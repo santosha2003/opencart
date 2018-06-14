@@ -1,0 +1,217 @@
+<modification>
+    <name>Почта России</name>
+    <code>LouiseRussianPost</code>
+    <version>3.7</version>
+    <author>louise170 (louise@ya.ru)</author>
+    <link><![CDATA[https://opencartforum.com/files/file/1157-модуль-доставки-почта-россии/]]></link>
+
+    <!-- COMMON -->
+    <file path="catalog/view/theme/*/template/checkout/shipping_method.tpl">
+        <operation>
+            <ignoreif><![CDATA[
+                <img src="<?php echo HTTP_IMAGE.$quote['image'];?>"/>
+            ]]>
+            </ignoreif>
+            <search>
+            <![CDATA[
+                echo $quote['title'];
+            ]]>
+            </search>
+            <add position="replace">
+            <![CDATA[
+                if (isset($quote['image']) and !empty($quote['image']) ) {
+                ?>
+                    <img src="<?php echo HTTP_IMAGE.$quote['image'];?>" />
+                <?php
+                }
+
+                echo $quote['title'];
+
+                if (isset($quote['error']) and $quote['error'] != false and $quote['error'] != true) {
+                    echo '<br/>'.$quote['error'];
+                }
+            ]]>
+            </add>
+        </operation>
+
+        <operation>
+            <ignoreif><![CDATA[
+                <input type="radio" name="shipping_method" class=""
+            ]]>
+            </ignoreif>
+            <search>
+            <![CDATA[
+                <input type="radio" name="shipping_method"
+            ]]>
+            </search>
+            <add position="replace"><![CDATA[
+                <?php if (isset($quote['error']) and $quote['error'] != false) {
+                    ?><input type="radio" name="shipping_method" class="" disabled="disabled" <?php
+                } else {
+                ?><input type="radio" name="shipping_method" class="" <?php
+                }?>
+            ]]>
+            </add>
+        </operation>
+
+        <operation>
+            <ignoreif><![CDATA[
+                <label for="<?php echo $quote['code']; ?>"><?php echo $quote['description']; ?></label>
+            ]]>
+            </ignoreif>
+            <search>
+            <![CDATA[
+                <?php echo $quote['text']; ?></label>
+            ]]>
+            </search>
+            <add position="replace">
+                <![CDATA[
+                <?php echo $quote['text']; ?></label>
+
+                <?php if (!empty($quote['description'])) { ?>
+                    <br/><label><?php echo $quote['description']; ?></label>
+                <?php } ?>
+            ]]>
+            </add>
+        </operation>
+    </file>
+
+    <!-- SIMPLE -->
+    <file path="catalog/view/theme/*/template/checkout/simplecheckout_shipping.tpl">
+        <operation>
+            <ignoreif><![CDATA[
+                <img src="<?php echo HTTP_IMAGE.$quote['image'];?>" class="1"/>
+            ]]>
+            </ignoreif>
+            <search>
+            <![CDATA[
+                echo $quote['title'];
+            ]]>
+            </search>
+            <add position="replace"><![CDATA[
+                if (isset($quote['image']) and !empty($quote['image']) ) {
+                ?>
+                    <img src="<?php echo HTTP_IMAGE.$quote['image'];?>" class="1"/>
+                <?php
+                    echo '<span style="vertical-align:10px;">'.$quote['title'].'</span>';
+                }
+                else {
+                    echo $quote['title'];
+                }
+
+                if (isset($quote['error']) and $quote['error'] != false and $quote['error'] != true) {
+                    echo '<br/>'.$quote['error'];
+                }
+            ]]>
+            </add>
+        </operation>
+
+        <operation>
+            <ignoreif><![CDATA[
+                <input type="radio" name="shipping_method" class=""
+            ]]>
+            </ignoreif>
+            <search>
+            <![CDATA[
+                <input type="radio" name="shipping_method"
+            ]]>
+            </search>
+            <add position="replace"><![CDATA[
+                <?php if (isset($quote['error']) and $quote['error'] != false) {
+                    ?><input type="radio" name="shipping_method" class="" disabled="disabled" <?php
+                } else {
+                ?><input type="radio" name="shipping_method" class="" <?php
+                }?>
+            ]]>
+            </add>
+        </operation>
+
+        <operation>
+            <ignoreif><![CDATA[
+                <img src="<?php echo HTTP_IMAGE.$quote['image'];?>" class="2"/>
+            ]]>
+            </ignoreif>
+            <search>
+            <![CDATA[
+                echo !empty($quote['title']) ? $quote['title'] : '';
+            ]]>
+            </search>
+            <add position="replace"><![CDATA[
+                if (isset($quote['image']) and !empty($quote['image']) ) {
+                ?>
+                    <img src="<?php echo HTTP_IMAGE.$quote['image'];?>" class="2"/>
+                <?php
+                    if (!empty($quote['title'])) {
+                        echo '<span style="vertical-align:10px;">'.$quote['title'].'</span>';
+                    }
+                }
+                else {
+                    echo !empty($quote['title']) ? $quote['title'] : '';
+                }
+
+                if (isset($quote['error']) and $quote['error'] != false and $quote['error'] != true) {
+                    echo '<br/>'.$quote['error'];
+                }
+            ]]>
+            </add>
+        </operation>
+
+        <operation>
+            <ignoreif><![CDATA[
+                <input type="radio" data-onchange="reloadAll" name="shipping_method" class=""
+            ]]>
+            </ignoreif>
+            <search>
+                <![CDATA[
+                <input type="radio" data-onchange="reloadAll" name="shipping_method"
+            ]]>
+            </search>
+            <add position="replace"><![CDATA[
+                <?php if (isset($quote['error']) and $quote['error'] != false) {
+                    ?><input type="radio" data-onchange="reloadAll" name="shipping_method" class="" disabled="disabled" <?php
+                } else {
+                ?><input type="radio" data-onchange="reloadAll" name="shipping_method" class="" <?php
+                }?>
+            ]]>
+            </add>
+        </operation>
+    </file>
+
+    <file path="admin/language/russian/russian.php">
+        <operation>
+            <ignoreif><![CDATA[
+                ['text_image_manager']
+            ]]>
+            </ignoreif>
+            <search>
+            <![CDATA[
+                $_['text_yes']
+            ]]>
+            </search>
+            <add position="before"><![CDATA[
+                $_['text_image_manager'] = 'Менеджер изображений';
+            ]]>
+            </add>
+        </operation>
+    </file>
+
+    <file path="admin/language/english/english.php">
+        <operation>
+            <ignoreif><![CDATA[
+                ['text_image_manager']
+            ]]>
+            </ignoreif>
+            <search>
+            <![CDATA[
+                $_['text_yes']
+            ]]>
+            </search>
+            <add position="before"><![CDATA[
+                $_['text_image_manager'] = 'Image Manager';
+            ]]>
+            </add>
+        </operation>
+    </file>
+
+</modification>
+

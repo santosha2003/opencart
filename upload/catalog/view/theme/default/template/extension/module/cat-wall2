@@ -1,0 +1,98 @@
+<h4><?php echo ' '; echo 'Отделы магазина'; //$heading_title; ?></h4>
+  <?php foreach ($categories as $category) { ?>
+  <?php if ($category['category_id'] == $category_id) { ?> <!-- раздел выбран -->
+     <ul style="border-top:1px solid #949cff;border-bottom:1px solid #949cff; text-align:left; background:transparent url(http://belosnezhka.ru/catalog/view/theme/default/image/5left.png) repeat-x scroll 0 0;">
+                <li class="caption" style="min-height: 20px">
+		  <?php if($category['image']){ ?>
+                    <h5><a class="list-group-item active" img src="<?php echo $category['image']; ?>" href="<?php echo $category['href']; ?>"> <?php echo $category['name']; ?></a></h5>
+                  <?php } else { ?>
+                    <h5><a class="list-group-item active" href="<?php echo $category['href']; ?>"> <?php echo $category['name']; ?></a></h5>
+                  <?php } ?>
+                </li>
+ <!--  </ul> -->
+  <?php if ($category['children']) { ?>
+  <?php foreach ($category['children'] as $child) { ?>
+  <?php if ($child['category_id'] == $child_id) { ?>
+<!-- <i class="fa fa-check-circle-o" aria-hidden="false"></i> -->
+     <ul  style="border-top:1px solid #949cff;border-bottom:1px solid #949cff; text-align:left; background:transparent url(http://belosnezhka.ru/catalog/view/theme/default/image/5left.png) repeat-x scroll 0 0;">
+      <li class="caption" style="min-height: 20px">
+       <a class="list-group-item active" href="<?php echo $child['href']; ?>"> - <?php echo $child['name']; ?></a>
+      </li>
+     </ul>
+  <?php } else { ?>
+    <ul  style="list-style:none; border-top:1px solid #949cff;border-bottom:1px solid #949cff; text-align:left; background:transparent url(http://belosnezhka.ru/catalog/view/theme/default/image/5left.png) repeat-x scroll 0 0;">
+     <li class="caption" style="min-height: 20px"> <!-- подкаталог пока не выбран -->
+     <a class="list-group-item" href="<?php echo $child['href']; ?>"> - <?php echo $child['name']; ?></a>
+     </li>
+    </ul>
+  <?php } ?>
+  <?php } ?>
+  <?php } ?>
+     </ul>
+  <?php } else { ?>
+     <ul  style="list-style:none; border-top:1px solid #949cff;border-bottom:1px solid #949cff; text-align:left; background:transparent url(http://belosnezhka.ru/catalog/view/theme/default/image/5left.png) repeat-x scroll 0 0;">
+                <li class="caption" style="min-height: 20px"> <!--ne wybranij element class="caption" style="text-decoration: none" -->
+  <a  href="<?php echo $category['href']; ?>" class="list-group-item"><?php echo $category['name']; ?></a>
+                </li>
+  <!-- </ul> -->
+  <?php if ($category['children']) { ?>
+  <?php foreach ($category['children'] as $child) { ?>
+  <?php if ($child['category_id'] == $child_id) { ?>
+<!-- <i class="fa fa-check-circle-o" aria-hidden="false"></i> -->
+     <ul  style="border-top:1px solid #949cff;border-bottom:1px solid #949cff; text-align:left; background:transparent url(http://belosnezhka.ru/catalog/view/theme/default/image/5left.png) repeat-x scroll 0 0;">
+      <li class="caption" style="min-height: 20px">
+       <a class="list-group-item active" href="<?php echo $child['href']; ?>"> - <?php echo $child['name']; ?></a>
+      </li>
+     </ul>
+  <?php } else { ?>
+    <ul  style="list-style:none; border-top:1px solid #949cff;border-bottom:1px solid #949cff; text-align:left; background:transparent url(http://belosnezhka.ru/catalog/view/theme/default/image/5left.png) repeat-x scroll 0 0;">
+     <li class="caption" style="min-height: 20px"> <!-- подкаталог пока не выбран -->
+     <a class="list-group-item" href="<?php echo $child['href']; ?>"> - <?php echo $child['name']; ?></a>
+     </li>
+    </ul>
+  <?php } ?>
+  <?php } ?>
+  <?php } ?>
+   <?php } ?><!-- хвостик вывода кнопки или линки каталога -->
+   </ul>
+  <?php } ?><!-- хвостик вывода списка всех и выбранного и остальных каталогов -->
+   
+     <?php /* ?>
+      <?php if ($categories) { ?>
+      <h3><?php echo $text_refine; ?></h3>
+      <?php if (count($categories) <= 5) { ?>
+      <div class="row">
+        <div class="col-sm-3">
+          <ul style="display:block" aria-expanded="true">
+            <?php foreach ($categories as $category) { ?>
+            <li><a href="<?php echo $category['href']; ?>">
+             <?php if($category['image']){ ?>
+    	     <img src="<?php echo $category['image']; ?>" ><br>
+	     <?php } ?>
+	    <?php echo $category['name']; ?></a></li>
+            <?php } ?>
+          </ul>
+        </div>
+      </div>
+      <?php } else { ?>
+      <div class="row">
+        <?php foreach (array_chunk($categories, ceil(count($categories) / 4)) as $categories) { ?>
+        <div class="col-sm-3">
+          <ul style="display:block" aria-expanded="true">
+            <?php foreach ($categories as $category) { ?>
+            <li><a href="<?php echo $category['href']; ?>">
+             <?php if($category['image']){ ?>
+    	     <img src="<?php echo $category['image']; ?>" ><br>
+	     <?php } ?>
+            <?php echo $category['name']; ?> </a></li> <!-- <img src="<?php // if  ($data['thumb']) {  echo $data['thumb']; } ?>" alt="<?php // echo $category['name']; ?>"></a></li> -->
+            <?php } ?>
+          </ul>
+        </div>
+        <?php } ?>
+      </div>
+      <?php } ?>
+      <?php } ?>
+
+
+  <?php */ ?>
+

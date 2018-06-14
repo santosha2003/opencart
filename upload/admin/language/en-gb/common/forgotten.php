@@ -1,5 +1,5 @@
 <?php
-// Heading
+// header
 $_['heading_title']   = 'Forgot Your Password?';
 
 // Text

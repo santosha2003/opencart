@@ -35,28 +35,6 @@ class ModelExtensionPaymentPPExpress extends Model {
 			  PRIMARY KEY (`paypal_order_transaction_id`)
 			) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci
 		");
-
-		$this->load->model('setting/setting');
-
-		$defaults = array();
-
-		// Order Status defaults
-		$defaults['payment_pp_express_canceled_reversal_status_id'] = 9;
-		$defaults['payment_pp_express_completed_status_id'] = 5;
-		$defaults['payment_pp_express_denied_status_id'] = 8;
-		$defaults['payment_pp_express_expired_status_id'] = 14;
-		$defaults['payment_pp_express_failed_status_id'] = 10;
-		$defaults['payment_pp_express_pending_status_id'] = 1;
-		$defaults['payment_pp_express_processed_status_id'] = 15;
-		$defaults['payment_pp_express_refunded_status_id'] = 11;
-		$defaults['payment_pp_express_reversed_status_id'] = 12;
-		$defaults['payment_pp_express_voided_status_id'] = 16;
-
-		$defaults['payment_pp_express_incontext_disable'] = 0;
-		$defaults['payment_pp_express_status'] = 0;
-		$defaults['payment_pp_express_currency'] = "USD";
-
-		$this->model_setting_setting->editSetting('payment_pp_express', $defaults);
 	}
 
 	public function uninstall() {
@@ -75,29 +53,17 @@ class ModelExtensionPaymentPPExpress extends Model {
 	}
 
 	public function addTransaction($transaction_data, $request_data = array()) {
-		$this->db->query("INSERT INTO `" . DB_PREFIX . "paypal_order_transaction` SET 
-		`paypal_order_id` = '" . (int)$transaction_data['paypal_order_id'] . "', 
-		`transaction_id` = '" . $this->db->escape($transaction_data['transaction_id']) . "', 
-		`parent_id` = '" . $this->db->escape($transaction_data['parent_id']) . "', 
-		`date_added` = NOW(), `note` = '" . $this->db->escape($transaction_data['note']) . "', 
-		`msgsubid` = '" . $this->db->escape($transaction_data['msgsubid']) . "', 
-		`receipt_id` = '" . $this->db->escape($transaction_data['receipt_id']) . "', 
-		`payment_type` = '" . $this->db->escape($transaction_data['payment_type']) . "', 
-		`payment_status` = '" . $this->db->escape($transaction_data['payment_status']) . "', 
-		`pending_reason` = '" . $this->db->escape($transaction_data['pending_reason']) . "', 
-		`transaction_entity` = '" . $this->db->escape($transaction_data['transaction_entity']) . "', 
-		`amount` = '" . (float)$transaction_data['amount'] . "', 
-		`debug_data` = '" . $this->db->escape($transaction_data['debug_data']) . "'");
-
-		$paypal_order_transaction_id = $this->db->getLastId();
-
-		if (!empty($request_data)) {
+		if ($request_data) {
 			$serialized_data = json_encode($request_data);
 
-			$this->db->query("UPDATE `" . DB_PREFIX . "paypal_order_transaction` SET `call_data` = '" . $this->db->escape($serialized_data) . "' WHERE `paypal_order_transaction_id` = " . (int)$paypal_order_transaction_id . " LIMIT 1");
+			$this->db->query("UPDATE " . DB_PREFIX . "paypal_order_transaction SET call_data = '" . $this->db->escape($serialized_data) . "' WHERE paypal_order_transaction_id = " . (int)$paypal_order_transaction_id . " LIMIT 1");
 		}
 
-		return $paypal_order_transaction_id;
+
+
+		$this->db->query("INSERT INTO `" . DB_PREFIX . "paypal_order_transaction` SET `paypal_order_id` = '" . (int)$transaction_data['paypal_order_id'] . "', `transaction_id` = '" . $this->db->escape($transaction_data['transaction_id']) . "', `parent_id` = '" . $this->db->escape($transaction_data['parent_id']) . "', `date_added` = NOW(), `note` = '" . $this->db->escape($transaction_data['note']) . "', `msgsubid` = '" . $this->db->escape($transaction_data['msgsubid']) . "', `receipt_id` = '" . $this->db->escape($transaction_data['receipt_id']) . "', `payment_type` = '" . $this->db->escape($transaction_data['payment_type']) . "', `payment_status` = '" . $this->db->escape($transaction_data['payment_status']) . "', `pending_reason` = '" . $this->db->escape($transaction_data['pending_reason']) . "', `transaction_entity` = '" . $this->db->escape($transaction_data['transaction_entity']) . "', `amount` = '" . (float)$transaction_data['amount'] . "', `debug_data` = '" . $this->db->escape($transaction_data['debug_data']) . "'");
+
+		return $this->db->getLastId();
 	}
 
 	public function updateTransaction($transaction) {
@@ -161,7 +127,6 @@ class ModelExtensionPaymentPPExpress extends Model {
 			'THB',
 			'TRY',
 			'USD',
-			'INR',
 		);
 	}
 
@@ -203,7 +168,7 @@ class ModelExtensionPaymentPPExpress extends Model {
 	}
 
 	public function log($data, $title = null) {
-		if ($this->config->get('payment_pp_express_debug')) {
+		if ($this->config->get('pp_express_debug')) {
 			$this->log->write('PayPal Express debug (' . $title . '): ' . json_encode($data));
 		}
 	}
@@ -232,6 +197,7 @@ class ModelExtensionPaymentPPExpress extends Model {
 
 		return $query->rows;
 	}
+
 
 	public function getTokens($test) {
 		if ($test == 'sandbox') {
@@ -301,16 +267,16 @@ class ModelExtensionPaymentPPExpress extends Model {
 	}
 
 	public function call($data) {
-		if ($this->config->get('payment_pp_express_test') == 1) {
+		if ($this->config->get('pp_express_test') == 1) {
 			$api_endpoint = 'https://api-3t.sandbox.paypal.com/nvp';
-			$user = $this->config->get('payment_pp_express_sandbox_username');
-			$password = $this->config->get('payment_pp_express_sandbox_password');
-			$signature = $this->config->get('payment_pp_express_sandbox_signature');
+			$user = $this->config->get('pp_express_sandbox_username');
+			$password = $this->config->get('pp_express_sandbox_password');
+			$signature = $this->config->get('pp_express_sandbox_signature');
 		} else {
 			$api_endpoint = 'https://api-3t.paypal.com/nvp';
-			$user = $this->config->get('payment_pp_express_username');
-			$password = $this->config->get('payment_pp_express_password');
-			$signature = $this->config->get('payment_pp_express_signature');
+			$user = $this->config->get('pp_express_username');
+			$password = $this->config->get('pp_express_password');
+			$signature = $this->config->get('pp_express_signature');
 		}
 
 		$settings = array(
@@ -337,25 +303,25 @@ class ModelExtensionPaymentPPExpress extends Model {
 			CURLOPT_POSTFIELDS => http_build_query(array_merge($data, $settings), '', "&")
 		);
 
-		$curl = curl_init();
+		$ch = curl_init();
 
-		curl_setopt_array($curl, $defaults);
+		curl_setopt_array($ch, $defaults);
 
-		if (!$curl_response = curl_exec($curl)) {
+		if (!$result = curl_exec($ch)) {
 			$log_data = array(
-				'curl_error' => curl_error($curl),
-				'curl_errno' => curl_errno($curl)
+				'curl_error' => curl_error($ch),
+				'curl_errno' => curl_errno($ch)
 			);
 
 			$this->log($log_data, 'CURL failed');
 			return false;
 		}
 
-		$this->log($curl_response, 'Result');
+		$this->log($result, 'Result');
 
-		curl_close($curl);
+		curl_close($ch);
 
-		return $this->cleanReturn($curl_response);
+		return $this->cleanReturn($result);
 	}
 
 	private function curl($endpoint, $additional_opts = array()) {
@@ -369,16 +335,15 @@ class ModelExtensionPaymentPPExpress extends Model {
 			CURLOPT_URL => $endpoint,
 		);
 
-		$curl = curl_init($endpoint);
+		$ch = curl_init($endpoint);
 
 		$opts = $default_opts + $additional_opts;
 
-		curl_setopt_array($curl, $opts);
+		curl_setopt_array($ch, $opts);
 
-		$curl_response = curl_exec($curl);
-		$response = json_decode($curl_response);
+		$response = json_decode(curl_exec($ch));
 
-		curl_close($curl);
+		curl_close($ch);
 
 		return $response;
 	}

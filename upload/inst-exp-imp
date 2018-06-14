@@ -1,0 +1,57 @@
+<modification>
+	<name>Export/Import Tool (V3.19) for OpenCart 2.x</name>
+	<code>Export/Import Tool (V3.19) for OpenCart 2.x</code>
+	<version>2.x-3.19</version>
+	<author>mhccorp.com</author>
+	<link>https://www.mhccorp.com</link>
+	<file path="admin/controller/common/menu.php">
+		<operation error="skip">
+			<search><![CDATA[$data['text_backup'] = $this->language->get('text_backup');]]></search>
+			<add position="after"><![CDATA[
+		$data['text_export_import'] = $this->language->get('text_export_import');
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[$data['backup'] = $this->url->link('tool/backup', 'token=' . $this->session->data['token'],]]></search>
+			<add position="after"><![CDATA[
+		$data['export_import'] = $this->url->link('tool/export_import', 'token=' . $this->session->data['token'], (version_compare(PHP_VERSION, '2.2.0.0') >= 0) ? true : 'SSL');
+			]]></add>
+		</operation>
+	</file>
+	<file path="admin/language/*/common/menu.php">
+		<operation error="skip">
+			<search><![CDATA[$_['text_backup']]]></search>
+			<add position="after"><![CDATA[
+$_['text_export_import']               = 'Export / Import';
+			]]></add>
+		</operation>
+	</file>
+	<file path="admin/view/template/common/menu.tpl">
+		<operation error="skip">
+			<search><![CDATA[<li><a href="<?php echo $backup; ?>"><?php echo $text_backup; ?></a></li>]]></search>
+			<add position="replace"><![CDATA[<li><a href="<?php echo $backup; ?>"><?php echo $text_backup; ?></a></li><li><a href="<?php echo $export_import; ?>"><?php echo $text_export_import; ?></a></li>]]></add>
+		</operation>
+	</file>
+	<file path="admin/controller/common/column_left.php">
+		<operation error="skip">
+			<search><![CDATA[if ($this->user->hasPermission('access', 'tool/log')) {]]></search>
+			<add position="before"><![CDATA[
+			if ($this->user->hasPermission('access', 'tool/export_import')) {
+				$tool[] = array(
+					'name'	   => $this->language->get('text_export_import'),
+					'href'     => $this->url->link('tool/export_import', 'token=' . $this->session->data['token'], true),
+					'children' => array()		
+				);
+			}
+			]]></add>
+		</operation>
+	</file>
+	<file path="admin/language/*/common/column_left.php">
+		<operation error="skip">
+			<search><![CDATA[$_['text_backup']]]></search>
+			<add position="after"><![CDATA[
+$_['text_export_import']             = 'Export / Import';
+			]]></add>
+		</operation>
+	</file>
+</modification>

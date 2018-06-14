@@ -1,0 +1,18 @@
+<!--  Tag Cloud	-->
+<!--[if lt IE ]><script type="text/javascript" src="tag_cloud/excanvas.js"></script><![endif]-->
+<script src="tag_cloud/jquery.tagcanvas.js" type="text/javascript"></script>
+<script type="text/javascript">
+      $(document).ready(function() {
+        if(!$('#myCanvas').tagcanvas({
+          textColour: '#CCC',
+          outlineColour: '#CCC',
+          reverse: true,
+          depth: 1,
+          maxSpeed: 0.05
+        },'tags')) {
+          // something went wrong, hide the canvas container
+          $('#myCanvasContainer').hide();
+        }
+      });
+    </script>
+<!--	Tag Cloud	-->

@@ -1,0 +1,72 @@
+  <div id="menu" class="container">
+<?php if ($categories) { //menu srazu pod bolshim logotipom kartinkoj ?>
+<!-- <div class="container"> -->
+<!--    <nav id="menu" class="navbar"> <a> вкл это и поиск с корзиной опускаются ниже кнопок  </a> -->
+    <div class="navbar-header">
+     <span id="category" class="visible-xs"><?php echo $text_category; ?></span>
+      <span class="caret"></span>
+      <button type="button" class="btn btn-navbar navbar-toggle" data-toggle="collapse" aria-expanded="true" data-target=".navbar-ex1-collapse"><i class="fa fa-bars"></i></button>
+    </div>
+<!--     <div class="collapse navbar-collapse navbar-ex1-collapse"> -->
+      <ul class="nav navbar-nav">
+        <?php //GLOBAL $cat1; $cat1=$categories;  //print_r ($categories); ?>
+        <?php foreach ($categories as $category) { ?>
+        <?php if ($category['children']) { ?>
+
+        <li class="dropdown"><a href="<?php echo 'http://belosnezhka.ru/shop/vyshivanie-kanva-aida-14'; //echo $category['href'];" ?> class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" aria-expanded="true"><?php echo 'Вся продукция'; //echo $category['name']; ?></a>
+          <div class="dropdown-menu">
+            <div class="dropdown-inner">
+              <?php foreach (array_chunk($category['children'], ceil(count($category['children']) / $category['column'])) as $children) { ?>
+              <ul class="list-unstyled">
+                <?php foreach ($children as $child) { ?>
+                <!-- <li><a href="<?php //echo $child['href']; ?>"><?php //echo $child['name']; ?></a></li> -->
+<!--///////// Level 1--> 
+<li><a href="<?php echo $child['href']; ?>"> 
+               <?php if ($child['image']) { ?>
+    	     <img src="<?php echo $child['image']; ?>" >
+	     <?php } //echo $child['image']; ?>
+           <?php echo $child['name']; ?></a></li>
+
+<?php if ($child['subchildren']) { ?>
+<!--///////// Level 2--> 
+<?php foreach ($child['subchildren'] as $subchild) { ?>
+<li style="padding-left: 45px;"><a href="<?php echo $subchild['href']; ?>"><img src="<?php if($subchild['image']) { echo $subchild['image']; } ?>"><?php echo $subchild['name']; ?></a></li>
+  <?php } ?>
+
+<?php } ?>
+
+                <?php } ?>
+              </ul>
+<!--///////// xvost 2 -->
+
+              <?php } ?>
+            </div>
+<!--///////// xvost 1 -->
+<!-- 2 колонка раскрывается вниз -->
+            <a href="<?php echo 'http://belosnezhka.ru/shop/vyshivanie-kanva-aida-14'; //echo $category['href']; ?>" class="see-all"><?php //echo $text_all; ?> <?php echo 'Вышивка'; //echo $category['name']; ?></a> </div>
+        </li>
+        <li class="dropdown"><a href="<?php echo 'http://belosnezhka.ru/shop/xolst-4050-sm'; //echo $category['href']; ?>" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" aria-expanded="true"><?php echo 'Раскраски по номерам'; //echo $category['name']; ?></a>
+          <div class="dropdown-menu">
+            <div class="dropdown-inner">
+              <?php //foreach (array_chunk($category['children'], ceil(count($category['children']) / $category['column'])) as $children) { ?>
+              <ul class="list-unstyled">
+                <?php //foreach ($children as $child) { ?>
+                <li><a href="<?php echo 'http://belosnezhka.ru/shop/zhivopis'; //echo $child['href']; ?>"><?php echo "Картины раскраски по номерам"; //echo $child['name']; ?></a></li>
+                <li><a href="<?php echo 'http://belosnezhka.ru/shop/xolst-3040-sm'; //echo $child['href']; ?>"><?php echo "Картины раскраски 40x30"; //echo $child['name']; ?></a></li>
+                <li><a href="<?php echo 'http://belosnezhka.ru/shop/xolst-4050-sm'; //echo $child['href']; ?>"><?php echo "Картины раскраски 40x50"; //echo $child['name']; ?></a></li>
+                <li><a href="<?php echo 'http://belosnezhka.ru/shop/xolst-3040-sm'; //echo $child['href']; ?>"><?php echo "Картины раскраски 40x30"; //echo $child['name']; ?></a></li>
+                <?php //} ?>
+              </ul>
+              <?php //} ?>
+            </div>
+            <a href="<?php echo 'http://belosnezhka.ru/shop/xolst-4050-sm'; //echo $category['href']; ?>" class="see-all"><?php //echo $text_all; ?> <?php echo 'Картины раскраски 40x50' //echo $category['name']; ?></a> </div>
+        </li>
+        <?php } else { ?>
+        <!-- <li><a href="<?php //echo $category['href']; ?>"><?php //echo $category['name']; ?></a></li> -->
+        <?php } ?>
+        <?php } ?>
+      </ul>
+<!--    </div> -->
+<!--   </nav> <a> вкл это и поиск с корзиной опускаются ниже кнопок  </a> -->
+<!--  </div> -->
+<?php } ?>

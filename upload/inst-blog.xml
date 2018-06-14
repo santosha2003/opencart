@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<name>Blog</name>
+	<code>super-blog-oc2x</code>
+	<version>2.3</version>
+	<author>opencart2x.ru</author>
+	<link>https://opencart2x.ru</link>
+	<file path="admin/controller/common/column_left.php">
+		<operation error="skip">
+			<search><![CDATA[
+			$extension = array();
+			]]></search>
+			<add position="before"><![CDATA[
+			// Blog start
+			$blog = array();
+			$this->load->language('blog/blog');
+            if ($this->user->hasPermission('access', 'blog/blog')) {
+                $blog[] = array(
+                    'name'     => $this->language->get('text_blog_post'),
+                    'href'     => $this->url->link('blog/blog', 'token=' . $this->session->data['token'], true),
+                    'children' => array()   
+                );
+            }
+            if ($this->user->hasPermission('access', 'blog/blog_category')) {
+                $blog[] = array(
+                    'name'     => $this->language->get('text_blog_category'),
+                    'href'     => $this->url->link('blog/blog_category', 'token=' . $this->session->data['token'], true),
+                    'children' => array()   
+                );
+            }
+            if ($this->user->hasPermission('access', 'blog/blog_comment')) {
+                $blog[] = array(
+                    'name'     => $this->language->get('text_blog_comment'),
+                    'href'     => $this->url->link('blog/blog_comment', 'token=' . $this->session->data['token'], true),
+                    'children' => array()   
+                );
+            }
+            if ($this->user->hasPermission('access', 'blog/blog_setting')) {
+                $blog[] = array(
+                    'name'     => $this->language->get('text_blog_setting'),
+                    'href'     => $this->url->link('blog/blog_setting', 'token=' . $this->session->data['token'], true),
+                    'children' => array()   
+                );
+            }
+            if ($catalog) {
+				$data['menus'][] = array(
+					'id'       => 'menu-catalog',
+					'icon'	   => 'fa-th-list', 
+					'name'	   => $this->language->get('text_blog'),
+					'href'     => '',
+					'children' => $blog
+				);		
+			}
+			// Blog ends
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/startup/seo_url.php">
+		<operation>
+			<search><![CDATA[
+			if ($query->row['query'] && $url[0]
+			]]></search>
+			<add position="before"><![CDATA[
+			if ($url[0] == 'blog_id') {$this->request->get['blog_id'] = $url[1]; }
+			if ($url[0] == 'blog_category_id') {
+			if (!isset($this->request->get['blogpath'])) {
+			$this->request->get['blogpath'] = $url[1];
+				} else {
+			$this->request->get['blogpath'] .= '_' . $url[1];
+			}}
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[
+			!= 'category_id' && $url[0]
+			]]></search>
+			<add position="replace"><![CDATA[
+			!= 'category_id' && $url[0] != 'blog_category_id' && $url[0] != 'blog_id' && $url[0] 
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[
+			$this->request->get['route'] = 'product/product';
+			]]></search>
+			<add position="after"><![CDATA[
+			} elseif (isset($this->request->get['blog_id'])&&isset($this->request->get['page'])) {
+			$this->request->get['route'] = 'blog/blog/comment';
+			} elseif (isset($this->request->get['blog_id'])) {
+			$this->request->get['route'] = 'blog/blog';
+			} elseif ($this->request->get['_route_'] ==  'blog_home') { 
+			$this->request->get['route'] = 'blog/home';
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[
+			$this->request->get['route'] = 'product/category';
+			]]></search>
+			<add position="after"><![CDATA[
+			} elseif (isset($this->request->get['blogpath'])) {
+			$this->request->get['route'] = 'blog/category';
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[
+			($data['route'] == 'information/information' && $key == 'information_id'))
+			]]></search>
+			<add position="replace"><![CDATA[
+			($data['route'] == 'information/information' && $key == 'information_id') || ($data['route'] == 'blog/blog' && $key == 'blog_id'))
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[
+			} elseif ($key == 'path') {
+			]]></search>
+			<add position="before"><![CDATA[
+			} elseif ($key == 'blogpath') {
+			$blog_categories = explode('_', $value);
+			foreach ($blog_categories as $category) {
+			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "url_alias WHERE `query` = 'blog_category_id=" . (int)$category . "'");
+			if ($query->num_rows) {
+			$url .= '/' . $query->row['keyword'];
+			} else {
+			$url = '';
+			break;
+			}}
+			unset($data[$key]);
+			} elseif (isset($data['route']) && $data['route'] ==   'blog/home') {
+			$blog_home = $this->db->query("SELECT * FROM " . DB_PREFIX . "url_alias WHERE `query` = 'blog/home'");
+			if ($blog_home->num_rows) {
+			$url .= '/' . $blog_home->row['keyword'];
+			} else {
+			$url = '';
+			}
+			]]></add>
+		</operation>
+	</file>
+		<file path="catalog/controller/{common,startup}/seo_pro.php">
+		<operation>
+			<search><![CDATA[
+			$this->request->get['route'] = 'information/information';
+			]]></search>
+			<add position="after"><![CDATA[
+			} elseif (isset($this->request->get['blog_id'])&&isset($this->request->get['page'])) {
+				$this->request->get['route'] = 'blog/blog/comment';
+			} elseif (isset($this->request->get['blog_id'])) {
+				$this->request->get['route'] = 'blog/blog';
+			} elseif (isset($this->request->get['blog_category_id'])) {
+				$this->request->get['route'] = 'blog/category';
+				$this->request->get['blogpath'] = $this->request->get['blog_category_id'];
+				unset($this->request->get['blog_category_id']);
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[
+			case 'product/product':
+			]]></search>
+			<add position="before"><![CDATA[
+			case 'blog/blog':
+				if (isset($data['blog_id'])) {
+					// Whitelist GET parameters
+					$tmp = $data;
+					$data = array();
+					if ($this->config->get('config_seo_url_include_path')) {
+						$data['blog_category_id'] = $this->getPathByBlog($tmp['blog_id']);
+						if (!$data['blog_category_id']) return $link;
+					}
+
+					$allowed_parameters = array(
+						'blog_id', 'tracking',
+						// Compatibility with "OCJ Merchandising Reports" module.
+						// Save and pass-thru module specific GET parameters.
+						'uri', 'list_type',
+						// Compatibility with Google Analytics
+						'gclid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+						'type', 'source', 'block', 'position', 'keyword',
+						// Compatibility with Yandex Metrics, Yandex Market
+						'yclid', 'ymclid', 'openstat', 'frommarket',
+						'openstat_service', 'openstat_campaign', 'openstat_ad', 'openstat_source',
+						// Compatibility with Themeforest Rgen templates (popup with product preview)
+						'urltype'
+						);
+					foreach($allowed_parameters as $ap) {
+						if (isset($tmp[$ap])) {
+							$data[$ap] = $tmp[$ap];
+						}
+					}
+				}
+				break;
+
+			case 'blog/category':
+				if (isset($data['blog_category_id'])) {
+					$category = explode('_', $data['blog_category_id']);
+					$category = end($category);
+					$data['blog_category_id'] = $this->getPathByBlogCategory($category);
+					if (!$data['blog_category_id']) return $link;
+
+					$allowed_parameters = array(
+						'blogpath', 'blog_category_id', 'tracking',
+						// Compatibility with "OCJ Merchandising Reports" module.
+						// Save and pass-thru module specific GET parameters.
+						'uri', 'list_type',
+						// Compatibility with Google Analytics
+						'gclid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+						'type', 'source', 'block', 'position', 'keyword',
+						// Compatibility with Yandex Metrics, Yandex Market
+						'yclid', 'ymclid', 'openstat', 'frommarket',
+						'openstat_service', 'openstat_campaign', 'openstat_ad', 'openstat_source',
+						// Compatibility with Themeforest Rgen templates (popup with product preview)
+						'urltype'
+						);
+					foreach($allowed_parameters as $ap) {
+						if (isset($tmp[$ap])) {
+							$data[$ap] = $tmp[$ap];
+						}
+					}
+				}
+				break;
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[
+			case 'product/product/review':
+			]]></search>
+			<add position="before"><![CDATA[
+				case 'blog/blog/comment':
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[
+			case 'order_id':
+			]]></search>
+			<add position="after"><![CDATA[
+				case 'blog_id':
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[
+			case 'path':
+			]]></search>
+			<add position="before"><![CDATA[
+				case 'blog_category_id':
+				case 'blogpath':
+					$category_path = explode('_', $value);
+					$category_id = end($category_path);
+					$categories = $this->getPathByBlogCategory($category_id);
+					$categories = explode('_', $categories);
+					foreach ($categories as $category) {
+						$queries[] = 'blog_category_id=' . $category;
+					}
+					unset($data[$key]);
+					break;
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[
+			private function getPathByProduct($product_id) {
+			]]></search>
+			<add position="before"><![CDATA[
+			private function getPathByBlog($blog_id) {
+				$blog_id = (int)$blog_id;
+				if ($blog_id < 1) return false;
+
+				static $path = null;
+				if (!is_array($path)) {
+					$path = $this->cache->get('blog.seopath');
+					if (!is_array($path)) $path = array();
+				}
+
+				if (!isset($path[$blog_id])) {
+					$query = $this->db->query("SELECT blog_category_id FROM " . DB_PREFIX . "blog_to_category WHERE blog_id = '" . $blog_id . "' LIMIT 1");
+
+					$path[$blog_id] = $this->getPathByBlogCategory($query->num_rows ? (int)$query->row['blog_category_id'] : 0);
+
+					$this->cache->set('blog.seopath', $path);
+				}
+
+				return $path[$blog_id];
+			}
+
+			private function getPathByBlogCategory($category_id) {
+				$category_id = (int)$category_id;
+				if ($category_id < 1) return false;
+
+				static $path = null;
+				if (!is_array($path)) {
+					$path = $this->cache->get('blog_category.seopath');
+					if (!is_array($path)) $path = array();
+				}
+
+				if (!isset($path[$category_id])) {
+					$max_level = 10;
+
+					$sql = "SELECT CONCAT_WS('_'";
+					for ($i = $max_level-1; $i >= 0; --$i) {
+						$sql .= ",t$i.blog_category_id";
+					}
+					$sql .= ") AS blogpath FROM " . DB_PREFIX . "blog_category t0";
+					for ($i = 1; $i < $max_level; ++$i) {
+						$sql .= " LEFT JOIN " . DB_PREFIX . "blog_category t$i ON (t$i.blog_category_id = t" . ($i-1) . ".parent_id)";
+					}
+					$sql .= " WHERE t0.blog_category_id = '" . $category_id . "'";
+
+					$query = $this->db->query($sql);
+
+					$path[$category_id] = $query->num_rows ? $query->row['blogpath'] : false;
+
+					$this->cache->set('blog_category.seopath', $path);
+				}
+
+				return $path[$category_id];
+			}
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/extension/feed/{google_sitemap,yandex_sitemap}.php">
+		<operation>
+			<search><![CDATA[
+			$output .= '</urlset>';
+			]]></search>
+			<add position="before"><![CDATA[
+			$this->load->model('blog/blog_category');
+			$categories_1 = $this->model_blog_blog_category->getBlogCategories(0);
+			foreach ($categories_1 as $category_1) {
+				// First level
+				$output .= '<url>';
+				$output .= '<loc>' . $this->url->link('blog/category', 'blogpath=' . $category_1['blog_category_id']) . '</loc>';
+				$output .= '<changefreq>weekly</changefreq>';
+				$output .= '<priority>0.7</priority>';
+				$output .= '</url>';
+				$categories_2 = $this->model_blog_blog_category->getBlogCategories($category_1['blog_category_id']);
+				foreach ($categories_2 as $category_2) {
+					// Second level
+					$categories_2 = $this->model_blog_blog_category->getBlogCategories(0);
+					$output .= '<url>';
+					$output .= '<loc>' . $this->url->link('blog/category', 'blogpath=' . $category_1['blog_category_id'] . '_' . $category_2['blog_category_id']) . '</loc>';
+					$output .= '<changefreq>weekly</changefreq>';
+					$output .= '<priority>0.7</priority>';
+					$output .= '</url>';				
+				}
+			}
+
+			$this->load->model('blog/blog');
+			$blogs = $this->model_blog_blog->getBlogs(array('filter_tag'=>''));
+	    	foreach ($blogs as $blog) {
+	    		$output .= '<url>';
+				$output .= '<loc>' . $this->url->link('blog/blog', 'blog_id=' . $blog['blog_id']) . '</loc>';
+				$output .= '<changefreq>weekly</changefreq>';
+				$output .= '<priority>0.5</priority>';
+				$output .= '</url>';
+			}
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/information/sitemap.php">
+		<operation>
+			<search><![CDATA[
+			$this->load->model('catalog/information');
+			]]></search>
+			<add position="before"><![CDATA[
+			$this->load->model('blog/blog');
+			$data['blogs'] = array();
+			$results = $this->model_blog_blog->getBlogs(array('filter_tag'  => ''));
+	    	foreach ($results as $result) {		
+				$data['blogs'][] = array(
+				'title'      => $result['title'],
+				'href' => $this->url->link('blog/blog', 'blog_id=' . $result['blog_id'])
+				);
+			}
+
+			$this->load->model('blog/blog_category');
+			$categories_1 = $this->model_blog_blog_category->getBlogCategories(0);
+			$data['categories_1'] = array();
+			foreach ($categories_1 as $category_1) {
+				$level_2_data = array();
+				$categories_2 = $this->model_blog_blog_category->getBlogCategories($category_1['blog_category_id']);
+				foreach ($categories_2 as $category_2) {
+					$level_3_data = array();
+					// Second level
+					$categories_2 = $this->model_blog_blog_category->getBlogCategories(0);		
+					$level_2_data[] = array(
+						'name'    	=> $category_2['name'],
+						'children'	=> $level_3_data,
+						'href'    	=> $this->url->link('blog/category', 'blogpath=' . $category_1['blog_category_id'] . '_' . $category_2['blog_category_id'])
+						);					
+					}
+				// First level
+				$data['blog_categories'][] = array(
+					'name'     => $category_1['name'],				
+					'children' => $level_2_data,
+					'href'     => $this->url->link('blog/category', 'blogpath=' . $category_1['blog_category_id'])
+				);
+			}
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/view/theme/*/template/information/sitemap.tpl">
+		<operation>
+			<search><![CDATA[
+			<?php echo $content_bottom; ?>
+			]]></search>
+			<add position="before"><![CDATA[
+			<hr>
+		    <div class="row">
+		        <div class="col-sm-6">
+		          <?php if (!empty($blog_categories)) { ?>
+		          <ul class="list-unstyled">
+		          <?php foreach ($blog_categories as $category_1) { ?>
+		              <li><a href="<?php echo $category_1['href']; ?>" ><?php echo $category_1['name']; ?></a> 
+		                <?php if ($category_1['children']) { ?>
+		                <ul>
+		                <?php foreach ($category_1['children'] as $category_2) { ?>
+		                  <li><a href="<?php echo $category_2['href']; ?>"><?php echo $category_2['name']; ?></a></li>
+		                <?php } ?>
+		                </ul>
+		                <?php } ?>
+		              </li>
+		              <?php } ?>
+		          </ul>
+		          <?php } ?>
+		        </div>
+		        <div class="col-sm-6">
+		        <?php if($blogs){ ?>
+		          <ul class="list-unstyled">
+		            <?php foreach ($blogs as $blog) { ?>
+		              <li><a href="<?php echo $blog['href']; ?>" ><?php echo $blog['title']; ?></a></li>
+		            <?php } ?>
+		          </ul>
+		        <?php } ?>
+		        </div>
+		    </div>
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/common/content_top.php">
+		<operation>
+			<search><![CDATA[
+			$layout_id = 0;
+			]]></search>
+			<add position="after"><![CDATA[
+			if ($route == 'blog/blog' && isset($this->request->get['blog_id'])) { $this->load->model('blog/blog');
+			$layout_id = $this->model_blog_blog->getBlogLayoutId($this->request->get['blog_id']);}
+			if ($route == 'blog/category' && isset($this->request->get['blogpath'])) { $this->load->model('blog/blog_category');
+			$layout_id = $this->model_blog_blog_category->getBlogCategoryLayoutId($this->request->get['blogpath']);}
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/common/content_bottom.php">
+		<operation>
+			<search><![CDATA[
+			$layout_id = 0;
+			]]></search>
+			<add position="after"><![CDATA[
+			if ($route == 'blog/blog' && isset($this->request->get['blog_id'])) { $this->load->model('blog/blog');
+			$layout_id = $this->model_blog_blog->getBlogLayoutId($this->request->get['blog_id']);}
+			if ($route == 'blog/category' && isset($this->request->get['blogpath'])) { $this->load->model('blog/blog_category');
+			$layout_id = $this->model_blog_blog_category->getBlogCategoryLayoutId($this->request->get['blogpath']);}
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/common/column_left.php">
+		<operation>
+			<search><![CDATA[
+			$layout_id = 0;
+			]]></search>
+			<add position="after"><![CDATA[
+			if ($route == 'blog/blog' && isset($this->request->get['blog_id'])) { $this->load->model('blog/blog');
+			$layout_id = $this->model_blog_blog->getBlogLayoutId($this->request->get['blog_id']);}
+			if ($route == 'blog/category' && isset($this->request->get['blogpath'])) { $this->load->model('blog/blog_category');
+			$layout_id = $this->model_blog_blog_category->getBlogCategoryLayoutId($this->request->get['blogpath']);}
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/common/column_right.php">
+		<operation>
+			<search><![CDATA[
+			$layout_id = 0;
+			]]></search>
+			<add position="after"><![CDATA[
+			if ($route == 'blog/blog' && isset($this->request->get['blog_id'])) { $this->load->model('blog/blog');
+			$layout_id = $this->model_blog_blog->getBlogLayoutId($this->request->get['blog_id']);}
+			if ($route == 'blog/category' && isset($this->request->get['blogpath'])) { $this->load->model('blog/blog_category');
+			$layout_id = $this->model_blog_blog_category->getBlogCategoryLayoutId($this->request->get['blogpath']);}
+			]]></add>
+		</operation>
+	</file>
+</modification>

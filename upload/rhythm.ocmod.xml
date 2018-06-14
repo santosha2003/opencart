@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Rhythm - OpenCart Theme Framework</name>
+    <version>1.3.1</version>
+    <code>rhythm_1.3.1</code>
+    <author>EchoThemes</author>
+    <link>http://www.echothemes.com</link>
+
+    <file path="admin/controller/startup/startup.php">
+        <operation info="Register Rhythm">
+            <search><![CDATA[$this->registry->set('customer']]></search>
+            <add position="after"><![CDATA[
+        // Rhytm - OpenCart Theme Framework
+        $this->registry->set('rhythm', new Rhythm($this->registry));
+            ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/startup/startup.php">
+        <operation info="Register Rhythm and autoload active theme preset">
+            <search><![CDATA[$this->registry->set('customer']]></search>
+            <add position="after"><![CDATA[
+        // Rhythm - OpenCart Themes Framework
+        $rhythm = new Rhythm($this->registry);
+        $rhythm->loadData($this->config->get('config_theme'));
+        $rhythm->loadPreset($this->config->get('config_theme'));
+        $this->registry->set('rhythm', $rhythm);
+            ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/common/header.php">
+        <operation info="Manuall Events">
+            <search><![CDATA[$data['base']]]></search>
+            <add position="before"><![CDATA[
+                $this->event->trigger('rhythm/common/header', array(&$data));
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/common/footer.php">
+        <operation info="Languages">
+            <search><![CDATA[$data['powered']]]></search>
+            <add position="before"><![CDATA[
+                $this->load->language('common/cart');
+                $data['text_loading'] = $this->language->get('text_loading');
+                $data['text_view_cart'] = $this->language->get('text_cart');
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/common/maintenance.php">
+        <operation info="Manuall Events">
+            <search><![CDATA[$data['header']]]></search>
+            <add position="before"><![CDATA[
+                $this->event->trigger('rhythm/common/maintenance', array(&$data));
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/error/not_found.php">
+        <operation info="Manuall Events">
+            <search><![CDATA[$data['column_left']]]></search>
+            <add position="before"><![CDATA[
+                $data['controller_error_notfound'] = true;
+                $this->event->trigger('rhythm/error/not_found', array(&$data));
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/{account,affiliate,checkout,common,error,information,product,blog}/*.php">
+        <operation info="Manuall Events, used to inject Block Position. Note: 3rd ext need to add this Events manually">
+            <search><![CDATA[$this->load->controller('common/header');]]></search>
+            <add position="before"><![CDATA[
+                $this->event->trigger('rhythm/controller-hmvc/before', array(&$data));
+            ]]></add>
+        </operation>
+    </file>
+
+    <file path="system/library/pagination.php">
+        <operation info="Change pagination arrow with fontawesome">
+            <search><![CDATA['|&lt;']]></search>
+            <add position="replace"><![CDATA['<i class="fa fa-angle-double-left fa-lg"></i>']]></add>
+        </operation>
+        <operation info="Change pagination arrow with fontawesome">
+            <search><![CDATA['&gt;|']]></search>
+            <add position="replace"><![CDATA['<i class="fa fa-angle-double-right fa-lg"></i>']]></add>
+        </operation>
+        <operation info="Change pagination arrow with fontawesome">
+            <search><![CDATA['&lt;']]></search>
+            <add position="replace"><![CDATA['<i class="fa fa-angle-left fa-lg"></i>']]></add>
+        </operation>
+        <operation info="Change pagination arrow with fontawesome">
+            <search><![CDATA['&gt;']]></search>
+            <add position="replace"><![CDATA['<i class="fa fa-angle-right fa-lg"></i>']]></add>
+        </operation>
+    </file>
+</modification>

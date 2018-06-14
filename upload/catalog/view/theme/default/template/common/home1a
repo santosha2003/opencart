@@ -1,0 +1,36 @@
+<?php echo $header; ?>
+<div id="container" class="container">
+
+<!-- в строчку -->
+<!-- <div class="row"> -->
+
+    <?php //if ($column_left && $column_right) { ?>
+    <?php //$class = 'col-sm-6'; ?>
+    <?php if ($column_left || $column_right) { //} elseif ($column_left || $column_right) { ?>
+    <?php $class = 'col-sm-9'; ?>
+    <?php } else { ?>
+    <?php $class = 'col-sm-12'; ?>
+    <?php } // class col-sm-9 - left panel visible; ?>
+
+  <!--  <aside id="column-left" class="col-sm-9"> -->
+  <!-- eto  levaja главная страница -->
+  <div class="col-sm-6" ><?php echo $column_left; ?>
+  </div>
+  
+  <!--  </aside> -->
+
+  <div id="content" class="<?php echo $class; ?>">
+
+<?php if ($modules) { ?>
+  <?php foreach ($modules as $module) { ?>
+  <?php echo $module; ?>
+  <?php } ?>
+<?php } ?>
+
+      <?php echo $content_top; ?>
+      <?php echo $content_bottom; ?>
+  </div>
+    <?php echo $column_right; ?>
+<!-- </div> -->
+</div>
+    <?php echo $footer; ?>

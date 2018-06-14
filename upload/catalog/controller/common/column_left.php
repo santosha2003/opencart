@@ -2,6 +2,12 @@
 class ControllerCommonColumnLeft extends Controller {
 	public function index() {
 		$this->load->model('design/layout');
+  $this->load->model('catalog/category');
+  $this->load->model('catalog/product');
+ $this->load->model('tool/image');
+  $data['categories'] = array();
+  $categories = $this->model_catalog_category->getCategories(0);
+
 
 		if (isset($this->request->get['route'])) {
 			$route = (string)$this->request->get['route'];
@@ -12,7 +18,7 @@ class ControllerCommonColumnLeft extends Controller {
 		$layout_id = 0;
 
 		if ($route == 'product/category' && isset($this->request->get['path'])) {
-			$this->load->model('catalog/category');
+			 //$this->load->model('catalog/category');
 
 			$path = explode('_', (string)$this->request->get['path']);
 
@@ -20,7 +26,7 @@ class ControllerCommonColumnLeft extends Controller {
 		}
 
 		if ($route == 'product/product' && isset($this->request->get['product_id'])) {
-			$this->load->model('catalog/product');
+			 //$this->load->model('catalog/product');
 
 			$layout_id = $this->model_catalog_product->getProductLayoutId($this->request->get['product_id']);
 		}
@@ -38,8 +44,16 @@ class ControllerCommonColumnLeft extends Controller {
 		if (!$layout_id) {
 			$layout_id = $this->config->get('config_layout_id');
 		}
-
-		$this->load->model('setting/module');
+                      if (isset($category_info)) {
+			if ($category_info['image']) {
+				$data['thumb'] = $this->model_tool_image->resize($category_info['image'], $this->config->get($this->config->get('config_theme') . '_image_category_width'), $this->config->get($this->config->get('config_theme') . '_image_category_height'));
+			} else {
+				$data['thumb'] = '';
+			}
+                       } else { 
+                         $data['thumb'] = '';
+                      }                      
+		$this->load->model('extension/module');
 
 		$data['modules'] = array();
 
@@ -48,7 +62,7 @@ class ControllerCommonColumnLeft extends Controller {
 		foreach ($modules as $module) {
 			$part = explode('.', $module['code']);
 
-			if (isset($part[0]) && $this->config->get('module_' . $part[0] . '_status')) {
+			if (isset($part[0]) && $this->config->get($part[0] . '_status')) {
 				$module_data = $this->load->controller('extension/module/' . $part[0]);
 
 				if ($module_data) {
@@ -57,7 +71,7 @@ class ControllerCommonColumnLeft extends Controller {
 			}
 
 			if (isset($part[1])) {
-				$setting_info = $this->model_setting_module->getModule($part[1]);
+				$setting_info = $this->model_extension_module->getModule($part[1]);
 
 				if ($setting_info && $setting_info['status']) {
 					$output = $this->load->controller('extension/module/' . $part[0], $setting_info);

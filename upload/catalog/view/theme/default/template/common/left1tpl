@@ -1,0 +1,11 @@
+<?php // if ($modules) { ?> <!-- //print_r ($categories);// foreach  ($categories as $category) { echo $category['name']; }  //; ?> -->
+<!-- 1 load category controller  & product -->
+<!-- <a >по ширине в 2 раза уже если class col-sm-9  </a> -->
+ <aside id="column-left" class="col-sm-12">
+  <?php foreach ($modules as $module) { ?>
+  <?php echo $module; ?>
+  <?php } ?>
+ </aside>
+<? php // } ?>
+
+

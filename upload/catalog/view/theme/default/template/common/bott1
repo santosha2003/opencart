@@ -1,0 +1,11 @@
+<?php echo 'Выбор товаров Белоснежка'; ?>
+<?php foreach ($modules as $module) { ?>
+<?php echo $module; ?>
+<?php } ?>
+  <div class="list-unstyled">
+                            <ul class="list-unstyled">
+                        <li ><a href="http://belosnezhka.ru/shop" >Каталог магазина</a>
+                              </ul>
+                          </div>
+<?php echo 'Страницы'; ?>
+

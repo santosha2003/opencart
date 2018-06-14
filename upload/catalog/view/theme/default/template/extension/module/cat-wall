@@ -1,0 +1,60 @@
+<h4><?php echo ' '; echo 'Отделы магазина'; //$heading_title; ?></h4>
+<!-- <div class="col-sm-3" style="opacity: 1; display: block;margin-bottom: 7px;"> -->
+ <!--
+    <?php foreach ($categories as $category) { ?>
+          <!-- строчки категорий  class="col-sm-3"-->
+     <ul  style="border-top:1px solid #949cff;border-bottom:1px solid #949cff; text-align:left; background:transparent url(http://belosnezhka.ru/catalog/view/theme/default/image/5left.png) repeat-x scroll 0 0;">
+            <!-- <div class="product-thumb transition"> -->
+             <!--    <div class="image"><a href="<?php echo $category['href']; ?>"><img src="<?php echo $category['image']; ?>" alt="<?php echo $category['name']; ?>" title="<?php echo $category['name']; ?>" class="img-responsive" /></a></div> -->
+                <li class="caption" style="min-height: 50px">
+                    <h5><a style="text-decoration: none" href="<?php echo $category['href']; ?>"><?php echo $category['name']; ?></a></h5>
+                </li> 
+            <!-- </div> -->
+      </ul>
+    <?php } ?>
+    -->
+  <?php foreach ($categories as $category) { ?>
+  <?php if ($category['category_id'] == $category_id) { ?>
+     <ul  style="border-top:1px solid #949cff;border-bottom:1px solid #949cff; text-align:left; background:transparent url(http://belosnezhka.ru/catalog/view/theme/default/image/5left.png) repeat-x scroll 0 0;">
+                <li class="caption" style="min-height: 50px">
+                    <h5><a style="text-decoration: none" href="<?php echo $category['href']; ?>"><?php echo $category['name']; ?></a></h5>
+                </li> 
+  <?php if ($category['children']) { ?>
+  <?php foreach ($category['children'] as $child) { ?>
+  <?php if ($child['category_id'] == $child_id) { ?>
+  <a href="<?php echo $child['href']; ?>" class="list-group-item active">&nbsp;&nbsp;&nbsp;- <?php echo $child['name']; ?></a>
+  <?php } else { ?>
+  <a href="<?php echo $child['href']; ?>" class="list-group-item">&nbsp;&nbsp;&nbsp;- <?php echo $child['name']; ?></a>
+  <?php } ?>
+  <?php } ?>
+  <?php } ?>
+  <?php } else { ?>
+  <a href="<?php echo $category['href']; ?>" class="list-group-item"><?php echo $category['name']; ?></a>
+  <?php } ?>
+  <?php } ?>
+    
+    
+
+<!-- </div> --> 
+
+<!-- 
+<div class="list-group">
+  <?php foreach ($categories as $category) { ?>
+  <?php if ($category['category_id'] == $category_id) { ?>
+  <a href="<?php echo $category['href']; ?>" class="list-group-item active"><?php echo $category['name']; ?></a>
+  <?php if ($category['children']) { ?>
+  <?php foreach ($category['children'] as $child) { ?>
+  <?php if ($child['category_id'] == $child_id) { ?>
+  <a href="<?php echo $child['href']; ?>" class="list-group-item active">&nbsp;&nbsp;&nbsp;- <?php echo $child['name']; ?></a>
+  <?php } else { ?>
+  <a href="<?php echo $child['href']; ?>" class="list-group-item">&nbsp;&nbsp;&nbsp;- <?php echo $child['name']; ?></a>
+  <?php } ?>
+  <?php } ?>
+  <?php } ?>
+  <?php } else { ?>
+  <a href="<?php echo $category['href']; ?>" class="list-group-item"><?php echo $category['name']; ?></a>
+  <?php } ?>
+  <?php } ?>
+</div>
+ -->
+ 

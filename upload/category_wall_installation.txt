@@ -1,0 +1,47 @@
+===EN===
+
+OCMOD - Category Wall
+~~~~~~~~~~~~~~~~~~~~~
+
+This module displays categories as image and name in boxes across rows.
+
+Width and Height of the images is taken from the admin>settings>image>category image size.
+
+Once uploaded go to modules, install and enable.
+
+Only parent categories and those that are selected to appear in the "Top Menu Bar" will be displayed. 
+
+
+Installation
+~~~~~~~~~~~~
+
+        Copy contents of zip file to site root
+
+
+
+
+
+
+
+
+===RUS===
+
+Стена Категорий
+~~~~~~~~~~~~~~~~~~~~~
+
+Этот модуль отображает категории, изображение и имя в блоке по строкам.
+
+Длина и ширина определяется в настройках Админпанель > Модули > Темы > Ваш шаблон и укажите размер для "Размер изображения в списке категорий".
+
+Не забудьте включить модуль
+
+И добавьте его в нужный макет для отображения
+
+
+Установка
+~~~~~~~~~~~~
+
+1. Скопируйте все файлы на сервер
+2. Включите модуль
+3. Выведите добавив в нужный макет.
+

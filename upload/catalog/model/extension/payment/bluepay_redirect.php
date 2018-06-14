@@ -1,13 +1,15 @@
 <?php
-class ModelExtensionPaymentBluepayRedirect extends Model {
+
+class ModelExtensionPaymentBluePayRedirect extends Model {
+
 	public function getMethod($address, $total) {
 		$this->load->language('extension/payment/bluepay_redirect');
 
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "zone_to_geo_zone` WHERE geo_zone_id = '" . (int)$this->config->get('payment_bluepay_redirect_geo_zone_id') . "' AND country_id = '" . (int)$address['country_id'] . "' AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");
+		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "zone_to_geo_zone` WHERE geo_zone_id = '" . (int)$this->config->get('bluepay_redirect_geo_zone_id') . "' AND country_id = '" . (int)$address['country_id'] . "' AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");
 
-		if ($this->config->get('payment_bluepay_redirect_total') > 0 && $this->config->get('payment_bluepay_redirect_total') > $total) {
+		if ($this->config->get('bluepay_redirect_total') > 0 && $this->config->get('bluepay_redirect_total') > $total) {
 			$status = false;
-		} elseif (!$this->config->get('payment_bluepay_redirect_geo_zone_id')) {
+		} elseif (!$this->config->get('bluepay_redirect_geo_zone_id')) {
 			$status = true;
 		} elseif ($query->num_rows) {
 			$status = true;
@@ -22,7 +24,7 @@ class ModelExtensionPaymentBluepayRedirect extends Model {
 				'code' => 'bluepay_redirect',
 				'title' => $this->language->get('text_title'),
 				'terms' => '',
-				'sort_order' => $this->config->get('payment_bluepay_redirect_sort_order')
+				'sort_order' => $this->config->get('bluepay_redirect_sort_order')
 			);
 		}
 
@@ -56,7 +58,7 @@ class ModelExtensionPaymentBluepayRedirect extends Model {
 	}
 
 	public function addOrder($order_info, $response_data) {
-		if ($this->config->get('payment_bluepay_redirect_transaction') == 'SALE') {
+		if ($this->config->get('bluepay_redirect_transaction') == 'SALE') {
 			$release_status = 1;
 		} else {
 			$release_status = null;
@@ -95,7 +97,7 @@ class ModelExtensionPaymentBluepayRedirect extends Model {
 	}
 
 	public function logger($message) {
-		if ($this->config->get('payment_bluepay_redirect_debug') == 1) {
+		if ($this->config->get('bluepay_redirect_debug') == 1) {
 			$log = new Log('bluepay_redirect.log');
 			$log->write($message);
 		}
