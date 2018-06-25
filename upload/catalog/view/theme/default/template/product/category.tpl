@@ -112,12 +112,12 @@
           <div class="product-thumb">
             <div class="image"><a href="<?php echo $product['href']; ?>"><img src="<?php echo $product['thumb']; ?>" alt="<?php echo $product['name']; ?>" title="<?php echo $product['name']; ?>" class="img-responsive" /></a></div>
             <div>
-              <div class="caption">
-                <h4><a href="<?php echo $product['href']; ?>"><?php echo $product['name']; ?></a></h4>
+              <div class="caption" style=" min-height: 50px; ">
+                <h4 style=" min-height: 50px; "><a "href="<?php echo $product['href']; ?>"><?php echo $product['name']; ?></a></h4>
                 <!-- <p><?php // echo $product['description']; ?>выкл. краткое описание где просмотр всех товаров в разделе</p> -->
                 <?php if ($product['price']) { ?>
-              <a> <?php echo $product['model']; ?></a>
-                <p class="price">
+              <a>  <?php echo $product['model']; ?></a>
+                <p class="price"  style=" min-height: 50px; ">
                   <?php //echo "Цена: "; ?>
                   <?php if (!$product['special']) { ?>
                   <?php echo 'Цена: '.$product["price"]; ?>

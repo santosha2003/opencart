@@ -9,7 +9,7 @@
  </div> <!-- товар -->
  <div class="alert"> </div>
  <hr>
-  <div class="containbody"><!-- товар --><?php  // echo $column_left; ?>
+  <div class="containbody"><!-- товар --><?php   echo $column_left; ?>
     <?php if ($column_left && $column_right) { ?>
     <?php $class = 'col-sm-6'; ?>
     <?php } elseif ($column_left || $column_right) { ?>
