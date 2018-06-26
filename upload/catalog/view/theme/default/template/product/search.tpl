@@ -5,13 +5,13 @@
     <li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
     <?php } ?>
   </ul>
-  <div class="row"><!-- поиск без левой колонки --><?php // echo $column_left; ?>
+  <div class="row"><!-- поиск без левой колонки --><?php  echo $column_left; ?>
     <?php // no columns define ! check controller! throw error if ($column_left && $column_right) { ?>
     <?php // $class = 'col-sm-6'; ?>
     <?php // } elseif ($column_left || $column_right) { ?>
     <?php // $class = 'col-sm-9'; ?>
     <?php //} else { ?>
-    <?php // $class = 'col-sm-12'; ?>
+    <?php  $class = 'col-sm-12'; ?>
     <?php //} ?>
     <div id="content" class="<?php //echo $class; ?>col-sm-12"><?php echo $content_top; ?>
       <h1><?php echo $heading_title; ?></h1>
@@ -111,14 +111,16 @@
       </div>
       <div class="row">
         <?php foreach ($products as $product) { ?>
-        <div class="product-layout product-list col-xs-12">
+        <div class="product-layout product-list col-xs-12 col-xs-9">
           <div class="product-thumb">
-            <div class="image"><a href="<?php echo $product['href']; ?>"><img src="<?php echo $product['thumb']; ?>" alt="<?php echo $product['name']; ?>" title="<?php echo $product['name']; ?>" class="img-responsive" /></a></div>
+            <div class="image"><a href="<?php echo $product['href']; ?>"><img src="<?php echo $product['thumb']; ?>" alt="<?php echo $product['name']; ?>" title="<?php echo $product['name']; ?>" />
+            </a></div> <!-- class="thumbnails" -->
             <div>
-              <div class="caption">
-                <h4><a href="<?php echo $product['href']; ?>"><?php echo $product['name']; ?></a></h4>
+              <div class="caption" style=" min-height: 50px; ">
+                <h4 style=" margin-top: 10px; min-height: 50px; "><a href="<?php echo $product['href']; ?>"><?php echo $product['name']; ?></a></h4>
                 <a> <?php echo $product['model']; ?></a>
-                <p><?php echo $product['description']; ?></p>
+                <!-- <p><?php // echo $product['description']; ?>выкл. краткое описание где просмотр всех товаров в разделе</p> -->
+                <p><?php //echo $product['description']; ?></p>
                 <?php if ($product['price']) { ?>
                 <p class="price">
                   <?php if (!$product['special']) { ?>
