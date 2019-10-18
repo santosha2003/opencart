@@ -1,0 +1,245 @@
+{
+    "codename": "d_shopunity",
+    "version": "3.0.32",
+    "name": "Shopunity Extension manager",
+    "description": "Allows the user to connect his opencart store to shopunity network and purchase modules with ease.",
+    "index": "module/d_shopunity",
+    "readme": "system/mbooth/readme/d_shopunity.md",
+    "author": {
+        "name": "Shopunity",
+        "email": "info@shopunity.com",
+        "url": "https://shopunity.net/"
+    },
+    "opencart_version": [
+        "2.0.0.0",
+        "2.0.1.1",
+        "2.0.1.1",
+        "2.0.2.0",
+        "2.0.3.1",
+        "2.1.0.1",
+        "2.1.0.2",
+        "2.2.0.0",
+        "2.3.0.2"
+    ],
+    "mbooth_version": "^4.0.0",
+    "type": "module",
+    "license": {
+        "type": "free",
+        "url": "https://shopunity.net/licenses/free"
+    },
+    "install": {
+        "url": "extension/module/install&extension=d_shopunity",
+        "xml": "system/mbooth/install/d_shopunity.xml",
+        "php": "system/mbooth/install/d_shopunity.php",
+        "sql": "system/mbooth/install/d_shopunity.sql"
+    },
+    "uninstall": {
+        "url": "extension/module/uninstall&extension=d_shopunity"
+    },
+    "support": {
+        "email": "support@shopunity.com",
+        "url": "https://shopunity.net/"
+    },
+    "files": [
+        "system/mbooth/extension/d_shopunity.json",
+        "system/mbooth/install/d_shopunity.xml",
+        "system/mbooth/install/d_shopunity.php",
+        "system/mbooth/install/d_shopunity.sql",
+        "system/mbooth/readme/d_shopunity.md",
+        "system/mbooth/download/index.php",
+        "system/mbooth/backup/index.php",
+
+        "admin/controller/module/d_shopunity.php",
+        "admin/language/english/module/d_shopunity.php",
+        "admin/view/template/module/d_shopunity.tpl",
+
+        "system/library/deploy_bitbucket.php",
+        "system/library/deploy_github.php",
+        "system/library/shopunity.php",
+        "system/library/semver.php",
+
+        "vqmod/xml/a_vqmod_d_shopunity.xml",
+        "vqmod/xml/a_vqmod_d_compatibilty_fix_230.xml"
+    ],
+    "dirs": [
+        "admin/controller/d_shopunity",
+        "admin/language/english/d_shopunity",
+        "admin/model/d_shopunity",
+
+        "admin/view/template/d_shopunity",
+        "admin/view/javascript/d_shopunity",
+        "admin/view/stylesheet/d_shopunity",
+
+        "catalog/controller/d_shopunity",
+        "catalog/model/d_shopunity",
+
+        "system/library/httpful",
+        "system/library/semver",
+
+        "system/library/hyperlight",
+        "admin/view/stylesheet/shopunity",
+        "admin/view/javascript/shopunity"
+    ],
+    "changelog": [
+        {     
+            "varsion":"3.0.32",
+            "change": "1. Small fixes and debug"
+        },
+        {     
+            "varsion":"3.0.31",
+            "change": "1. Small fixes and debug"
+        },
+        {     
+            "varsion":"3.0.30",
+            "change": "1. Small fixes and debug"
+        },
+        {     
+            "varsion":"3.0.29",
+            "change": "1. Small fixes and debug"
+        }, 
+        {     
+            "varsion":"3.0.28",
+            "change": "1. Refactored API and install process"
+        },
+        {     
+            "varsion":"3.0.27",
+            "change": "1. bug fixes \r\n 2. Deploy through shopunity"
+        },
+        {     
+            "varsion":"3.0.26",
+            "change": "1. bug fixes"
+        },
+        {     
+            "varsion":"3.0.25",
+            "change": "1. conflict fix \r\n 2. Added filemanager \r\n3. System update"
+        },
+        {     
+            "varsion":"3.0.24",
+            "change": "1. works from localhost"
+        },
+        {     
+            "varsion":"3.0.23",
+            "change": "1. more fixes"
+        },
+        {     
+            "varsion":"3.0.22",
+            "change": "1. testing developer update function"
+        },
+        {     
+            "varsion":"3.0.21",
+            "change": "1. developer"
+        },
+        {     
+            "varsion":"3.0.20",
+            "change": "1. Unknown module fix"
+        },
+        {     
+            "varsion":"3.0.19",
+            "change": "1. added paging"
+        },
+        {     
+            "varsion":"3.0.17",
+            "change": "1. added status"
+        },
+        {     
+            "varsion":"3.0.16",
+            "change": "1. added cancel"
+        },
+        {   
+            "varsion":"3.0.15",
+            "change": "1. added refund"
+        },
+        {
+            "varsion":"3.0.14",
+            "change": "1. style fixes"
+        },
+        {
+            "varsion":"3.0.13",
+            "change": "1. corrected some styling"
+        },
+        {
+            "varsion":"3.0.12",
+            "change": "1. added dependencies validate"
+        },
+        {
+            "varsion":"3.0.11",
+            "change": "1. added uninstall function"
+        },
+        {
+            "varsion":"3.0.10",
+            "change": "1. install dependencies added \r\n 2. Removed elfinder - separate extension. \r\n 3. Semver added"
+        },
+        {
+            "varsion":"3.0.9",
+            "change": "1. fix download"
+        },
+        {
+            "varsion":"3.0.8",
+            "change": "1. style fixes"
+        },
+        {
+            "varsion":"3.0.7",
+            "change": "1. fixed a_vqmod_d_compatibilty_fix_230"
+        },
+        {
+            "varsion":"3.0.6",
+            "change": "1. Removed a_vqmod_d_shopunity.xml - depricated"
+        },
+        {
+            "varsion":"3.0.5",
+            "change": "1. fixed catalog compatiblity fix to 2.3.0.2"
+        },
+        {
+            "varsion":"3.0.4",
+            "change": "1. Added compatiblity fix to 2.3.0.2"
+        },
+        {
+            "varsion":"3.0.3",
+            "change": "1. bug fixes"
+        },
+        {
+            "varsion":"3.0.2",
+            "change": "1. bug fixes"
+        },
+        {
+            "varsion":"3.0.0",
+            "change": "1. Implemented extension.json instead of mbooth.xml \r\n 2. Integrated mbooth into shopunity"
+        },
+        {
+            "varsion":"2.5.0",
+            "change": "1. added bootbox.js"
+        },
+        {
+            "varsion":"2.4.0",
+            "change": "1. added star rating \r\n 2. x-editable \r\n 3. tagsinput"
+        },
+        {
+            "varsion":"2.3.0",
+            "change": "underscroe added (1.8.3) \r\n 2. backbone added (1.2.3)"
+        },
+        {
+            "varsion":"2.2.0",
+            "change": "1. bootstrap-colorpicker \r\n 2. bootstrap-editable\r\n 3. bootstrap-slider\r\n 4. bootstrap-sortable\r\n 5. bootstrap-switch\r\n 6. serializeObjact"
+        },
+        {
+            "varsion":"2.1.0",
+            "change": "1. rubaxa-sortable \r\n 2. style fixes"
+        },
+        {
+            "varsion":"2.0.2",
+            "change": "1. added margins and paddings"
+        },
+        {
+            "varsion":"2.0.1",
+            "change": "1. Added interect.js"
+        },
+        {
+            "varsion":"2.0.0",
+            "change": "1. Added compatiblity with version 2.0 bootstrap"
+        },
+        {
+            "varsion":"1.1.0",
+            "change": "1. Bug fixes"
+        }
+    ]
+}

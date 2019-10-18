@@ -1,7 +1,7 @@
 function getURLVar(key) {
 	var value = [];
 
-	var query = String(document.location).split('?');
+	var query = document.location.search.split('?');
 
 	if (query[1]) {
 		var part = query[1].split('&');
@@ -29,47 +29,12 @@ $(document).ready(function() {
 	});
 
 	// Highlight any found errors
-	$('.invalid-tooltip').each(function() {
-		var element = $(this).parent().find(':input');
+	$('.text-danger').each(function() {
+		var element = $(this).parent().parent();
 
-		if (element.hasClass('form-control')) {
-			element.addClass('is-invalid');
+		if (element.hasClass('form-group')) {
+			element.addClass('has-error');
 		}
-	});
-
-	$('.invalid-tooltip').show();
-
-	// tooltips on hover
-	$('[data-toggle=\'tooltip\']').tooltip({container: 'body', html: true});
-
-	// Makes tooltips work on ajax generated content
-	$(document).ajaxStop(function() {
-		$('[data-toggle=\'tooltip\']').tooltip({container: 'body'});
-	});
-
-	// tooltip remove
-	$('[data-toggle=\'tooltip\']').on('remove', function() {
-		$(this).tooltip('dispose');
-	});
-
-	// Tooltip remove fixed
-	$(document).on('click', '[data-toggle=\'tooltip\']', function(e) {
-		$('body > .tooltip').remove();
-	});
-
-	// https://github.com/opencart/opencart/issues/2595
-	$.event.special.remove = {
-		remove: function(o) {
-			if (o.handler) {
-				o.handler.apply(this, arguments);
-			}
-		}
-	}
-
-	$('#button-menu').on('click', function(e) {
-		e.preventDefault();
-
-		$('#column-left').toggleClass('active');
 	});
 
 	// Set last page opened on the menu
@@ -81,66 +46,150 @@ $(document).ready(function() {
 		$('#menu #dashboard').addClass('active');
 	} else {
 		// Sets active and open to selected page in the left column menu.
-		$('#menu a[href=\'' + sessionStorage.getItem('menu') + '\']').parent().addClass('active');
+		$('#menu a[href=\'' + sessionStorage.getItem('menu') + '\']').parents('li').addClass('active open');
 	}
 
-	$('#menu a[href=\'' + sessionStorage.getItem('menu') + '\']').parents('li > a').removeClass('collapsed');
+	if (localStorage.getItem('column-left') == 'active') {
+		$('#button-menu i').replaceWith('<i class="fa fa-dedent fa-lg"></i>');
 
-	$('#menu a[href=\'' + sessionStorage.getItem('menu') + '\']').parents('ul').addClass('show');
+		$('#column-left').addClass('active');
 
-	$('#menu a[href=\'' + sessionStorage.getItem('menu') + '\']').parents('li').addClass('active');
+		// Slide Down Menu
+		$('#menu li.active').has('ul').children('ul').addClass('collapse in');
+		$('#menu li').not('.active').has('ul').children('ul').addClass('collapse');
+	} else {
+		$('#button-menu i').replaceWith('<i class="fa fa-indent fa-lg"></i>');
+
+		$('#menu li li.active').has('ul').children('ul').addClass('collapse in');
+		$('#menu li li').not('.active').has('ul').children('ul').addClass('collapse');
+	}
+
+	// Menu button
+	$('#button-menu').on('click', function() {
+		// Checks if the left column is active or not.
+		if ($('#column-left').hasClass('active')) {
+			localStorage.setItem('column-left', '');
+
+			$('#button-menu i').replaceWith('<i class="fa fa-indent fa-lg"></i>');
+
+			$('#column-left').removeClass('active');
+
+			$('#menu > li > ul').removeClass('in collapse');
+			$('#menu > li > ul').removeAttr('style');
+		} else {
+			localStorage.setItem('column-left', 'active');
+
+			$('#button-menu i').replaceWith('<i class="fa fa-dedent fa-lg"></i>');
+
+			$('#column-left').addClass('active');
+
+			// Add the slide down to open menu items
+			$('#menu li.open').has('ul').children('ul').addClass('collapse in');
+			$('#menu li').not('.open').has('ul').children('ul').addClass('collapse');
+		}
+	});
+
+	// Menu
+	$('#menu').find('li').has('ul').children('a').on('click', function() {
+		if ($('#column-left').hasClass('active')) {
+			$(this).parent('li').toggleClass('open').children('ul').collapse('toggle');
+			$(this).parent('li').siblings().removeClass('open').children('ul.in').collapse('hide');
+		} else if (!$(this).parent().parent().is('#menu')) {
+			$(this).parent('li').toggleClass('open').children('ul').collapse('toggle');
+			$(this).parent('li').siblings().removeClass('open').children('ul.in').collapse('hide');
+		}
+	});
+
+	// Tooltip remove fixed
+	$(document).on('click', '[data-toggle=\'tooltip\']', function(e) {
+		$('body > .tooltip').remove();
+	});
 
 	// Image Manager
-	$(document).on('click', '[data-toggle=\'image\']', function(e) {
-		var element = this;
+	$(document).on('click', 'a[data-toggle=\'image\']', function(e) {
+		var $element = $(this);
+		var $popover = $element.data('bs.popover'); // element has bs popover?
+		
+		e.preventDefault();
 
-		$('#modal-image').remove();
+		// destroy all image popovers
+		$('a[data-toggle="image"]').popover('destroy');
 
-		$.ajax({
-			url: 'index.php?route=common/filemanager&user_token=' + getURLVar('user_token') + '&target=' + $(this).attr('data-target') + '&thumb=' + $(this).attr('data-thumb'),
-			dataType: 'html',
-			beforeSend: function() {
-				$(element).button('loading');
-			},
-			complete: function() {
-				$(element).button('reset');
-			},
-			success: function(html) {
-				$('body').append(html);
-
-				$('#modal-image').modal('show');
-			}
-		});
-	});
-
-	$(document).on('click', '[data-toggle=\'clear\']', function() {
-		var element = this;
-
-		$('#' + $(this).attr('data-thumb')).attr('src', $('#' + $(this).attr('data-thumb')).attr('data-placeholder'));
-
-		$('#' + $(this).attr('data-target')).val('');
-	});
-
-	// table dropdown responsive fix
-	$('.table-responsive').on('shown.bs.dropdown', function(e) {
-		var t = $(this),
-			m = $(e.target).find('.dropdown-menu'),
-			tb = t.offset().top + t.height(),
-			mb = m.offset().top + m.outerHeight(true),
-			d = 20;
-
-		if (t[0].scrollWidth > t.innerWidth()) {
-			if (mb + d > tb) {
-				t.css('padding-bottom', ((mb + d) - tb));
-			}
-		} else {
-			t.css('overflow', 'visible');
+		// remove flickering (do not re-add popover when clicking for removal)
+		if ($popover) {
+			return;
 		}
-	}).on('hidden.bs.dropdown', function() {
-		$(this).css({
-			'padding-bottom': '',
-			'overflow': ''
+
+		$element.popover({
+			html: true,
+			placement: 'right',
+			trigger: 'manual',
+			content: function() {
+				return '<button type="button" id="button-image" class="btn btn-primary"><i class="fa fa-pencil"></i></button> <button type="button" id="button-clear" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>';
+			}
 		});
+
+		$element.popover('show');
+
+		$('#button-image').on('click', function() {
+			var $button = $(this);
+			var $icon   = $button.find('> i');
+			
+			$('#modal-image').remove();
+
+			$.ajax({
+				url: 'index.php?route=common/filemanager&token=' + getURLVar('token') + '&target=' + $element.parent().find('input').attr('id') + '&thumb=' + $element.attr('id'),
+				dataType: 'html',
+				beforeSend: function() {
+					$button.prop('disabled', true);
+					if ($icon.length) {
+						$icon.attr('class', 'fa fa-circle-o-notch fa-spin');
+					}
+				},
+				complete: function() {
+					$button.prop('disabled', false);
+					if ($icon.length) {
+						$icon.attr('class', 'fa fa-pencil');
+					}
+				},
+				success: function(html) {
+					$('body').append('<div id="modal-image" class="modal">' + html + '</div>');
+
+					$('#modal-image').modal('show');
+				}
+			});
+
+			$element.popover('destroy');
+		});
+
+		$('#button-clear').on('click', function() {
+			$element.find('img').attr('src', $element.find('img').attr('data-placeholder'));
+
+			$element.parent().find('input').val('');
+
+			$element.popover('destroy');
+		});
+	});
+
+	// tooltips on hover
+	$('[data-toggle=\'tooltip\']').tooltip({container: 'body', html: true});
+
+	// Makes tooltips work on ajax generated content
+	$(document).ajaxStop(function() {
+		$('[data-toggle=\'tooltip\']').tooltip({container: 'body'});
+	});
+
+	// https://github.com/opencart/opencart/issues/2595
+	$.event.special.remove = {
+		remove: function(o) {
+			if (o.handler) {
+				o.handler.apply(this, arguments);
+			}
+		}
+	}
+
+	$('[data-toggle=\'tooltip\']').on('remove', function() {
+		$(this).tooltip('destroy');
 	});
 });
 
@@ -149,17 +198,14 @@ $(document).ready(function() {
 	$.fn.autocomplete = function(option) {
 		return this.each(function() {
 			var $this = $(this);
-			var $dropdown = $('<div class="dropdown-menu"/>');
-
+			var $dropdown = $('<ul class="dropdown-menu" />');
+			
 			this.timer = null;
 			this.items = [];
 
 			$.extend(this, option);
 
-			$(this).wrap('<div class="dropdown">');
-
 			$this.attr('autocomplete', 'off');
-			$this.active = false;
 
 			// Focus
 			$this.on('focus', function() {
@@ -167,23 +213,15 @@ $(document).ready(function() {
 			});
 
 			// Blur
-			$this.on('blur', function(e) {
-				if (!$this.active) {
-					this.hide();
-				}
-			});
-
-			$this.parent().on('mouseover', function(e) {
-				$this.active = true;
-			});
-
-			$this.parent().on('mouseout', function(e) {
-				$this.active = false;
+			$this.on('blur', function() {
+				setTimeout(function(object) {
+					object.hide();
+				}, 200, this);
 			});
 
 			// Keydown
 			$this.on('keydown', function(event) {
-				switch (event.keyCode) {
+				switch(event.keyCode) {
 					case 27: // escape
 						this.hide();
 						break;
@@ -197,23 +235,28 @@ $(document).ready(function() {
 			this.click = function(event) {
 				event.preventDefault();
 
-				var value = $(event.target).attr('href');
+				var value = $(event.target).parent().attr('data-value');
 
 				if (value && this.items[value]) {
 					this.select(this.items[value]);
-
-					this.hide();
 				}
 			}
 
 			// Show
 			this.show = function() {
-				$dropdown.addClass('show');
+				var pos = $this.position();
+
+				$dropdown.css({
+					top: pos.top + $this.outerHeight(),
+					left: pos.left
+				});
+
+				$dropdown.show();
 			}
 
 			// Hide
 			this.hide = function() {
-				$dropdown.removeClass('show');
+				$dropdown.hide();
 			}
 
 			// Request
@@ -222,7 +265,7 @@ $(document).ready(function() {
 
 				this.timer = setTimeout(function(object) {
 					object.source($(object).val(), $.proxy(object.response, object));
-				}, 50, this);
+				}, 200, this);
 			}
 
 			// Response
@@ -239,11 +282,10 @@ $(document).ready(function() {
 
 						if (!json[i]['category']) {
 							// ungrouped items
-							html += '<a href="' + json[i]['value'] + '" class="dropdown-item">' + json[i]['label'] + '</a>';
+							html += '<li data-value="' + json[i]['value'] + '"><a href="#">' + json[i]['label'] + '</a></li>';
 						} else {
 							// grouped items
 							name = json[i]['category'];
-
 							if (!category[name]) {
 								category[name] = [];
 							}
@@ -253,10 +295,10 @@ $(document).ready(function() {
 					}
 
 					for (name in category) {
-						html += '<h6 class="dropdown-header">' + name + '</h6>';
+						html += '<li class="dropdown-header">' + name + '</li>';
 
 						for (j = 0; j < category[name].length; j++) {
-							html += '<a href="' + category[name][j]['value'] + '" class="dropdown-item">&nbsp;&nbsp;&nbsp;' + category[name][j]['label'] + '</a>';
+							html += '<li data-value="' + category[name][j]['value'] + '"><a href="#">&nbsp;&nbsp;&nbsp;' + category[name][j]['label'] + '</a></li>';
 						}
 					}
 				}
@@ -270,121 +312,8 @@ $(document).ready(function() {
 				$dropdown.html(html);
 			}
 
-			$dropdown.on('click', '> a', $.proxy(this.click, this));
-
+			$dropdown.on('click', '> li > a', $.proxy(this.click, this));
 			$this.after($dropdown);
 		});
 	}
 })(window.jQuery);
-
-+function($) {
-	'use strict';
-
-	// BUTTON PUBLIC CLASS DEFINITION
-	// ==============================
-
-	var Button = function(element, options) {
-		this.$element = $(element)
-		this.options = $.extend({}, Button.DEFAULTS, options)
-		this.isLoading = false
-	}
-
-	Button.VERSION = '3.3.5'
-
-	Button.DEFAULTS = {
-		loadingText: 'loading...'
-	}
-
-	Button.prototype.setState = function(state) {
-		var d = 'disabled'
-		var $el = this.$element
-		var val = $el.is('input') ? 'val' : 'html'
-		var data = $el.data()
-
-		state += 'Text'
-
-		if (data.resetText == null) $el.data('resetText', $el[val]())
-
-		// push to event loop to allow forms to submit
-		setTimeout($.proxy(function() {
-			$el[val](data[state] == null ? this.options[state] : data[state])
-
-			if (state == 'loadingText') {
-				this.isLoading = true
-				$el.addClass(d).attr(d, d)
-			} else if (this.isLoading) {
-				this.isLoading = false
-				$el.removeClass(d).removeAttr(d)
-			}
-		}, this), 0)
-	}
-
-	Button.prototype.toggle = function() {
-		var changed = true
-		var $parent = this.$element.closest('[data-toggle="buttons"]')
-
-		if ($parent.length) {
-			var $input = this.$element.find('input')
-			if ($input.prop('type') == 'radio') {
-				if ($input.prop('checked')) changed = false
-				$parent.find('.active').removeClass('active')
-				this.$element.addClass('active')
-			} else if ($input.prop('type') == 'checkbox') {
-				if (($input.prop('checked')) !== this.$element.hasClass('active')) changed = false
-				this.$element.toggleClass('active')
-			}
-			$input.prop('checked', this.$element.hasClass('active'))
-			if (changed) $input.trigger('change')
-		} else {
-			this.$element.attr('aria-pressed', !this.$element.hasClass('active'))
-			this.$element.toggleClass('active')
-		}
-	}
-
-
-	// BUTTON PLUGIN DEFINITION
-	// ========================
-
-	function Plugin(option) {
-		return this.each(function() {
-			var $this = $(this)
-			var data = $this.data('bs.button')
-			var options = typeof option == 'object' && option
-
-			if (!data) $this.data('bs.button', (data = new Button(this, options)))
-
-			if (option == 'toggle') data.toggle()
-			else if (option) data.setState(option)
-		})
-	}
-
-	var old = $.fn.button
-
-	$.fn.button = Plugin
-	$.fn.button.Constructor = Button
-
-
-	// BUTTON NO CONFLICT
-	// ==================
-
-	$.fn.button.noConflict = function() {
-		$.fn.button = old
-		return this
-	}
-
-
-	// BUTTON DATA-API
-	// ===============
-
-	$(document)
-		.on('click.bs.button.data-api', '[data-toggle^="button"]', function(e) {
-			var $btn = $(e.target)
-			if (!$btn.hasClass('btn')) $btn = $btn.closest('.btn')
-			Plugin.call($btn, 'toggle')
-			if (!($(e.target).is('input[type="radio"]') || $(e.target).is('input[type="checkbox"]'))) e.preventDefault()
-		})
-		.on('focus.bs.button.data-api blur.bs.button.data-api', '[data-toggle^="button"]', function(e) {
-			$(e.target).closest('.btn').toggleClass('focus', /^focus(in)?$/.test(e.type))
-		})
-
-}(jQuery);

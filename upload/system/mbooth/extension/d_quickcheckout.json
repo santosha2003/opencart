@@ -1,0 +1,131 @@
+{
+    "codename": "d_quickcheckout",
+    "version": "2.0",
+    "name": "Simple One Page Checkout",
+    "index": "module/d_quickcheckout",
+    "description": "The #1 one page checkout solution for opencart. We are proude to say we are the best.",
+    "images": {
+        "thumb": "https://opencart.dreamvention.com/market/image/d_blog_module/small.png",
+        "main": "https://opencart.dreamvention.com/market/image/d_blog_module/big.png"
+    },
+    "author": {
+        "name": "opencart2x.ru",
+        "email": "info@opencart2x.ru",
+        "url": "https://opencart2x.ru/"
+    },
+    "opencart_version": [
+        "2.0.0.0",
+        "2.0.1.1",
+        "2.0.1.1",
+        "2.0.2.0",
+        "2.0.3.1",
+        "2.1.0.1",
+        "2.1.0.2",
+        "2.2.0.0",
+        "2.3.0.2"
+    ],
+    "mbooth_version": "^4.0.0",
+    "type": "module",
+    "license": {
+        "type": "commercial",
+        "url": "https://shopunity.net/licenses/commercial"
+    },
+    "install": {
+        "url": "extension/module/install&extension=d_quickcheckout",
+        "xml": "system/mbooth/install/d_quickcheckout.xml"
+    },
+    "uninstall": {
+        "url": "extension/module/uninstall&extension=d_quickcheckout"
+    },
+    "support": {
+        "email": "info@opencart2x.ru",
+        "url": "https://opencart2x.ru/"
+    },
+    "required": {
+        "d_shopunity": ">= 3.0.0"
+    },
+    "files": [
+    	"system/mbooth/install/d_quickcheckout.xml",
+        "system/mbooth/extension/d_quickcheckout.json",
+        "system/mbooth/xml/mbooth_d_quickcheckout.xml",
+        "admin/controller/module/d_quickcheckout.php",
+        "admin/language/english/module/d_quickcheckout.php",
+        "admin/language/english/module/d_quickcheckout_instruction.php",
+        "admin/model/module/d_quickcheckout.php",
+        "admin/view/template/module/d_quickcheckout.tpl",
+        "admin/view/stylesheet/d_quickcheckout.css",
+        "admin/view/stylesheet/d_quickcheckout.less",
+        "catalog/controller/module/d_quickcheckout.php",
+        "catalog/language/english/module/d_quickcheckout.php",
+        "catalog/model/module/d_quickcheckout.php",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/d_quickcheckout.less",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/d_quickcheckout.css",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/bootstrap.less",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/bootstrap.css",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/theme/blue.less",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/theme/blue.css",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/theme/dark.less",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/theme/dark.css",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/theme/default.css",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/theme/green.less",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/theme/green.css",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/theme/journal.less",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/theme/journal.css",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/theme/red.less",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/theme/red.css",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/theme/seablue.less",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/theme/seablue.css",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/theme/yellow.less",
+        "catalog/view/theme/default/stylesheet/d_quickcheckout/theme/yellow.css",
+
+        "catalog/view/theme/default/template/module/d_quickcheckout.tpl",
+        "catalog/view/theme/default/template/checkout/d_quickcheckout.tpl",
+        "system/config/d_quickcheckout.php",
+    ],
+    "dirs":[
+        "catalog/controller/d_quickcheckout",
+        "catalog/model/d_quickcheckout",
+        "catalog/view/javascript/d_quickcheckout",
+        "catalog/view/theme/default/template/d_quickcheckout",
+        "image/catalog/d_quickcheckout",
+        "system/library/d_compress"
+    ],
+    "changelog": [
+        {
+            "varsion":"1.4.0",
+            "change": "1. Phone validation  \r\n2. Fix & error in address."
+        }, 
+        {
+            "varsion":"1.3.3",
+            "change": "1. Replaced mbooth.xml with extension.json"
+        }, 
+        {
+            "varsion":"1.3.2.5",
+            "change": "1. Fix lost region."
+        },
+        {
+            "varsion":"1.3.2.5",
+            "change": "1. Bug fixes \r\n2. Mobile hover fix."
+        },
+        {
+            "varsion":"1.3.2.4",
+            "change": "1. Fix default payment and shipping \r\n 2. Fix the problem did not work when the payment popup \r\n3. Fix problem when the logged in user can not make an order \r\n4. Fix loss of data address"
+        },
+        {
+            "varsion":"1.3.2.3",
+            "change": "1. Delete label from checkbox(custom_field)."
+        },
+        {
+            "varsion":"1.3.2.2",
+            "change": "1. minor bug fixes"
+        },
+        {
+            "varsion":"1.3.2.1",
+            "change": "1. Added postcode in shipping address."
+        },
+        {
+            "varsion":"1.3.2.0",
+            "change": "1. Autocomplete option added. \r\n2. Fix shipping and payment addres conflict on registration \r\n3. Fix multiple request sent \r\n4. Small bug fixes."
+        }
+    ]
+}

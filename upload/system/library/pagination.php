@@ -1,15 +1,4 @@
 <?php
-/**
- * @package		OpenCart
- * @author		Daniel Kerr
- * @copyright	Copyright (c) 2005 - 2017, OpenCart, Ltd. (https://www.opencart.com/)
- * @license		https://opensource.org/licenses/GPL-3.0
- * @link		https://www.opencart.com
-*/
-
-/**
-* Pagination class
-*/
 class Pagination {
 	public $total = 0;
 	public $page = 1;
@@ -21,11 +10,6 @@ class Pagination {
 	public $text_next = '&gt;';
 	public $text_prev = '&lt;';
 
-	/**
-     *
-     *
-     * @return	text
-     */
 	public function render() {
 		$total = $this->total;
 
@@ -49,12 +33,12 @@ class Pagination {
 		$output = '<ul class="pagination">';
 
 		if ($page > 1) {
-			$output .= '<li class="page-item"><a href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '" class="page-link">' . $this->text_first . '</a></li>';
-
+            $output .= '<li><a href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '">' . $this->text_first . '</a></li>';
+			
 			if ($page - 1 === 1) {
-				$output .= '<li class="page-item"><a href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '" class="page-link">' . $this->text_prev . '</a></li>';
+                $output .= '<li><a href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '">' . $this->text_prev . '</a></li>';
 			} else {
-				$output .= '<li class="page-item"><a href="' . str_replace('{page}', $page - 1, $this->url) . '" class="page-link">' . $this->text_prev . '</a></li>';
+				$output .= '<li><a href="' . str_replace('{page}', $page - 1, $this->url) . '">' . $this->text_prev . '</a></li>';
 			}
 		}
 
@@ -79,20 +63,20 @@ class Pagination {
 
 			for ($i = $start; $i <= $end; $i++) {
 				if ($page == $i) {
-					$output .= '<li class="page-item active"><span class="page-link">' . $i . '</span></li>';
+					$output .= '<li class="active"><span>' . $i . '</span></li>';
 				} else {
 					if ($i === 1) {
-						$output .= '<li class="page-item"><a href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '" class="page-link">' . $i . '</a></li>';
+                        $output .= '<li><a href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '">' . $i . '</a></li>';
 					} else {
-						$output .= '<li class="page-item"><a href="' . str_replace('{page}', $i, $this->url) . '" class="page-link">' . $i . '</a></li>';
+						$output .= '<li><a href="' . str_replace('{page}', $i, $this->url) . '">' . $i . '</a></li>';
 					}
 				}
 			}
 		}
 
 		if ($page < $num_pages) {
-			$output .= '<li class="page-item"><a href="' . str_replace('{page}', $page + 1, $this->url) . '" class="page-link">' . $this->text_next . '</a></li>';
-			$output .= '<li class="page-item"><a href="' . str_replace('{page}', $num_pages, $this->url) . '" class="page-link">' . $this->text_last . '</a></li>';
+			$output .= '<li><a href="' . str_replace('{page}', $page + 1, $this->url) . '">' . $this->text_next . '</a></li>';
+			$output .= '<li><a href="' . str_replace('{page}', $num_pages, $this->url) . '">' . $this->text_last . '</a></li>';
 		}
 
 		$output .= '</ul>';

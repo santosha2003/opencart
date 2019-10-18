@@ -3,24 +3,15 @@ class ControllerCommonCurrency extends Controller {
 	public function index() {
 		$this->load->language('common/currency');
 
-		$data['action'] = $this->url->link('common/currency/currency', 'language=' . $this->config->get('config_language'));
+		$data['text_currency'] = $this->language->get('text_currency');
+
+		$data['action'] = $this->url->link('common/currency/currency', '', isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1')));
 
 		$data['code'] = $this->session->data['currency'];
 
-		$url_data = $this->request->get;
-
-		if (isset($url_data['route'])) {
-			$route = $url_data['route'];
-		} else {
-			$route = $this->config->get('action_default');
-		}
-
-		unset($url_data['_route_']);
-		unset($url_data['route']);
+		$this->load->model('localisation/currency');
 
 		$data['currencies'] = array();
-
-		$this->load->model('localisation/currency');
 
 		$results = $this->model_localisation_currency->getCurrencies();
 
@@ -35,13 +26,25 @@ class ControllerCommonCurrency extends Controller {
 			}
 		}
 
-		$url = '';
+		if (!isset($this->request->get['route'])) {
+			$data['redirect'] = $this->url->link('common/home');
+		} else {
+			$url_data = $this->request->get;
 
-		if ($url_data) {
-			$url = '&' . urldecode(http_build_query($url_data, '', '&'));
+			unset($url_data['_route_']);
+
+			$route = $url_data['route'];
+
+			unset($url_data['route']);
+
+			$url = '';
+
+			if ($url_data) {
+				$url = '&' . urldecode(http_build_query($url_data, '', '&'));
+			}
+
+			$data['redirect'] = $this->url->link($route, $url, isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1')));
 		}
-
-		$data['redirect'] = $this->url->link($route, 'language=' . $this->config->get('config_language') . $url);
 
 		return $this->load->view('common/currency', $data);
 	}
@@ -54,10 +57,10 @@ class ControllerCommonCurrency extends Controller {
 			unset($this->session->data['shipping_methods']);
 		}
 		
-		if (isset($this->request->post['redirect']) && substr($this->request->post['redirect'], 0, strlen($this->config->get('config_url'))) == $this->config->get('config_url')) {
+		if (isset($this->request->post['redirect'])) {
 			$this->response->redirect($this->request->post['redirect']);
 		} else {
-			$this->response->redirect($this->url->link($this->config->get('action_default')));
+			$this->response->redirect($this->url->link('common/home'));
 		}
 	}
 }

@@ -1,5 +1,5 @@
 <?php
-// Heading
+// header
 $_['heading_title']  = 'Reset your password';
 
 // Text
@@ -11,7 +11,5 @@ $_['entry_password'] = 'Password';
 $_['entry_confirm']  = 'Confirm';
 
 // Error
-$_['error_code']     = 'Reset code does not match!';
-$_['error_disabled'] = 'Password reset has been disabled!';
 $_['error_password'] = 'Password must be between 4 and 20 characters!';
 $_['error_confirm']  = 'Password and password confirmation do not match!';

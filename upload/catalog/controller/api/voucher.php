@@ -30,6 +30,13 @@ class ControllerApiVoucher extends Controller {
 			}
 		}
 
+		if (isset($this->request->server['HTTP_ORIGIN'])) {
+			$this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);
+			$this->response->addHeader('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+			$this->response->addHeader('Access-Control-Max-Age: 1000');
+			$this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+		}
+
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
@@ -90,7 +97,7 @@ class ControllerApiVoucher extends Controller {
 					$json['error']['from_name'] = $this->language->get('error_from_name');
 				}
 
-				if ((utf8_strlen($this->request->post['from_email']) > 96) || !filter_var($this->request->post['from_email'], FILTER_VALIDATE_EMAIL)) {
+				if ((utf8_strlen($this->request->post['from_email']) > 96) || !preg_match($this->config->get('config_mail_regexp'), $this->request->post['from_email'])) {
 					$json['error']['from_email'] = $this->language->get('error_email');
 				}
 
@@ -98,7 +105,7 @@ class ControllerApiVoucher extends Controller {
 					$json['error']['to_name'] = $this->language->get('error_to_name');
 				}
 
-				if ((utf8_strlen($this->request->post['to_email']) > 96) || !filter_var($this->request->post['to_email'], FILTER_VALIDATE_EMAIL)) {
+				if ((utf8_strlen($this->request->post['to_email']) > 96) || !preg_match($this->config->get('config_mail_regexp'), $this->request->post['to_email'])) {
 					$json['error']['to_email'] = $this->language->get('error_email');
 				}
 
@@ -107,7 +114,7 @@ class ControllerApiVoucher extends Controller {
 				}
 
 				if (!$json) {
-					$code = token();
+					$code = mt_rand();
 
 					$this->session->data['vouchers'][$code] = array(
 						'code'             => $code,
@@ -129,6 +136,13 @@ class ControllerApiVoucher extends Controller {
 					unset($this->session->data['payment_methods']);
 				}
 			}
+		}
+
+		if (isset($this->request->server['HTTP_ORIGIN'])) {
+			$this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);
+			$this->response->addHeader('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+			$this->response->addHeader('Access-Control-Max-Age: 1000');
+			$this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 		}
 
 		$this->response->addHeader('Content-Type: application/json');

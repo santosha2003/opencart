@@ -7,8 +7,6 @@ $_['text_success']      = 'Success: You have modified filters!';
 $_['text_list']         = 'Filter List';
 $_['text_add']          = 'Add Filter';
 $_['text_edit']         = 'Edit Filter';
-$_['text_group']        = 'Filter Group';
-$_['text_value']        = 'Filter Values';
 
 // Column
 $_['column_group']      = 'Filter Group';

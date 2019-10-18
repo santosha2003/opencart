@@ -1,5 +1,5 @@
 <?php
-// Heading
+// header
 $_['heading_title']  = 'Administration';
 
 // Text

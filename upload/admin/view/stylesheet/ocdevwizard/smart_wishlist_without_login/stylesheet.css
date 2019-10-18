@@ -1,0 +1,33 @@
+/**
+ *
+ * @category  : OpenCart
+ * @module    : Smart Wishlist Without Login
+ * @author    : OCdevWizard <ocdevwizard@gmail.com>
+ * @copyright : Copyright (c) 2015, OCdevWizard
+ * @license   : http://license.ocdevwizard.com/Noncommercial_Licensing_Policy.pdf
+ *
+ */
+
+.special_margin {
+  height: 7px;
+}
+.special_margin_lg {
+  height: 14px;
+}
+#promo-block .thumbnail {
+  cursor: pointer;
+}
+#smas_modal .panel-default {
+  border-top: 1px solid #E8E8E8;
+}
+.table-responsive table.table tr td p:last-child {
+  margin-bottom: 0;
+}
+#content .well {
+  margin-bottom: 7px;
+}
+#content .form-group .alert-danger, 
+#content .form-group .alert-info {
+  margin-bottom: 0px;
+  margin-top: 10px;
+}

@@ -4,9 +4,9 @@ class ControllerAccountReturn extends Controller {
 
 	public function index() {
 		if (!$this->customer->isLogged()) {
-			$this->session->data['redirect'] = $this->url->link('account/return', 'language=' . $this->config->get('config_language'));
+			$this->session->data['redirect'] = $this->url->link('account/return', '', true);
 
-			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
+			$this->response->redirect($this->url->link('account/login', '', true));
 		}
 
 		$this->load->language('account/return');
@@ -17,12 +17,12 @@ class ControllerAccountReturn extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
+			'href' => $this->url->link('common/home')
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_account'),
-			'href' => $this->url->link('account/account', 'language=' . $this->config->get('config_language'))
+			'href' => $this->url->link('account/account', '', true)
 		);
 
 		$url = '';
@@ -33,8 +33,21 @@ class ControllerAccountReturn extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('account/return', 'language=' . $this->config->get('config_language') . $url)
+			'href' => $this->url->link('account/return', $url, true)
 		);
+
+		$data['heading_title'] = $this->language->get('heading_title');
+
+		$data['text_empty'] = $this->language->get('text_empty');
+
+		$data['column_return_id'] = $this->language->get('column_return_id');
+		$data['column_order_id'] = $this->language->get('column_order_id');
+		$data['column_status'] = $this->language->get('column_status');
+		$data['column_date_added'] = $this->language->get('column_date_added');
+		$data['column_customer'] = $this->language->get('column_customer');
+
+		$data['button_view'] = $this->language->get('button_view');
+		$data['button_continue'] = $this->language->get('button_continue');
 
 		$this->load->model('account/return');
 
@@ -57,21 +70,21 @@ class ControllerAccountReturn extends Controller {
 				'name'       => $result['firstname'] . ' ' . $result['lastname'],
 				'status'     => $result['status'],
 				'date_added' => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
-				'href'       => $this->url->link('account/return/info', 'language=' . $this->config->get('config_language') . '&return_id=' . $result['return_id'] . $url)
+				'href'       => $this->url->link('account/return/info', 'return_id=' . $result['return_id'] . $url, true)
 			);
 		}
 
 		$pagination = new Pagination();
 		$pagination->total = $return_total;
 		$pagination->page = $page;
-		$pagination->limit = $this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit');
-		$pagination->url = $this->url->link('account/return', 'language=' . $this->config->get('config_language') . '&page={page}');
+		$pagination->limit = $this->config->get($this->config->get('config_theme') . '_product_limit');
+		$pagination->url = $this->url->link('account/return', 'page={page}', true);
 
 		$data['pagination'] = $pagination->render();
 
-		$data['results'] = sprintf($this->language->get('text_pagination'), ($return_total) ? (($page - 1) * $this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit')) + 1 : 0, ((($page - 1) * $this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit')) > ($return_total - $this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit'))) ? $return_total : ((($page - 1) * $this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit')) + $this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit')), $return_total, ceil($return_total / $this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit')));
+		$data['results'] = sprintf($this->language->get('text_pagination'), ($return_total) ? (($page - 1) * $this->config->get($this->config->get('config_theme') . '_product_limit')) + 1 : 0, ((($page - 1) * $this->config->get($this->config->get('config_theme') . '_product_limit')) > ($return_total - $this->config->get($this->config->get('config_theme') . '_product_limit'))) ? $return_total : ((($page - 1) * $this->config->get($this->config->get('config_theme') . '_product_limit')) + $this->config->get($this->config->get('config_theme') . '_product_limit')), $return_total, ceil($return_total / $this->config->get($this->config->get('config_theme') . '_product_limit')));
 
-		$data['continue'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language'));
+		$data['continue'] = $this->url->link('account/account', '', true);
 
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
@@ -93,9 +106,9 @@ class ControllerAccountReturn extends Controller {
 		}
 
 		if (!$this->customer->isLogged()) {
-			$this->session->data['redirect'] = $this->url->link('account/return/info', 'language=' . $this->config->get('config_language') . '&return_id=' . $return_id);
+			$this->session->data['redirect'] = $this->url->link('account/return/info', 'return_id=' . $return_id, true);
 
-			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language')));
+			$this->response->redirect($this->url->link('account/login', '', true));
 		}
 
 		$this->load->model('account/return');
@@ -109,12 +122,12 @@ class ControllerAccountReturn extends Controller {
 
 			$data['breadcrumbs'][] = array(
 				'text' => $this->language->get('text_home'),
-				'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
+				'href' => $this->url->link('common/home', '', true)
 			);
 
 			$data['breadcrumbs'][] = array(
 				'text' => $this->language->get('text_account'),
-				'href' => $this->url->link('account/account', 'language=' . $this->config->get('config_language'))
+				'href' => $this->url->link('account/account', '', true)
 			);
 
 			$url = '';
@@ -125,13 +138,42 @@ class ControllerAccountReturn extends Controller {
 
 			$data['breadcrumbs'][] = array(
 				'text' => $this->language->get('heading_title'),
-				'href' => $this->url->link('account/return', 'language=' . $this->config->get('config_language') . $url)
+				'href' => $this->url->link('account/return', $url, true)
 			);
 
 			$data['breadcrumbs'][] = array(
 				'text' => $this->language->get('text_return'),
-				'href' => $this->url->link('account/return/info', 'language=' . $this->config->get('config_language') . '&return_id=' . $this->request->get['return_id'] . $url)
+				'href' => $this->url->link('account/return/info', 'return_id=' . $this->request->get['return_id'] . $url, true)
 			);
+
+			$data['heading_title'] = $this->language->get('text_return');
+
+			$data['text_return_detail'] = $this->language->get('text_return_detail');
+			$data['text_return_id'] = $this->language->get('text_return_id');
+			$data['text_order_id'] = $this->language->get('text_order_id');
+			$data['text_date_ordered'] = $this->language->get('text_date_ordered');
+			$data['text_customer'] = $this->language->get('text_customer');
+			$data['text_email'] = $this->language->get('text_email');
+			$data['text_telephone'] = $this->language->get('text_telephone');
+			$data['text_status'] = $this->language->get('text_status');
+			$data['text_date_added'] = $this->language->get('text_date_added');
+			$data['text_product'] = $this->language->get('text_product');
+			$data['text_reason'] = $this->language->get('text_reason');
+			$data['text_comment'] = $this->language->get('text_comment');
+			$data['text_history'] = $this->language->get('text_history');
+			$data['text_no_results'] = $this->language->get('text_no_results');
+
+			$data['column_product'] = $this->language->get('column_product');
+			$data['column_model'] = $this->language->get('column_model');
+			$data['column_quantity'] = $this->language->get('column_quantity');
+			$data['column_opened'] = $this->language->get('column_opened');
+			$data['column_reason'] = $this->language->get('column_reason');
+			$data['column_action'] = $this->language->get('column_action');
+			$data['column_date_added'] = $this->language->get('column_date_added');
+			$data['column_status'] = $this->language->get('column_status');
+			$data['column_comment'] = $this->language->get('column_comment');
+
+			$data['button_continue'] = $this->language->get('button_continue');
 
 			$data['return_id'] = $return_info['return_id'];
 			$data['order_id'] = $return_info['order_id'];
@@ -161,7 +203,7 @@ class ControllerAccountReturn extends Controller {
 				);
 			}
 
-			$data['continue'] = $this->url->link('account/return', 'language=' . $this->config->get('config_language') . $url);
+			$data['continue'] = $this->url->link('account/return', $url, true);
 
 			$data['column_left'] = $this->load->controller('common/column_left');
 			$data['column_right'] = $this->load->controller('common/column_right');
@@ -178,17 +220,17 @@ class ControllerAccountReturn extends Controller {
 
 			$data['breadcrumbs'][] = array(
 				'text' => $this->language->get('text_home'),
-				'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
+				'href' => $this->url->link('common/home')
 			);
 
 			$data['breadcrumbs'][] = array(
 				'text' => $this->language->get('text_account'),
-				'href' => $this->url->link('account/account', 'language=' . $this->config->get('config_language'))
+				'href' => $this->url->link('account/account', '', true)
 			);
 
 			$data['breadcrumbs'][] = array(
 				'text' => $this->language->get('heading_title'),
-				'href' => $this->url->link('account/return', 'language=' . $this->config->get('config_language'))
+				'href' => $this->url->link('account/return', '', true)
 			);
 
 			$url = '';
@@ -199,10 +241,16 @@ class ControllerAccountReturn extends Controller {
 
 			$data['breadcrumbs'][] = array(
 				'text' => $this->language->get('text_return'),
-				'href' => $this->url->link('account/return/info', 'language=' . $this->config->get('config_language') . '&return_id=' . $return_id . $url)
+				'href' => $this->url->link('account/return/info', 'return_id=' . $return_id . $url, true)
 			);
 
-			$data['continue'] = $this->url->link('account/return', 'language=' . $this->config->get('config_language'));
+			$data['heading_title'] = $this->language->get('text_return');
+
+			$data['text_error'] = $this->language->get('text_error');
+
+			$data['button_continue'] = $this->language->get('button_continue');
+
+			$data['continue'] = $this->url->link('account/return', '', true);
 
 			$data['column_left'] = $this->load->controller('common/column_left');
 			$data['column_right'] = $this->load->controller('common/column_right');
@@ -221,14 +269,36 @@ class ControllerAccountReturn extends Controller {
 		$this->load->model('account/return');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-			$this->model_account_return->addReturn($this->request->post);
+			$return_id = $this->model_account_return->addReturn($this->request->post);
 
-			$this->response->redirect($this->url->link('account/return/success', 'language=' . $this->config->get('config_language')));
+			// Add to activity log
+			if ($this->config->get('config_customer_activity')) {
+				$this->load->model('account/activity');
+
+				if ($this->customer->isLogged()) {
+					$activity_data = array(
+						'customer_id' => $this->customer->getId(),
+						'name'        => $this->customer->getFirstName() . ' ' . $this->customer->getLastName(),
+						'return_id'   => $return_id
+					);
+
+					$this->model_account_activity->addActivity('return_account', $activity_data);
+				} else {
+					$activity_data = array(
+						'name'      => $this->request->post['firstname'] . ' ' . $this->request->post['lastname'],
+						'return_id' => $return_id
+					);
+
+					$this->model_account_activity->addActivity('return_guest', $activity_data);
+				}
+			}
+
+			$this->response->redirect($this->url->link('account/return/success', '', true));
 		}
 
 		$this->document->setTitle($this->language->get('heading_title'));
-		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment.min.js');
-		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment-with-locales.min.js');
+		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment.js');
+		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/locale/'.$this->session->data['language'].'.js');
 		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.js');
 		$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css');
 
@@ -236,18 +306,42 @@ class ControllerAccountReturn extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
+			'href' => $this->url->link('common/home')
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_account'),
-			'href' => $this->url->link('account/account', 'language=' . $this->config->get('config_language'))
+			'href' => $this->url->link('account/account', '', true)
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('account/return/add', 'language=' . $this->config->get('config_language'))
+			'href' => $this->url->link('account/return/add', '', true)
 		);
+
+		$data['heading_title'] = $this->language->get('heading_title');
+
+		$data['text_description'] = $this->language->get('text_description');
+		$data['text_order'] = $this->language->get('text_order');
+		$data['text_product'] = $this->language->get('text_product');
+		$data['text_yes'] = $this->language->get('text_yes');
+		$data['text_no'] = $this->language->get('text_no');
+
+		$data['entry_order_id'] = $this->language->get('entry_order_id');
+		$data['entry_date_ordered'] = $this->language->get('entry_date_ordered');
+		$data['entry_firstname'] = $this->language->get('entry_firstname');
+		$data['entry_lastname'] = $this->language->get('entry_lastname');
+		$data['entry_email'] = $this->language->get('entry_email');
+		$data['entry_telephone'] = $this->language->get('entry_telephone');
+		$data['entry_product'] = $this->language->get('entry_product');
+		$data['entry_model'] = $this->language->get('entry_model');
+		$data['entry_quantity'] = $this->language->get('entry_quantity');
+		$data['entry_reason'] = $this->language->get('entry_reason');
+		$data['entry_opened'] = $this->language->get('entry_opened');
+		$data['entry_fault_detail'] = $this->language->get('entry_fault_detail');
+
+		$data['button_submit'] = $this->language->get('button_submit');
+		$data['button_back'] = $this->language->get('button_back');
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -303,7 +397,7 @@ class ControllerAccountReturn extends Controller {
 			$data['error_reason'] = '';
 		}
 
-		$data['action'] = $this->url->link('account/return/add', 'language=' . $this->config->get('config_language'));
+		$data['action'] = $this->url->link('account/return/add', '', true);
 
 		$this->load->model('account/order');
 
@@ -410,7 +504,7 @@ class ControllerAccountReturn extends Controller {
 		}
 
 		// Captcha
-		if ($this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('return', (array)$this->config->get('config_captcha_page'))) {
+		if ($this->config->get($this->config->get('config_captcha') . '_status') && in_array('return', (array)$this->config->get('config_captcha_page'))) {
 			$data['captcha'] = $this->load->controller('extension/captcha/' . $this->config->get('config_captcha'), $this->error);
 		} else {
 			$data['captcha'] = '';
@@ -422,7 +516,7 @@ class ControllerAccountReturn extends Controller {
 			$information_info = $this->model_catalog_information->getInformation($this->config->get('config_return_id'));
 
 			if ($information_info) {
-				$data['text_agree'] = sprintf($this->language->get('text_agree'), $this->url->link('information/information/agree', 'language=' . $this->config->get('config_language') . '&information_id=' . $this->config->get('config_return_id')), $information_info['title'], $information_info['title']);
+				$data['text_agree'] = sprintf($this->language->get('text_agree'), $this->url->link('information/information/agree', 'information_id=' . $this->config->get('config_return_id'), true), $information_info['title'], $information_info['title']);
 			} else {
 				$data['text_agree'] = '';
 			}
@@ -436,7 +530,7 @@ class ControllerAccountReturn extends Controller {
 			$data['agree'] = false;
 		}
 
-		$data['back'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language'));
+		$data['back'] = $this->url->link('account/account', '', true);
 
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
@@ -461,7 +555,7 @@ class ControllerAccountReturn extends Controller {
 			$this->error['lastname'] = $this->language->get('error_lastname');
 		}
 
-		if ((utf8_strlen($this->request->post['email']) > 96) || !filter_var($this->request->post['email'], FILTER_VALIDATE_EMAIL)) {
+		if ((utf8_strlen($this->request->post['email']) > 96) || !preg_match($this->config->get('config_mail_regexp'), $this->request->post['email'])) {
 			$this->error['email'] = $this->language->get('error_email');
 		}
 
@@ -481,7 +575,7 @@ class ControllerAccountReturn extends Controller {
 			$this->error['reason'] = $this->language->get('error_reason');
 		}
 
-		if ($this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('return', (array)$this->config->get('config_captcha_page'))) {
+		if ($this->config->get($this->config->get('config_captcha') . '_status') && in_array('return', (array)$this->config->get('config_captcha_page'))) {
 			$captcha = $this->load->controller('extension/captcha/' . $this->config->get('config_captcha') . '/validate');
 
 			if ($captcha) {
@@ -511,15 +605,21 @@ class ControllerAccountReturn extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
+			'href' => $this->url->link('common/home')
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('account/return', 'language=' . $this->config->get('config_language'))
+			'href' => $this->url->link('account/return', '', true)
 		);
 
-		$data['continue'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
+		$data['heading_title'] = $this->language->get('heading_title');
+
+		$data['text_message'] = $this->language->get('text_message');
+
+		$data['button_continue'] = $this->language->get('button_continue');
+
+		$data['continue'] = $this->url->link('common/home');
 
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');

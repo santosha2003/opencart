@@ -155,13 +155,13 @@ class ModelExtensionPaymentKlarnaCheckout extends Model {
 		}
 	}
 
-	public function getConnector($accounts, $currency) {
+	public function getConnector($accounts, $country_id, $currency) {
 		$klarna_account = false;
 		$connector = false;
 
-		if ($accounts && $currency) {
+		if ($accounts && $country_id && $currency) {
 			foreach ($accounts as $account) {
-				if ($account['currency'] == $currency) {
+				if (($account['country'] == $country_id) && ($account['currency'] == $currency)) {
 					if ($account['environment'] == 'test') {
 						if ($account['api'] == 'NA') {
 							$base_url = KCConnectorInterface::NA_TEST_BASE_URL;
@@ -195,12 +195,6 @@ class ModelExtensionPaymentKlarnaCheckout extends Model {
 		return $this->db->query("SELECT * FROM `" . DB_PREFIX . "klarna_checkout_order` WHERE `order_id` = '" . (int)$order_id . "' LIMIT 1")->row;
 	}
 
-	public function checkForPaymentTaxes() {
-		$query = $this->db->query("SELECT COUNT(*) AS `total` FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "tax_rule tr ON (`tr`.`tax_class_id` = `p`.`tax_class_id`) WHERE `tr`.`based` = 'payment'");
-
-		return $query->row['total'];
-	}
-
 	public function install() {
 		$this->db->query("
 			CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "klarna_checkout_order` (
@@ -217,7 +211,7 @@ class ModelExtensionPaymentKlarnaCheckout extends Model {
 	}
 
 	public function log($data) {
-		if ($this->config->get('payment_klarna_checkout_debug')) {
+		if ($this->config->get('klarna_checkout_debug')) {
 			$backtrace = debug_backtrace();
 			$log = new Log('klarna_checkout.log');
 			$log->write('(' . $backtrace[1]['class'] . '::' . $backtrace[1]['function'] . ') - ' . print_r($data, true));

@@ -111,6 +111,7 @@ class ControllerApiOrder extends Controller {
 				$order_data['lastname'] = $this->session->data['customer']['lastname'];
 				$order_data['email'] = $this->session->data['customer']['email'];
 				$order_data['telephone'] = $this->session->data['customer']['telephone'];
+				$order_data['fax'] = $this->session->data['customer']['fax'];
 				$order_data['custom_field'] = $this->session->data['customer']['custom_field'];
 
 				// Payment Details
@@ -238,7 +239,7 @@ class ControllerApiOrder extends Controller {
 				}
 
 				// Order Totals
-				$this->load->model('setting/extension');
+				$this->load->model('extension/extension');
 
 				$totals = array();
 				$taxes = $this->cart->getTaxes();
@@ -253,16 +254,16 @@ class ControllerApiOrder extends Controller {
 			
 				$sort_order = array();
 
-				$results = $this->model_setting_extension->getExtensions('total');
+				$results = $this->model_extension_extension->getExtensions('total');
 
 				foreach ($results as $key => $value) {
-					$sort_order[$key] = $this->config->get('total_' . $value['code'] . '_sort_order');
+					$sort_order[$key] = $this->config->get($value['code'] . '_sort_order');
 				}
 
 				array_multisort($sort_order, SORT_ASC, $results);
 
 				foreach ($results as $result) {
-					if ($this->config->get('total_' . $result['code'] . '_status')) {
+					if ($this->config->get($result['code'] . '_status')) {
 						$this->load->model('extension/total/' . $result['code']);
 						
 						// We have to put the totals in an array so that they pass by reference.
@@ -290,12 +291,12 @@ class ControllerApiOrder extends Controller {
 					$subtotal = $this->cart->getSubTotal();
 
 					// Affiliate
-					$this->load->model('account/affiliate');
+					$this->load->model('affiliate/affiliate');
 
-					$affiliate_info = $this->model_account_affiliate->getAffiliate($this->request->post['affiliate_id']);
+					$affiliate_info = $this->model_affiliate_affiliate->getAffiliate($this->request->post['affiliate_id']);
 
 					if ($affiliate_info) {
-						$order_data['affiliate_id'] = $affiliate_info['customer_id'];
+						$order_data['affiliate_id'] = $affiliate_info['affiliate_id'];
 						$order_data['commission'] = ($subtotal / 100) * $affiliate_info['commission'];
 					} else {
 						$order_data['affiliate_id'] = 0;
@@ -352,8 +353,15 @@ class ControllerApiOrder extends Controller {
 				$this->model_checkout_order->addOrderHistory($json['order_id'], $order_status_id);
 				
 				// clear cart since the order has already been successfully stored.
-				$this->cart->clear();
+				//$this->cart->clear();
 			}
+		}
+
+		if (isset($this->request->server['HTTP_ORIGIN'])) {
+			$this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);
+			$this->response->addHeader('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+			$this->response->addHeader('Access-Control-Max-Age: 1000');
+			$this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 		}
 
 		$this->response->addHeader('Content-Type: application/json');
@@ -481,6 +489,7 @@ class ControllerApiOrder extends Controller {
 					$order_data['lastname'] = $this->session->data['customer']['lastname'];
 					$order_data['email'] = $this->session->data['customer']['email'];
 					$order_data['telephone'] = $this->session->data['customer']['telephone'];
+					$order_data['fax'] = $this->session->data['customer']['fax'];
 					$order_data['custom_field'] = $this->session->data['customer']['custom_field'];
 
 					// Payment Details
@@ -608,7 +617,7 @@ class ControllerApiOrder extends Controller {
 					}
 
 					// Order Totals
-					$this->load->model('setting/extension');
+					$this->load->model('extension/extension');
 
 					$totals = array();
 					$taxes = $this->cart->getTaxes();
@@ -623,16 +632,16 @@ class ControllerApiOrder extends Controller {
 			
 					$sort_order = array();
 
-					$results = $this->model_setting_extension->getExtensions('total');
+					$results = $this->model_extension_extension->getExtensions('total');
 
 					foreach ($results as $key => $value) {
-						$sort_order[$key] = $this->config->get('total_' . $value['code'] . '_sort_order');
+						$sort_order[$key] = $this->config->get($value['code'] . '_sort_order');
 					}
 
 					array_multisort($sort_order, SORT_ASC, $results);
 
 					foreach ($results as $result) {
-						if ($this->config->get('total_' . $result['code'] . '_status')) {
+						if ($this->config->get($result['code'] . '_status')) {
 							$this->load->model('extension/total/' . $result['code']);
 							
 							// We have to put the totals in an array so that they pass by reference.
@@ -660,12 +669,12 @@ class ControllerApiOrder extends Controller {
 						$subtotal = $this->cart->getSubTotal();
 
 						// Affiliate
-						$this->load->model('account/affiliate');
+						$this->load->model('affiliate/affiliate');
 
-						$affiliate_info = $this->model_account_affiliate->getAffiliate($this->request->post['affiliate_id']);
+						$affiliate_info = $this->model_affiliate_affiliate->getAffiliate($this->request->post['affiliate_id']);
 
 						if ($affiliate_info) {
-							$order_data['affiliate_id'] = $affiliate_info['customer_id'];
+							$order_data['affiliate_id'] = $affiliate_info['affiliate_id'];
 							$order_data['commission'] = ($subtotal / 100) * $affiliate_info['commission'];
 						} else {
 							$order_data['affiliate_id'] = 0;
@@ -684,12 +693,19 @@ class ControllerApiOrder extends Controller {
 					} else {
 						$order_status_id = $this->config->get('config_order_status_id');
 					}
-					
+
 					$this->model_checkout_order->addOrderHistory($order_id, $order_status_id);
 				}
 			} else {
 				$json['error'] = $this->language->get('error_not_found');
 			}
+		}
+
+		if (isset($this->request->server['HTTP_ORIGIN'])) {
+			$this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);
+			$this->response->addHeader('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+			$this->response->addHeader('Access-Control-Max-Age: 1000');
+			$this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 		}
 
 		$this->response->addHeader('Content-Type: application/json');
@@ -722,7 +738,14 @@ class ControllerApiOrder extends Controller {
 				$json['error'] = $this->language->get('error_not_found');
 			}
 		}
-		
+
+		if (isset($this->request->server['HTTP_ORIGIN'])) {
+			$this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);
+			$this->response->addHeader('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+			$this->response->addHeader('Access-Control-Max-Age: 1000');
+			$this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+		}
+
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
@@ -752,6 +775,13 @@ class ControllerApiOrder extends Controller {
 			} else {
 				$json['error'] = $this->language->get('error_not_found');
 			}
+		}
+
+		if (isset($this->request->server['HTTP_ORIGIN'])) {
+			$this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);
+			$this->response->addHeader('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+			$this->response->addHeader('Access-Control-Max-Age: 1000');
+			$this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 		}
 
 		$this->response->addHeader('Content-Type: application/json');
@@ -791,12 +821,42 @@ class ControllerApiOrder extends Controller {
 			$order_info = $this->model_checkout_order->getOrder($order_id);
 
 			if ($order_info) {
+				$this->load->language('extension/payment/ocstore_payeer');
+				if (($this->config->get('ocstore_payeer_order_later_status_id') == $this->request->post['order_status_id']) && ($order_info['payment_code'] == 'ocstore_payeer')) {
+						$onpay_url = sprintf('%sindex.php/?route=extension/payment/ocstore_payeer/laterpay&order_id=%s&order_tt=%s',
+												defined('HTTPS_SERVER') ? HTTPS_SERVER : HTTP_SERVER,
+												$order_info['order_id'],
+												$order_info['total']
+						);
+						$this->request->post['comment'] .= "\n" . sprintf($this->language->get('text_payeer_onpay'), $onpay_url);
+				}
+
+				$this->load->language('extension/payment/ocstore_yk');
+				if (($this->config->get('ocstore_yk_order_later_status_id') == $this->request->post['order_status_id']) && (strpos($order_info['payment_code'], 'ocstore_yk') !== false)) {
+					$onpay_url = sprintf('%sindex.php/?route=extension/payment/ocstore_yk/laterpay&order_id=%s&order_ttl=%s&paymentType=%s',
+																isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1')) ? $this->config->get('config_ssl') : $this->config->get('config_url'),
+																$order_info['order_id'],
+																$order_info['total'],
+																$order_info['payment_code']
+															 );
+					$this->request->post['comment'] .= "\n" . sprintf($this->language->get('text_yk_onpay'), $onpay_url);
+				}
+
+				$this->load->language('api/order');
+
 				$this->model_checkout_order->addOrderHistory($order_id, $this->request->post['order_status_id'], $this->request->post['comment'], $this->request->post['notify'], $this->request->post['override']);
 
 				$json['success'] = $this->language->get('text_success');
 			} else {
 				$json['error'] = $this->language->get('error_not_found');
 			}
+		}
+
+		if (isset($this->request->server['HTTP_ORIGIN'])) {
+			$this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);
+			$this->response->addHeader('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+			$this->response->addHeader('Access-Control-Max-Age: 1000');
+			$this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 		}
 
 		$this->response->addHeader('Content-Type: application/json');

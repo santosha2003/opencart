@@ -6,14 +6,14 @@ class ModelExtensionTotalCredit extends Model {
 		$balance = $this->customer->getBalance();
 
 		if ((float)$balance) {
-			$credit = min($balance, $total['total']);
+			$credit = min($balance, $total);
 
-			if ((float)$credit > 0) {
+			if ($credit > 0) {
 				$total['totals'][] = array(
 					'code'       => 'credit',
 					'title'      => $this->language->get('text_credit'),
 					'value'      => -$credit,
-					'sort_order' => $this->config->get('total_credit_sort_order')
+					'sort_order' => $this->config->get('credit_sort_order')
 				);
 
 				$total['total'] -= $credit;

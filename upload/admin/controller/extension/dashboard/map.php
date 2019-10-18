@@ -14,8 +14,21 @@ class ControllerExtensionDashboardMap extends Controller {
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$this->response->redirect($this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=dashboard'));
+			$this->response->redirect($this->url->link('extension/extension', 'token=' . $this->session->data['token'] . '&type=dashboard', true));
 		}
+
+		$data['heading_title'] = $this->language->get('heading_title');
+		
+		$data['text_edit'] = $this->language->get('text_edit');
+		$data['text_enabled'] = $this->language->get('text_enabled');
+		$data['text_disabled'] = $this->language->get('text_disabled');
+
+		$data['entry_width'] = $this->language->get('entry_width');
+		$data['entry_status'] = $this->language->get('entry_status');
+		$data['entry_sort_order'] = $this->language->get('entry_sort_order');
+
+		$data['button_save'] = $this->language->get('button_save');
+		$data['button_cancel'] = $this->language->get('button_cancel');
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -27,22 +40,22 @@ class ControllerExtensionDashboardMap extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/dashboard', 'user_token=' . $this->session->data['user_token'])
+			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], true)
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_extension'),
-			'href' => $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=dashboard')
+			'href' => $this->url->link('extension/extension', 'token=' . $this->session->data['token'] . '&type=dashboard', true)
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('extension/dashboard/map', 'user_token=' . $this->session->data['user_token'])
+			'href' => $this->url->link('extension/dashboard/map', 'token=' . $this->session->data['token'], true)
 		);
 
-		$data['action'] = $this->url->link('extension/dashboard/map', 'user_token=' . $this->session->data['user_token']);
+		$data['action'] = $this->url->link('extension/dashboard/map', 'token=' . $this->session->data['token'], true);
 
-		$data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=dashboard');
+		$data['cancel'] = $this->url->link('extension/extension', 'token=' . $this->session->data['token'] . '&type=dashboard', true);
 
 		if (isset($this->request->post['dashboard_map_width'])) {
 			$data['dashboard_map_width'] = $this->request->post['dashboard_map_width'];
@@ -76,7 +89,7 @@ class ControllerExtensionDashboardMap extends Controller {
 	}
 
 	protected function validate() {
-		if (!$this->user->hasPermission('modify', 'extension/dashboard/map')) {
+		if (!$this->user->hasPermission('modify', 'extension/analytics/google_analytics')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
@@ -86,7 +99,12 @@ class ControllerExtensionDashboardMap extends Controller {
 	public function dashboard() {
 		$this->load->language('extension/dashboard/map');
 
-		$data['user_token'] = $this->session->data['user_token'];
+		$data['heading_title'] = $this->language->get('heading_title');
+
+		$data['text_order'] = $this->language->get('text_order');
+		$data['text_sale'] = $this->language->get('text_sale');
+
+		$data['token'] = $this->session->data['token'];
 		
 		return $this->load->view('extension/dashboard/map_info', $data);
 	}
@@ -94,9 +112,9 @@ class ControllerExtensionDashboardMap extends Controller {
 	public function map() {
 		$json = array();
 
-		$this->load->model('extension/dashboard/map');
+		$this->load->model('report/sale');
 
-		$results = $this->model_extension_dashboard_map->getTotalOrdersByCountry();
+		$results = $this->model_report_sale->getTotalOrdersByCountry();
 
 		foreach ($results as $result) {
 			$json[strtolower($result['iso_code_2'])] = array(
