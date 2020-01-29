@@ -87,7 +87,7 @@ class ControllerProductManufacturer extends Controller {
 		if (isset($this->request->get['order'])) {
 			$order = $this->request->get['order'];
 		} else {
-			$order = 'DESC';
+			$order = 'ASC';
 		}
 
 		if (isset($this->request->get['page'])) {
@@ -255,8 +255,8 @@ class ControllerProductManufacturer extends Controller {
 
 			$data['sorts'][] = array(
 				'text'  => $this->language->get('text_default'),
-				'value' => 'p.date_added-DESC',
-				'href'  => $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . '&sort=p.date_added&order=DESC' . $url)
+				'value' => 'p.sort_order-ASC',
+				'href'  => $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . '&sort=p.sort_order&order=ASC' . $url)
 			);
 
 			$data['sorts'][] = array(

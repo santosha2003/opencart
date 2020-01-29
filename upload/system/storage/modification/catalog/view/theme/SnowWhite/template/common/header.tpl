@@ -90,28 +90,6 @@
 					}
 				</style>
             
-
-				<script type="text/javascript" src="catalog/view/javascript/ajax-product-page-loader.js"></script>
-				<style>
-					#ajax_loader {
-						width: 100%;
-						height: 30px;
-						margin-top: 15px;
-						text-align: center;
-						border: none!important;	
-					}
-					#arrow_top {
-						background: url("../../../../../image/chevron_up.png") no-repeat transparent;
-						background-size: cover;
-						position: fixed;
-						bottom: 50px;
-						right: 15px;
-						cursor: pointer;
-						height: 50px;
-						width: 50px;
-					}
-				</style>
-            
 </head>
 
 <body class="<?=$class?><?php if($logged != NULL){echo ' logged';}?>">
