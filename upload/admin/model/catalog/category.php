@@ -1,7 +1,15 @@
 <?php
 class ModelCatalogCategory extends Model {
 	public function addCategory($data) {
-		$this->db->query("INSERT INTO " . DB_PREFIX . "category SET parent_id = '" . (int)$data['parent_id'] . "', `top` = '" . (isset($data['top']) ? (int)$data['top'] : 0) . "', `column` = '" . (int)$data['column'] . "', sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "', date_modified = NOW(), date_added = NOW()");
+		
+      // handle item id for universal import
+      if (!empty($data['category_id']) && defined('GKD_UNIV_IMPORT')) {
+        $univimp_item_id = 'category_id = "' . (int) $data['category_id'] . '", ';
+      } else {
+        $univimp_item_id = '';
+      }
+      
+			$this->db->query("INSERT INTO " . DB_PREFIX . "category SET " . $univimp_item_id . " parent_id = '" . (int)$data['parent_id'] . "', `top` = '" . (isset($data['top']) ? (int)$data['top'] : 0) . "', `column` = '" . (int)$data['column'] . "', sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "', date_modified = NOW(), date_added = NOW()");
 
 		$category_id = $this->db->getLastId();
 

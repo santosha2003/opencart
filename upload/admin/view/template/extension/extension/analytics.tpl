@@ -30,7 +30,9 @@
             <a href="<?php echo $extension['uninstall']; ?>" data-toggle="tooltip" title="<?php echo $button_uninstall; ?>" class="btn btn-danger"><i class="fa fa-minus-circle"></i></a>
             <?php } ?></td>
         </tr>
-        <?php } ?>
+        
+            <!-- d_shopunity_oc230_patch.xml 1 -->
+            
         <?php if ($extension['installed']) { ?>
         <?php foreach ($extension['store'] as $store) { ?>
         <tr>
@@ -40,6 +42,10 @@
         </tr>
         <?php } ?>
         <?php } ?>
+
+            <!-- d_shopunity_oc230_patch.xml 2 -->
+            <?php } ?>
+            
         <?php } else { ?>
         <tr>
           <td class="text-center" colspan="3"><?php echo $text_no_results; ?></td>

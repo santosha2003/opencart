@@ -27,7 +27,12 @@ class ControllerMarketingContact extends Controller {
 		$data['text_customer_group'] = $this->language->get('text_customer_group');
 		$data['text_affiliate_all'] = $this->language->get('text_affiliate_all');
 		$data['text_affiliate'] = $this->language->get('text_affiliate');
-		$data['text_product'] = $this->language->get('text_product');
+		
+        $data['text_product'] = $this->language->get('text_product');
+        // newsletter
+        $data['text_newsletter_all'] = $this->language->get('text_newsletter_all');
+        // newsletter
+                
 		$data['text_loading'] = $this->language->get('text_loading');
 
 		$data['entry_store'] = $this->language->get('entry_store');
@@ -117,7 +122,13 @@ class ControllerMarketingContact extends Controller {
 
 				$this->load->model('customer/customer_group');
 
-				$this->load->model('marketing/affiliate');
+				
+                $this->load->model('marketing/affiliate');
+
+                // newsletter
+                $this->load->model('marketing/newsletter');
+                // newsletter
+                
 
 				$this->load->model('sale/order');
 
@@ -202,7 +213,28 @@ class ControllerMarketingContact extends Controller {
 							$emails[] = $result['email'];
 						}
 						break;
-					case 'affiliate':
+					
+                    // newsletter
+
+                    case 'newsletter_all':
+                        $newsletter_data = array(
+                            'start' => ($page - 1) * 10,
+                            'limit' => 10
+                        );
+
+                        $email_total = $this->model_marketing_newsletter->getTotalNewsletters($newsletter_data);
+
+                        $results = $this->model_marketing_newsletter->getNewsletters($newsletter_data);
+
+                        foreach ($results as $result) {
+                            $emails[] = $result['news_email'];
+                        }
+                        break;
+
+                    // newsletter
+
+                    case 'affiliate':
+                
 						if (!empty($this->request->post['affiliate'])) {
 							foreach ($this->request->post['affiliate'] as $affiliate_id) {
 								$affiliate_info = $this->model_marketing_affiliate->getAffiliate($affiliate_id);

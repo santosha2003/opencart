@@ -26,6 +26,11 @@ class ControllerCatalogProduct extends Controller {
 
 			$url = '';
 
+
+    if (isset($this->request->get['filter_import_batch'])) {
+      $url .= '&filter_import_batch=' . urlencode(html_entity_decode($this->request->get['filter_import_batch'], ENT_QUOTES, 'UTF-8'));
+    }
+      
 			if (isset($this->request->get['filter_name'])) {
 				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 			}
@@ -82,6 +87,11 @@ class ControllerCatalogProduct extends Controller {
 
 			$url = '';
 
+
+    if (isset($this->request->get['filter_import_batch'])) {
+      $url .= '&filter_import_batch=' . urlencode(html_entity_decode($this->request->get['filter_import_batch'], ENT_QUOTES, 'UTF-8'));
+    }
+      
 			if (isset($this->request->get['filter_name'])) {
 				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 			}
@@ -140,6 +150,11 @@ class ControllerCatalogProduct extends Controller {
 
 			$url = '';
 
+
+    if (isset($this->request->get['filter_import_batch'])) {
+      $url .= '&filter_import_batch=' . urlencode(html_entity_decode($this->request->get['filter_import_batch'], ENT_QUOTES, 'UTF-8'));
+    }
+      
 			if (isset($this->request->get['filter_name'])) {
 				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 			}
@@ -198,6 +213,11 @@ class ControllerCatalogProduct extends Controller {
 
 			$url = '';
 
+
+    if (isset($this->request->get['filter_import_batch'])) {
+      $url .= '&filter_import_batch=' . urlencode(html_entity_decode($this->request->get['filter_import_batch'], ENT_QUOTES, 'UTF-8'));
+    }
+      
 			if (isset($this->request->get['filter_name'])) {
 				$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 			}
@@ -241,6 +261,24 @@ class ControllerCatalogProduct extends Controller {
 	}
 
 	protected function getList() {
+
+    // univ import filter by batch label
+    $importLabels = $this->db->query("SELECT import_batch FROM " . DB_PREFIX . "product WHERE import_batch <> '' GROUP BY import_batch")->rows;
+    
+    $data['importLabels'] = array();
+    
+    foreach ($importLabels as $importLabel) {
+      $data['importLabels'][] = $importLabel['import_batch'];
+    }
+    
+    if (isset($this->request->get['filter_import_batch'])) {
+			$filter_import_batch = $this->request->get['filter_import_batch'];
+		} else {
+			$filter_import_batch = null;
+		}
+    
+    $data['filter_import_batch'] = $filter_import_batch;
+      
 		if (isset($this->request->get['filter_name'])) {
 			$filter_name = $this->request->get['filter_name'];
 		} else {
@@ -303,6 +341,11 @@ class ControllerCatalogProduct extends Controller {
 
 		$url = '';
 
+
+    if (isset($this->request->get['filter_import_batch'])) {
+      $url .= '&filter_import_batch=' . urlencode(html_entity_decode($this->request->get['filter_import_batch'], ENT_QUOTES, 'UTF-8'));
+    }
+      
 		if (isset($this->request->get['filter_name'])) {
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 			}
@@ -363,6 +406,7 @@ class ControllerCatalogProduct extends Controller {
 
 		$filter_data = array(
 			'filter_name'	  => $filter_name,
+     'filter_import_batch'	  => $filter_import_batch,
 			'filter_model'	  => $filter_model,
 			'filter_price'	  => $filter_price,
 			'filter_quantity' => $filter_quantity,
@@ -480,6 +524,11 @@ class ControllerCatalogProduct extends Controller {
 
 		$url = '';
 
+
+    if (isset($this->request->get['filter_import_batch'])) {
+      $url .= '&filter_import_batch=' . urlencode(html_entity_decode($this->request->get['filter_import_batch'], ENT_QUOTES, 'UTF-8'));
+    }
+      
 		if (isset($this->request->get['filter_name'])) {
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 		}
@@ -527,6 +576,11 @@ class ControllerCatalogProduct extends Controller {
 
 		$url = '';
 
+
+    if (isset($this->request->get['filter_import_batch'])) {
+      $url .= '&filter_import_batch=' . urlencode(html_entity_decode($this->request->get['filter_import_batch'], ENT_QUOTES, 'UTF-8'));
+    }
+      
 		if (isset($this->request->get['filter_name'])) {
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 		}
@@ -592,6 +646,10 @@ class ControllerCatalogProduct extends Controller {
 	}
 
 	protected function getForm() {
+
+				$this->load->language('/extension/module/custom_img_title_alt_product');
+				$data['text_pattern_alt_title'] = $this->language->get('text_pattern_alt_title');
+			
     //CKEditor
     if ($this->config->get('config_editor_default')) {
         $this->document->addScript('view/javascript/ckeditor/ckeditor.js');
@@ -623,6 +681,9 @@ class ControllerCatalogProduct extends Controller {
 		$data['text_unselect_all'] = $this->language->get('text_unselect_all');
 
 		$data['entry_name'] = $this->language->get('entry_name');
+
+	    $data['entry_ext_description'] = $this->language->get('entry_ext_description');
+	  
 		$data['entry_description'] = $this->language->get('entry_description');
 		$data['entry_meta_title'] = $this->language->get('entry_meta_title');
 		$data['entry_meta_h1'] = $this->language->get('entry_meta_h1');
@@ -747,6 +808,11 @@ class ControllerCatalogProduct extends Controller {
 
 		$url = '';
 
+
+    if (isset($this->request->get['filter_import_batch'])) {
+      $url .= '&filter_import_batch=' . urlencode(html_entity_decode($this->request->get['filter_import_batch'], ENT_QUOTES, 'UTF-8'));
+    }
+      
 		if (isset($this->request->get['filter_name'])) {
 			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
 		}
@@ -1150,6 +1216,15 @@ class ControllerCatalogProduct extends Controller {
 			$data['product_category'] = array();
 		}
 
+
+		if (isset($this->request->post['ext_description'])) {
+		  $data['ext_description'] = $this->request->post['ext_description'];
+		} elseif (isset($this->request->get['product_id'])) {
+		  $data['ext_description'] = $this->model_catalog_product->getProductDescriptions($this->request->get['product_id']);
+		} else {
+		  $data['ext_description'] = array();
+		}
+	  
 		$this->load->model('catalog/filter');
 
 		if (isset($this->request->post['product_filter'])) {
@@ -1341,6 +1416,9 @@ class ControllerCatalogProduct extends Controller {
 			$data['product_images'][] = array(
 				'image'      => $image,
 				'thumb'      => $this->model_tool_image->resize($thumb, 100, 100),
+
+				'image_description' => (isset($product_image['image_description']) && $product_image['image_description'])? unserialize($product_image['image_description']):array(),
+			
 				'sort_order' => $product_image['sort_order']
 			);
 		}

@@ -24,11 +24,11 @@
           <?php if ($thumb || $images) { ?>
           <ul class="thumbnails">
             <?php if ($thumb) { ?>
-            <li><a class="thumbnail" href="<?php echo $popup; ?>" title="<?php echo $heading_title; ?>"><img src="<?php echo $thumb; ?>" title="<?php echo $heading_title; ?>" alt="<?php echo $heading_title; ?>" /></a></li>
+            <li><a class="thumbnail" href="<?php echo $popup; ?>" title="<?php echo $image_description['title']; ?>"><img src="<?php echo $thumb; ?>" title="<?php echo $image_description['title']; ?>" alt="<?php echo $image_description['alt']; ?>" /></a></li>
             <?php } ?>
             <?php if ($images) { ?>
             <?php foreach ($images as $image) { ?>
-            <li class="image-additional"><a class="thumbnail" href="<?php echo $image['popup']; ?>" title="<?php echo $heading_title; ?>"> <img src="<?php echo $image['thumb']; ?>" title="<?php echo $heading_title; ?>" alt="<?php echo $heading_title; ?>" /></a></li>
+            <li class="image-additional"><a class="thumbnail" href="<?php echo $image['popup']; ?>" title="<?php echo $image['image_description']['title']; ?>"> <img src="<?php echo $image['thumb']; ?>" title="<?php echo $image['image_description']['title']; ?>" alt="<?php echo $image['image_description']['alt']; ?>" /></a></li>
             <?php } ?>
             <?php } ?>
           </ul>
@@ -124,6 +124,13 @@
             <button type="button" data-toggle="tooltip" class="btn btn-default" title="<?php echo $button_compare; ?>" onclick="compare.add('<?php echo $product_id; ?>');"><i class="fa fa-exchange"></i></button>
           </div>
           <h1><?php echo $heading_title; ?></h1>
+
+		<?php if ($ext_description) { ?>
+		  <div class="ext-description">
+			<?php echo $ext_description; ?>
+		  </div>
+		<?php } ?>
+	  
           <ul class="list-unstyled">
             <?php if ($manufacturer) { ?>
             <li><?php echo $text_manufacturer; ?> <a href="<?php echo $manufacturers; ?>"><?php echo $manufacturer; ?></a></li>

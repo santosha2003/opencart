@@ -25,7 +25,11 @@ class ControllerEventCompatibility extends Controller {
 		$part = explode('/', $route);
 		
 		if (!is_file(DIR_APPLICATION . 'controller/' . $route . '.php') && is_file(DIR_APPLICATION . 'controller/' . $part[1] . '/' . $part[2] . '.php')) {
-			$route = $part[1] . '/' . $part[2];
+			
+            //d_shopunity_oc230_patch.xml 1
+            unset($part[0]);
+            $route = implode('/', $part);
+            
 		}
 	}
 	
@@ -35,7 +39,11 @@ class ControllerEventCompatibility extends Controller {
 		$part = explode('/', $route);
 
 		if (!is_file(DIR_APPLICATION . 'model/' . $route . '.php') && is_file(DIR_APPLICATION . 'model/' . $part[1] . '/' . $part[2] . '.php')) {
-			$route = $part[1] . '/' . $part[2];
+			
+            //d_shopunity_oc230_patch.xml 1
+            unset($part[0]);
+            $route = implode('/', $part);
+            
 		}
 	}
 	
@@ -53,7 +61,11 @@ class ControllerEventCompatibility extends Controller {
 		$part = explode('/', $route);	
 				
 		if (!is_file(DIR_LANGUAGE . $this->config->get('config_language') . '/' . $route . '.php') && is_file(DIR_LANGUAGE . $this->config->get('config_language') . '/' . $part[1] . '/' . $part[2] . '.php')) {
-			$route = $part[1] . '/' . $part[2];
+			
+            //d_shopunity_oc230_patch.xml 1
+            unset($part[0]);
+            $route = implode('/', $part);
+            
 		}
 	}		
 }

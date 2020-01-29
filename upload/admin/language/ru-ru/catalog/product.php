@@ -28,6 +28,9 @@ $_['column_action']          	= 'Действие';
 // Entry
 $_['entry_main_category']       = 'Главная категория:';
 $_['entry_name']          		= 'Наименование:';
+
+		$_['entry_ext_description'] = 'Дополнительное описание';
+	  
 $_['entry_description']         = 'Описание:';
 $_['entry_meta_title']          = 'HTML-тег Title';
 $_['entry_meta_h1']             = 'HTML-тег H1';

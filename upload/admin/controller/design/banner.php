@@ -279,6 +279,9 @@ class ControllerDesignBanner extends Controller {
 		$data['button_banner_add'] = $this->language->get('button_banner_add');
 		$data['button_remove'] = $this->language->get('button_remove');
 
+			$data['entry_description'] = $this->language->get('entry_description');
+			
+
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
 		} else {
@@ -380,6 +383,9 @@ class ControllerDesignBanner extends Controller {
 				}
 				
 				$data['banner_images'][$key][] = array(
+
+			'description'      => $banner_image['description'],
+			
 					'title'      => $banner_image['title'],
 					'link'       => $banner_image['link'],
 					'image'      => $image,

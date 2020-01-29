@@ -41,6 +41,11 @@ class ControllerExtensionExtensionDashboard extends Controller {
 			$this->model_extension_extension->uninstall('dashboard', $this->request->get['extension']);
 
 			// Call uninstall method if it exsits
+
+                //d_shopunity_oc230_patch.xml 2
+                $this->load->model('setting/setting');
+                $this->model_setting_setting->deleteSetting('dashboard_'.$this->request->get['extension']);
+            
 			$this->load->controller('extension/dashboard/' . $this->request->get['extension'] . '/uninstall');
 
 			$this->session->data['success'] = $this->language->get('text_success');
@@ -83,6 +88,11 @@ class ControllerExtensionExtensionDashboard extends Controller {
 		foreach ($extensions as $key => $value) {
 			if (!is_file(DIR_APPLICATION . 'controller/extension/dashboard/' . $value . '.php')) {
 				$this->model_extension_extension->uninstall('dashboard', $value);
+
+                //d_shopunity_oc230_patch.xml 3
+                $this->load->model('setting/setting');
+                $this->model_setting_setting->deleteSetting('dashboard_'.$value);
+            
 
 				unset($extensions[$key]);
 			}

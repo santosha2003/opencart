@@ -201,6 +201,13 @@ class ControllerAccountOrder extends Controller {
 				$data['success'] = '';
 			}
 
+
+			if ($order_info['track_no']) {
+				$data['track_no'] = $order_info['track_no'];
+			} else {
+				$data['track_no'] = '';
+			}
+				
 			if ($order_info['invoice_no']) {
 				$data['invoice_no'] = $order_info['invoice_prefix'] . $order_info['invoice_no'];
 			} else {

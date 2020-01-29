@@ -81,13 +81,13 @@ class ControllerProductManufacturer extends Controller {
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
-			$sort = 'p.sort_order';
+			$sort = 'p.date_added';
 		}
 
 		if (isset($this->request->get['order'])) {
 			$order = $this->request->get['order'];
 		} else {
-			$order = 'ASC';
+			$order = 'DESC';
 		}
 
 		if (isset($this->request->get['page'])) {
@@ -255,8 +255,8 @@ class ControllerProductManufacturer extends Controller {
 
 			$data['sorts'][] = array(
 				'text'  => $this->language->get('text_default'),
-				'value' => 'p.sort_order-ASC',
-				'href'  => $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . '&sort=p.sort_order&order=ASC' . $url)
+				'value' => 'p.date_added-DESC',
+				'href'  => $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . '&sort=p.date_added&order=DESC' . $url)
 			);
 
 			$data['sorts'][] = array(
@@ -383,7 +383,43 @@ class ControllerProductManufacturer extends Controller {
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
 
-			$this->response->setOutput($this->load->view('product/manufacturer_info', $data));
+			
+            $template = 'product/manufacturer_info';
+
+            // Custom template module
+            $this->load->model('setting/setting');
+
+            $customer_group_id = $this->customer->getGroupId();
+
+            if ($this->config->get('config_theme') == 'theme_default') {
+                $directory = $this->config->get('theme_default_directory');
+            } else {
+                $directory = $this->config->get('config_theme');
+            }
+
+            $custom_template_module = $this->model_setting_setting->getSetting('custom_template_module');
+            if(!empty($custom_template_module['custom_template_module'])){
+                foreach ($custom_template_module['custom_template_module'] as $key => $module) {
+                    if (($module['type'] == 3) && !empty($module['manufacturers'])) {
+                        if ((isset($module['customer_groups']) && in_array($customer_group_id, $module['customer_groups'])) || !isset($module['customer_groups']) || empty($module['customer_groups'])){
+
+                            if (in_array($manufacturer_id, $module['manufacturers'])) {
+                                if (file_exists(DIR_TEMPLATE . $directory . DIRECTORY_SEPARATOR . 'template' . DIRECTORY_SEPARATOR . $module['template_name'] . '.tpl')) {
+                                    $template = $this->config->get('config_theme') .DIRECTORY_SEPARATOR. $module['template_name'];
+                                }
+                            }
+
+                        } // customer groups
+
+                    }
+                }
+            }
+
+            $template = str_replace('\\', '/', $template);
+
+            $this->response->setOutput($this->load->view($template, $data));
+            // Custom template module
+            
 		} else {
 			$url = '';
 

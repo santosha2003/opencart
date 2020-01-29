@@ -29,6 +29,11 @@ class ControllerExtensionExtensionModule extends Controller {
             $this->model_user_user_group->addPermission($this->user->getGroupId(), 'access', 'extension/module/' . $this->request->get['extension']);
             $this->model_user_user_group->addPermission($this->user->getGroupId(), 'modify', 'extension/module/' . $this->request->get['extension']);
 
+            //d_shopunity_oc230_patch.xml 1
+            $this->model_user_user_group->addPermission($this->user->getGroupId(), 'access', 'module/' . $this->request->get['extension']);
+            $this->model_user_user_group->addPermission($this->user->getGroupId(), 'modify', 'module/' . $this->request->get['extension']);
+            
+
             $this->session->data['success'] = $this->language->get('text_success');
         } else {
 			$this->session->data['error'] = $this->error['warning'];
@@ -173,7 +178,23 @@ class ControllerExtensionExtensionModule extends Controller {
                         );
                     }
 
-                    $data['extensions'][] = array(
+
+        if ($extension == 'universal_import') {
+          ${'data'}['extensions'][] = array(
+            'name'      => (version_compare(VERSION, '3', '>=') ? $this->language->get('extension')->get('heading_title') : $this->language->get('heading_title')),
+            'module'    => $module_data,
+            'install'   => $this->url->link('extension/extension/module/install', (isset($this->session->data['user_token']) ? 'user_token='.$this->session->data['user_token'] : 'token='.$this->session->data['token']) . '&extension=' . $extension, true),
+            'uninstall' => $this->url->link('extension/extension/module/uninstall', (isset($this->session->data['user_token']) ? 'user_token='.$this->session->data['user_token'] : 'token='.$this->session->data['token']) . '&extension=' . $extension, true),
+            'installed' => in_array($extension, $extensions),
+            'edit'      => $this->url->link('module/' . $extension, (isset($this->session->data['user_token']) ? 'user_token='.$this->session->data['user_token'] : 'token='.$this->session->data['token']), true)
+          );
+          continue;
+        }
+			
+                    
+            //d_shopunity_oc230_patch.xml 2
+            $data['extensions'][$extension] = array(
+            
                         'name' => $this->language->get('heading_title'),
                         'module' => $module_data,
                         'install' => $this->url->link('extension/extension/module/install', 'token=' . $this->session->data['token'] . '&extension=' . $extension, true),

@@ -94,27 +94,6 @@
 					<a id="arrow_top" style="display:none;" onclick="scroll_to_top();"></a>
 				<?php } ?>
             
-
-				<?php if ($loadmore_status) {?>
-					<style>
-						a.load_more {
-							<?php if (isset($loadmore_style)) {echo $loadmore_style;} else {?>
-								display:inline-block; margin:0 auto 20px auto; padding: 0.5em 2em; border: 1px solid #000; color: #000;  text-decoration:none; text-transform:uppercase;
-							<?php } ?>
-						}
-					</style>		
-					<div id="load_more" style="display:none;">
-						<div class="row text-center">
-							<a href="#" class="load_more"><?php echo $loadmore_button; ?></a>
-						</div>
-					</div>
-				<?php } ?>
-            
-
-				<?php if ($loadmore_arrow_status) {?>
-					<a id="arrow_top" style="display:none;" onclick="scroll_to_top();"></a>
-				<?php } ?>
-            
 </body>
 
 </html>

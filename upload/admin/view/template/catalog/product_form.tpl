@@ -64,6 +64,14 @@
                       <textarea name="product_description[<?php echo $language['language_id']; ?>][description]" placeholder="<?php echo $entry_description; ?>" id="input-description<?php echo $language['language_id']; ?>" data-lang="<?php echo $lang; ?>" class="form-control summernote"><?php echo isset($product_description[$language['language_id']]) ? $product_description[$language['language_id']]['description'] : ''; ?></textarea>
                     </div>
                   </div>
+
+		<div class="form-group">
+		  <label class="col-sm-2 control-label" for="input-ext-description<?php echo $language['language_id']; ?>"><?php echo $entry_ext_description; ?></label>
+		  <div class="col-sm-10">
+			<textarea name="product_description[<?php echo $language['language_id']; ?>][ext_description]" placeholder="<?php echo $entry_ext_description; ?>" id="input-ext-description<?php echo $language['language_id']; ?>" class="form-control summernote"><?php echo isset($product_description[$language['language_id']]) ? $product_description[$language['language_id']]['ext_description'] : ''; ?></textarea>
+		  </div>
+		</div>
+	  
                   <div class="form-group">
                     <label class="col-sm-2 control-label" for="input-meta-title<?php echo $language['language_id']; ?>"><?php echo $entry_meta_title; ?></label>
                     <div class="col-sm-10">
@@ -851,12 +859,42 @@
                   <thead>
                     <tr>
                       <td class="text-left"><?php echo $entry_image; ?></td>
+
+		<td>Custom Title and Alt mainImage</td>
+			
                     </tr>
                   </thead>
 
                   <tbody>
                     <tr>
                       <td class="text-left"><a href="" id="thumb-image" data-toggle="image" class="img-thumbnail"><img src="<?php echo $thumb; ?>" alt="" title="" data-placeholder="<?php echo $placeholder; ?>" /></a><input type="hidden" name="image" value="<?php echo $image; ?>" id="input-image" /></td>
+
+<td style="overflow:hidden">
+<div class="form-group">
+	<label class="col-sm-1 control-label">Image Title:</label>
+    <div class="col-sm-11">
+	<?php foreach ($languages as $language) { ?>
+		<div class="input-group"><span class="input-group-addon"><img title="<?php echo $language['name']; ?>" src="language/<?php echo $language['code']; ?>/<?php echo $language['code']; ?>.png"></span>
+			<input type="text" class="form-control" value="<?php echo isset($product_description[$language['language_id']]['image_description']['description']['title']) ? $product_description[$language['language_id']]['image_description']['description']['title'] : ''; ?>" name="image_description[<?php echo $language['language_id']; ?>][description][title]">
+		</div>
+	<?php } ?>
+	</div>
+</div>				  
+<div class="form-group">
+	<label class="col-sm-1 control-label">Image Alt:</label>
+    <div class="col-sm-11">
+	<?php foreach ($languages as $language) { ?>
+		<div class="input-group"><span class="input-group-addon"><img title="<?php echo $language['name']; ?>" src="language/<?php echo $language['code']; ?>/<?php echo $language['code']; ?>.png"></span>
+			<input type="text" class="form-control" value="<?php echo isset($product_description[$language['language_id']]['image_description']['description']['alt']) ? $product_description[$language['language_id']]['image_description']['description']['alt'] : ''; ?>" name="image_description[<?php echo $language['language_id']; ?>][description][alt]">
+		</div>
+	<?php } ?>
+	</div>
+</div>
+<div>
+<?php echo $text_pattern_alt_title; ?>
+</div>			  
+	</td>				  
+			
                   </tr>
                   </tbody>
                 </table>
@@ -866,6 +904,9 @@
                   <thead>
                     <tr>
                       <td class="text-left"><?php echo $entry_additional_image; ?></td>
+
+		<td>Custom Title and Alt</td>
+			
                       <td class="text-right"><?php echo $entry_sort_order; ?></td>
                       <td></td>
                     </tr>
@@ -875,6 +916,38 @@
                     <?php foreach ($product_images as $product_image) { ?>
                     <tr id="image-row<?php echo $image_row; ?>">
                       <td class="text-left"><a href="" id="thumb-image<?php echo $image_row; ?>" data-toggle="image" class="img-thumbnail"><img src="<?php echo $product_image['thumb']; ?>" alt="" title="" data-placeholder="<?php echo $placeholder; ?>" /></a><input type="hidden" name="product_image[<?php echo $image_row; ?>][image]" value="<?php echo $product_image['image']; ?>" id="input-image<?php echo $image_row; ?>" /></td>
+
+<td>
+	<div class="form-group">
+		<label class="col-sm-1 control-label">Title:</label>
+		<div class="col-sm-11">
+	<?php foreach ($languages as $language) { ?>
+			<div class="input-group"><span class="input-group-addon"><img title="<?php echo $language['name']; ?>" src="language/<?php echo $language['code']; ?>/<?php echo $language['code']; ?>.png"></span>
+				<input type="text" class="form-control" 
+				value="<?php echo (isset($product_image['image_description'][$language['language_id']]['title']))? $product_image['image_description'][$language['language_id']]['title']:''?>" 
+				name="product_image[<?php echo $image_row; ?>][image_description][<?php echo $language['language_id']; ?>][title]">
+			</div>
+	<?php } ?>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-1 control-label">Alt:</label>
+		<div class="col-sm-11">
+	<?php foreach ($languages as $language) { ?>
+			<div class="input-group"><span class="input-group-addon"><img title="<?php echo $language['name']; ?>" src="language/<?php echo $language['code']; ?>/<?php echo $language['code']; ?>.png"></span>
+				<input type="text" class="form-control" 
+				value="<?php echo (isset($product_image['image_description'][$language['language_id']]['alt']))?$product_image['image_description'][$language['language_id']]['alt']:''?>" 
+				name="product_image[<?php echo $image_row; ?>][image_description][<?php echo $language['language_id']; ?>][alt]">
+			</div>
+	<?php } ?>
+		</div>
+	</div>
+<div>
+<?php echo $text_pattern_alt_title;?>
+</div>			  
+	
+</td>  
+			
                       <td class="text-right"><input type="text" name="product_image[<?php echo $image_row; ?>][sort_order]" value="<?php echo $product_image['sort_order']; ?>" placeholder="<?php echo $entry_sort_order; ?>" class="form-control" /></td>
                       <td class="text-left"><button type="button" onclick="$('#image-row<?php echo $image_row; ?>').remove();" data-toggle="tooltip" title="<?php echo $button_remove; ?>" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
                     </tr>
@@ -1400,6 +1473,31 @@ var image_row = <?php echo $image_row; ?>;
 function addImage() {
 	html  = '<tr id="image-row' + image_row + '">';
 	html += '  <td class="text-left"><a href="" id="thumb-image' + image_row + '"data-toggle="image" class="img-thumbnail"><img src="<?php echo $placeholder; ?>" alt="" title="" data-placeholder="<?php echo $placeholder; ?>" /></a><input type="hidden" name="product_image[' + image_row + '][image]" value="" id="input-image' + image_row + '" /></td>';
+
+html += '  <td>';
+html += '  	<div class="form-group">';
+html += '  		<label class="col-sm-1 control-label">Title:</label>';
+html += '  		<div class="col-sm-11">';
+<?php foreach ($languages as $language) { ?>
+html += '  			<div class="input-group"><span class="input-group-addon"><img src="language/<?php echo $language['code']; ?>/<?php echo $language['code']; ?>.png" title="<?php echo $language['name']; ?>"></span>';
+html += '  				<input type="text" class="form-control" name="product_image[' + image_row + '][image_description][<?php echo $language['language_id']; ?>][title]" value="" />';
+html += '  			</div>';
+<?php } ?>	
+html += '		</div>';
+html += '  	</div>';
+html += '  	<div class="form-group">';
+html += '  		<label class="col-sm-1 control-label">Alt:</label>';
+html += '  		<div class="col-sm-11">';
+<?php foreach ($languages as $language) { ?>
+html += '  			<div class="input-group"><span class="input-group-addon"><img src="language/<?php echo $language['code']; ?>/<?php echo $language['code']; ?>.png" title="<?php echo $language['name']; ?>"></span>';
+html += '  				<input type="text" class="form-control" name="product_image[' + image_row + '][image_description][<?php echo $language['language_id']; ?>][alt]"  value="" />';
+html += '  			</div>';
+<?php } ?>	
+html += '  		</div>';
+html += '  	</div>';
+html += '<div><?php echo str_replace(array("\r","\n"),' ',$text_pattern_alt_title); ?></div>';
+html += '  </td>';
+			
 	html += '  <td class="text-right"><input type="text" name="product_image[' + image_row + '][sort_order]" value="" placeholder="<?php echo $entry_sort_order; ?>" class="form-control" /></td>';
 	html += '  <td class="text-left"><button type="button" onclick="$(\'#image-row' + image_row  + '\').remove();" data-toggle="tooltip" title="<?php echo $button_remove; ?>" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
 	html += '</tr>';

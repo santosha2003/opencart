@@ -55,7 +55,43 @@ class ControllerInformationInformation extends Controller {
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
 
-			$this->response->setOutput($this->load->view('information/information', $data));
+			
+            $template = 'information/information';
+
+            // Custom template module
+            $this->load->model('setting/setting');
+
+            $customer_group_id = $this->customer->getGroupId();
+
+            if ($this->config->get('config_theme') == 'theme_default') {
+                $directory = $this->config->get('theme_default_directory');
+            } else {
+                $directory = $this->config->get('config_theme');
+            }
+
+            $custom_template_module = $this->model_setting_setting->getSetting('custom_template_module');
+            if(!empty($custom_template_module['custom_template_module'])){
+                foreach ($custom_template_module['custom_template_module'] as $key => $module) {
+                    if (($module['type'] == 2) && !empty($module['informations'])) {
+                        if ((isset($module['customer_groups']) && in_array($customer_group_id, $module['customer_groups'])) || !isset($module['customer_groups']) || empty($module['customer_groups'])){
+
+                            if (in_array($information_id, $module['informations'])) {
+                                if (file_exists(DIR_TEMPLATE . $directory . DIRECTORY_SEPARATOR . 'template' . DIRECTORY_SEPARATOR . $module['template_name'] . '.tpl')) {
+                                    $template = $module['template_name'];
+                                }
+                            }
+
+                        } // customer groups
+
+                    }
+                }
+            }
+
+            $template = str_replace('\\', '/', $template);
+
+            $this->response->setOutput($this->load->view($template, $data));
+            // Custom template module
+            
 		} else {
 			$data['breadcrumbs'][] = array(
 				'text' => $this->language->get('text_error'),

@@ -1,6 +1,12 @@
 <?php
 namespace Cart;
 final class Tax {
+
+	// a_vqmod_d_quickcheckout.xml
+	public function clearRates(){
+		$this->tax_rates = array();
+	}
+			
 	private $tax_rates = array();
 
 	public function __construct($registry) {

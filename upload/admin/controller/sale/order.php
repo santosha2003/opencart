@@ -562,6 +562,10 @@ class ControllerSaleOrder extends Controller {
 			$data['shipping_zone_id'] = $order_info['shipping_zone_id'];
 			$data['shipping_custom_field'] = $order_info['shipping_custom_field'];
 			$data['shipping_method'] = $order_info['shipping_method'];
+
+			$data['track_no_on'] = $this->config->get('track_no_status');
+			$data['track_no'] = isset($order_info['track_no']) ? $order_info['track_no'] : '';
+				
 			$data['shipping_code'] = $order_info['shipping_code'];
 
 			// Products
@@ -933,6 +937,10 @@ class ControllerSaleOrder extends Controller {
 			$data['telephone'] = $order_info['telephone'];
 
 			$data['shipping_method'] = $order_info['shipping_method'];
+
+			$data['track_no_on'] = $this->config->get('track_no_status');
+			$data['track_no'] = isset($order_info['track_no']) ? $order_info['track_no'] : '';
+				
 			$data['payment_method'] = $order_info['payment_method'];
 
 			// Payment Address
@@ -1520,6 +1528,21 @@ class ControllerSaleOrder extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
+
+	public function set_track_no() {
+		if ($this->request->server['REQUEST_METHOD'] == 'POST') {
+			if ($this->user->hasPermission('modify', 'sale/order')) {
+				$this->load->model('sale/track_no');
+				$error = '';
+				$resp = $this->model_sale_track_no->save($this->request->get['order_id'], $this->request->post['track_no'], $error);
+				if ($resp)
+					$this->response->setOutput(0);
+				else
+					$this->response->setOutput(1);
+			}
+		}
+	}
+				
 	public function history() {
 		$this->load->language('sale/order');
 

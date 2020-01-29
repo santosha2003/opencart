@@ -1,4 +1,8 @@
 <?php
+
+            //d_shopunity_oc230_patch.xml fix 1
+            if (!class_exists('ControllerEventCompatibility')) {
+            
 class ControllerEventCompatibility extends Controller {
 	public function controller(&$route) {
 		$route = preg_replace('/[^a-zA-Z0-9_\/]/', '', (string)$route);
@@ -7,7 +11,11 @@ class ControllerEventCompatibility extends Controller {
 		$part = explode('/', $route);
 				
 		if (!is_file(DIR_APPLICATION . 'controller/' . $route . '.php') && is_file(DIR_APPLICATION . 'controller/' . $part[1] . '/' . $part[2] . '.php')) {
-			$route = $part[1] . '/' . $part[2];
+			
+            //d_shopunity_oc230_patch.xml 1
+            unset($part[0]);
+            $route = implode('/', $part);
+            
 		}
 	}
 	
@@ -18,7 +26,11 @@ class ControllerEventCompatibility extends Controller {
 		$part = explode('/', $route);
 		
 		if (!is_file(DIR_LANGUAGE . $this->config->get('config_admin_language') . '/' . $route . '.php') && is_file(DIR_LANGUAGE . $this->config->get('config_admin_language') . '/' . $part[1] . '/' . $part[2] . '.php')) {
-			$route = $part[1] . '/' . $part[2];
+			
+            //d_shopunity_oc230_patch.xml 1
+            unset($part[0]);
+            $route = implode('/', $part);
+            
 		}
 	}
 	
@@ -30,3 +42,8 @@ class ControllerEventCompatibility extends Controller {
 		}
 	}
 }
+
+
+            //d_shopunity_oc230_patch.xml fix 2
+}
+            

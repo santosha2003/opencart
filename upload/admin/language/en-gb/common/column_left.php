@@ -6,10 +6,14 @@ $_['text_attribute']                 = 'Attributes';
 $_['text_attribute_group']           = 'Attribute Groups';
 $_['text_backup']                    = 'Backup / Restore';
 $_['text_banner']                    = 'Banners';
+$_['text_newsblog'] = 'NewsBlog articles';$_['text_newsblog_category'] = 'Category list';$_['text_newsblog_article'] = 'Item list';
 $_['text_catalog']                   = 'Catalog';
 $_['text_category']                  = 'Categories';
 $_['text_country']                   = 'Countries';
+
 $_['text_coupon']                    = 'Coupons';
+$_['text_newsletter']                = 'Newsletter';
+                
 $_['text_currency']                  = 'Currencies';
 $_['text_customer']                  = 'Customers';
 $_['text_customer_group']            = 'Customer Groups';
@@ -32,6 +36,7 @@ $_['text_contact']                   = 'Mail';
 $_['text_marketing']                 = 'Marketing';
 $_['text_menu']                      = 'Menu Manager';
 $_['text_modification']              = 'Modifications';
+$_['text_news'] = 'News';
 $_['text_manufacturer']              = 'Manufacturers';
 $_['text_option']                    = 'Options';
 $_['text_order']                     = 'Orders';

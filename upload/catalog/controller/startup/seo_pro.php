@@ -63,6 +63,15 @@ class ControllerStartupSeoPro extends Controller {
 					if(!isset($queries[$part])) return false;
 					$url = explode('=', $queries[$part], 2);
 
+
+      				if ($url[0] == 'newsblog_category_id') {
+						if (!isset($this->request->get['newsblog_path'])) {
+							$this->request->get['newsblog_path'] = $url[1];
+						} else {
+							$this->request->get['newsblog_path'] .= '_' . $url[1];
+						}
+					} else
+		
 					if ($url[0] == 'category_id') {
 						if (!isset($this->request->get['path'])) {
 							$this->request->get['path'] = $url[1];
@@ -77,6 +86,17 @@ class ControllerStartupSeoPro extends Controller {
 				$this->request->get['route'] = 'error/not_found';
 			}
 
+
+		    if (isset($this->request->get['newsblog_article_id'])) {
+				$this->request->get['route'] = 'newsblog/article';
+				if (!isset($this->request->get['newsblog_path'])) {
+					$path = $this->getPathByNewsBlogArticle($this->request->get['newsblog_article_id']);
+					if ($path) $this->request->get['newsblog_path'] = $path;
+				}
+			} elseif (isset($this->request->get['newsblog_path'])) {
+				$this->request->get['route'] = 'newsblog/category';
+			} else
+	    
 			if (isset($this->request->get['product_id'])) {
 				$this->request->get['route'] = 'product/product';
 				if (!isset($this->request->get['path'])) {
@@ -120,6 +140,28 @@ class ControllerStartupSeoPro extends Controller {
 		unset($data['route']);
 
 		switch ($route) {
+
+      			case 'newsblog/article':
+				if (isset($data['newsblog_article_id'])) {
+					$tmp = $data;
+					$data = array();
+					if ($this->config->get('config_seo_url_include_path')) {
+						$data['newsblog_path'] = $this->getPathByNewsBlogArticle($tmp['newsblog_article_id']);
+						if (!$data['newsblog_path']) return $link;
+					}
+					$data['newsblog_article_id'] = $tmp['newsblog_article_id'];
+				}
+				break;
+
+			case 'newsblog/category':
+				if (isset($data['newsblog_path'])) {
+					$category = explode('_', $data['newsblog_path']);
+					$category = end($category);
+					$data['newsblog_path'] = $this->getPathByNewsBlogCategory($category);
+					if (!$data['newsblog_path']) return $link;
+				}
+				break;
+		
 			case 'product/product':
 				if (isset($data['product_id'])) {
 					$tmp = $data;
@@ -173,6 +215,18 @@ class ControllerStartupSeoPro extends Controller {
 		if(!in_array($route, array('product/search'))) {
 		foreach ($data as $key => $value) {
 				switch ($key) {
+
+	       			case 'newsblog_path':
+						$categories = explode('_', $value);
+						foreach($categories as $category) {
+							$queries[] = 'newsblog_category_id=' . $category;
+						}
+						unset($data[$key]);
+						break;
+
+					case 'newsblog_article_id':
+					case 'newsblog_category_id':
+	    
 					case 'product_id':
 					case 'manufacturer_id':
 					case 'category_id':
@@ -246,6 +300,61 @@ class ControllerStartupSeoPro extends Controller {
 		return $seo_url;
 	}
 
+
+	private function getPathByNewsBlogArticle($article_id) {
+		$article_id = (int)$article_id;
+		if ($article_id < 1) return false;
+
+		static $path = null;
+		if (!isset($path)) {
+			$path = $this->cache->get('newsblog.article.seopath');
+			if (!isset($path)) $path = array();
+		}
+
+		if (!isset($path[$article_id])) {
+			$query = $this->db->query("SELECT category_id FROM " . DB_PREFIX . "newsblog_article_to_category WHERE article_id = '" . $article_id . "' ORDER BY main_category DESC LIMIT 1");
+
+			$path[$article_id] = $this->getPathByNewsBlogCategory($query->num_rows ? (int)$query->row['category_id'] : 0);
+
+			$this->cache->set('newsblog.article.seopath', $path);
+		}
+
+		return $path[$article_id];
+	}
+
+	private function getPathByNewsBlogCategory($category_id) {
+		$category_id = (int)$category_id;
+		if ($category_id < 1) return false;
+
+		static $path = null;
+		if (!isset($path)) {
+			$path = $this->cache->get('newsblog.category.seopath');
+			if (!isset($path)) $path = array();
+		}
+
+		if (!isset($path[$category_id])) {
+			$max_level = 10;
+
+			$sql = "SELECT CONCAT_WS('_'";
+			for ($i = $max_level-1; $i >= 0; --$i) {
+				$sql .= ",t$i.category_id";
+			}
+			$sql .= ") AS path FROM " . DB_PREFIX . "newsblog_category t0";
+			for ($i = 1; $i < $max_level; ++$i) {
+				$sql .= " LEFT JOIN " . DB_PREFIX . "newsblog_category t$i ON (t$i.category_id = t" . ($i-1) . ".parent_id)";
+			}
+			$sql .= " WHERE t0.category_id = '" . $category_id . "'";
+
+			$query = $this->db->query($sql);
+
+			$path[$category_id] = $query->num_rows ? $query->row['path'] : false;
+
+			$this->cache->set('newsblog.category.seopath', $path);
+		}
+
+		return $path[$category_id];
+	}
+		
 	private function getPathByProduct($product_id) {
 		$product_id = (int)$product_id;
 		if ($product_id < 1) return false;
