@@ -105,9 +105,6 @@
 						<p>В этой категории пока нет товаров.</p>
 					<?php endif; ?>
 				</div>
-				<div class="btn-block">
-					<!--<a class="butn-load-more load_more" id="load_more">Загрузить ещё</a>-->
-				</div>
 
 				<?php echo $pagination; ?>
 

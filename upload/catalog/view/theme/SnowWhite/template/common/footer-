@@ -5,14 +5,18 @@
                 <div class="footer-info col-md-3 col-sm-6">
                     <img src="/image/catalog/logo.png" class="img-fluid">
                     <div class="social"> <span class="social-text">Мы в соц.сетях</span>
+			<div>
                         <a target="_blank" href="https://www.instagram.com/belosnezhka_tm/" class="ig"><img src="catalog/view/theme/SnowWhite/img/instagram.svg"></a>
                         <a target="_blank" href="https://vk.com/club56235121" class="vk"><img src="catalog/view/theme/SnowWhite/img/vk.png"></a>
                         <a target="_blank" href="https://www.facebook.com/Homeartsru-133369520174884/" class="fb"><img src="catalog/view/theme/SnowWhite/img/facebook-logo.png"></a>
                         <a target="_blank" href="https://ok.ru/group/54341480873996" class="ig"><img src="catalog/view/theme/SnowWhite/img/ok.png"></a>
+                        <a target="_blank" href="https://www.youtube.com/channel/UCoIATATaUzt2SYxWAehwE0Q/videos" class="ig"><img src="catalog/view/theme/SnowWhite/img/YT_logo.jpg"></a>
+                        </div>
                     </div>
                     <div class="copy">
                         Копирайт. Все права защищены<br>
 						Разработка сайта - <a href="http://softmg.ru" target="_blank">Soft Media Group</a>
+						тех. поддержка <a href="https://santosha.pro" target="_blank">!</a>
                     </div>
                 </div>
 				<div class="footer-menu col-md-3 col-sm-6">

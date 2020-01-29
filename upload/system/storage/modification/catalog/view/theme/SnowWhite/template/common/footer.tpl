@@ -16,6 +16,7 @@
                     <div class="copy">
                         Копирайт. Все права защищены<br>
 						Разработка сайта - <a href="http://softmg.ru" target="_blank">Soft Media Group</a>
+						тех. поддержка <a href="https://santosha.pro" target="_blank">!</a>
                     </div>
                 </div>
 				<div class="footer-menu col-md-3 col-sm-6">
