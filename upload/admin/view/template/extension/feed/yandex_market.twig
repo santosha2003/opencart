@@ -1,0 +1,190 @@
+{{ header }} {{ column_left }} 
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }} </h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %} 
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }} </a></li>
+        {% endfor %} 
+      </ul>
+    </div>
+  </div>
+<div class="container-fluid">
+    {% if error_warning %} 
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }} 
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %} 
+	 <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ heading_title }}</h3>
+      </div>
+      <div class="panel-body">	
+			<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form" class="form-horizontal">
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-field">{{ entry_status }}</label>
+				 <div class="col-sm-10">
+				 <select name="feed_yandex_market_status" id="input-status" class="form-control">
+					{% if feed_yandex_market_status %} 
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0">{{ text_disabled }} </option>
+					{% else %}   
+					<option value="1">{{ text_enabled }} </option>
+					<option value="0" selected="selected">{{ text_disabled }}</option>
+					{% endif %} 
+				 </select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-field">{{ entry_currency }} </label>
+				<div class="col-sm-10">
+				<select name="feed_yandex_market_currency" class="form-control">
+					{% for currency in currencies %} 
+					{% if currency.code  == feed_yandex_market_currency %} 
+					<option value="{{ currency.code }}" selected="selected">{{ '(' ~ currency.code ~ ') ' ~ currency.title }} </option>
+					{% else %}   
+					<option value="{{ currency.code }}">{{ '(' ~ currency.code ~ ') ' ~ currency.title }} </option>
+					{% endif %} 
+					{% endfor %}
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-field">{{ entry_company }} </label>
+				 <div class="col-sm-10">
+				 <input name="feed_yandex_market_company" type="text" value="{{ feed_yandex_market_company }}" class="form-control"  />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-field">{{ entry_shopname }} </label>
+				<div class="col-sm-10">
+				<input name="feed_yandex_market_shopname" type="text" value="{{ feed_yandex_market_shopname }}" maxlength="20" class="form-control" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-field">{{ entry_category }} </label>
+			
+				<div class="col-sm-10">
+					{% set class = 'odd' %}
+					{% for category in categories %}
+					{% if class == 'even' %}
+						{% set class = 'odd' %}
+					{% else %}
+						{% set class = 'even' %}
+					{% endif %}  
+					<div class="{{ class }}">
+						{% if category.category_id in feed_yandex_market_categories %}
+						<input type="checkbox" name="feed_yandex_market_categories[]" value="{{ category.category_id}}" checked="checked" class="form-control" style="display: inline-block; margin-right: 10px;" />
+							{{ category.name }} 
+						{% else %}   
+						<input type="checkbox" name="feed_yandex_market_categories[]" value="{{ category.category_id }}" class="form-control" style="display: inline-block; margin-right: 10px;" />
+							{{ category.name }} 
+						{% endif %}  
+					</div>
+					{% endfor %}
+					<br>
+					<a class="btn btn-success" onclick="$(this).parent().find(':checkbox').attr('checked', true);"><i class="fa fa-check"></i> {{ text_select_all }} </a>
+					<a class="btn btn-danger" onclick="$(this).parent().find(':checkbox').attr('checked', false);"><i class="fa fa-times"></i> {{ text_unselect_all }} </a></td>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-field">{{ entry_in_stock }}</label>
+                <div class="col-sm-10">
+				<select name="feed_yandex_market_in_stock" class="form-control">
+                    {% for stock_status in stock_statuses %} 
+                    {% if stock_status.stock_status_id == feed_yandex_market_in_stock %} 
+                    <option value="{{ stock_status.stock_status_id }}" selected="selected">{{ stock_status.name }}</option>
+                   	{% else %}   
+                    <option value="{{ stock_status.stock_status_id }}">{{ stock_status.name }} </option>
+                    {% endif %} 
+                    {% endfor %}
+                    </select>
+               </div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-field">{{ entry_out_of_stock }} </label>
+                 <div class="col-sm-10">
+				<select name="feed_yandex_market_out_of_stock" class="form-control">
+                    {% for stock_status in stock_statuses %} 
+                    {% if stock_status.stock_status_id  ==  feed_yandex_market_out_of_stock %} 
+                    <option value="{{ stock_status.stock_status_id }}" selected="selected">{{ stock_status.name }}</option>
+                    {% else %}   
+                    <option value="{{ stock_status.stock_status_id }}">{{ stock_status.name }} </option>
+                    {% endif %} 
+                    {% endfor %} 
+                    </select>
+                 </div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-field">{{ entry_image }}</label>
+                 <div class="col-sm-10">
+				<select name="feed_yandex_market_image" class="form-control">
+                    <option value="1" {% if feed_yandex_market_image == '1' %} selected="selected" {% endif %}>{{ entry_image_single }}</option>
+                    <option value="2" {% if feed_yandex_market_image == '2' %} selected="selected" {% endif %}>{{ entry_image_all }}</option>
+                    </select>
+                 </div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-field">{{ entry_image_size }}</label>
+                 <div class="col-sm-10">
+				<select name="feed_yandex_market_image_size" class="form-control">
+                    <option value="1" {% if feed_yandex_market_image_size == '1' %} selected="selected" {% endif %}>600x600</option>
+                    <option value="2" {% if feed_yandex_market_image_size == '2' %} selected="selected" {% endif %}>{{ entry_image_original }}</option>
+                    </select>
+                 </div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-field"><span data-toggle="tooltip" title="{{ entry_sales_notes_help }}">{{ entry_sales_notes }}</span></label>
+				 <div class="col-sm-10">
+				 <input name="feed_yandex_market_sales_notes" type="text" value="{{ feed_yandex_market_sales_notes }}" class="form-control"  />
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-field">{{ entry_attributes }}</label>
+                <div class="col-sm-10">
+	                <input type="radio" name="feed_yandex_market_attributes" value="1" {% if feed_yandex_market_attributes == '1' %} checked="checked"{% endif %}> {{ text_yes }}  
+					<input type="radio" name="feed_yandex_market_attributes" value="0" {% if not feed_yandex_market_attributes %} checked="checked"{% endif %}> {{ text_no }}
+               </div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-field">{{ entry_options }}</label>
+                <div class="col-sm-10">
+	                <input type="radio" name="feed_yandex_market_options" value="1" {% if feed_yandex_market_options == '1' %} checked="checked"{% endif %}> {{ text_yes }}  
+					<input type="radio" name="feed_yandex_market_options" value="0" {% if not feed_yandex_market_options %} checked="checked"{% endif %}> {{ text_no }}
+               </div>
+			</div>
+			
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-field">{{ entry_description }}</label>
+				 <div class="col-sm-10">
+				 <select name="feed_yandex_market_description" id="input-description" class="form-control">
+					{% if feed_yandex_market_description %} 
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0">{{ text_disabled }} </option>
+					{% else %}   
+					<option value="1">{{ text_enabled }} </option>
+					<option value="0" selected="selected">{{ text_disabled }}</option>
+					{% endif %} 
+				 </select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-field">{{ entry_data_feed }} </label>
+				<div class="col-sm-10">
+				 <input type="text" value="{{ data_feed }}" class="form-control" readonly />
+				</div>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+</div>
+{{ footer }} 

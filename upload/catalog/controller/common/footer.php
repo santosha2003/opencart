@@ -45,6 +45,9 @@ class ControllerCommonFooter extends Controller {
 		$data['wishlist'] = $this->url->link('account/wishlist', '', true);
 		$data['newsletter'] = $this->url->link('account/newsletter', '', true);
 
+        $data['footer_new'] = $this->load->controller('common/footer_new');
+
+
 		$data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));
 
 		// Whos Online
@@ -71,6 +74,11 @@ class ControllerCommonFooter extends Controller {
 
 			$this->model_tool_online->addOnline($ip, $this->customer->getId(), $url, $referer);
 		}
+
+//        $data['subscribe_guest'] = $this->load->conroller('extension/module/newsletters', [
+//            'status' => 1,
+//        ]);
+
 
 		return $this->load->view('common/footer', $data);
 	}

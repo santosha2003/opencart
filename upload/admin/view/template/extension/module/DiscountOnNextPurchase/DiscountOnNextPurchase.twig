@@ -1,0 +1,124 @@
+{{ header }}{{ column_left }}
+<div id="content" class="DiscountOnNextPurchase">
+<script type="text/javascript">
+		NProgress.configure({
+			showSpinner: false,
+			ease: 'ease',
+			speed: 500,
+			trickleRate: 0.2,
+			trickleSpeed: 200 
+		});
+</script>
+   <div class="page-header">
+    <div class="container-fluid">
+      <h1><a href="https://oc3x.ru/moduli-opencart" target="_blank" title="All Modules" style="color:#233746"><i class="fa fa-gift"></i>&nbsp;{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+   {% if (error_warning) %}
+            <div class="alert alert-danger autoSlideUp"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+             <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        {% if (success) %}
+            <div class="alert alert-success autoSlideUp"><i class="fa fa-check-circle"></i> {{ success }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            <script>$('.autoSlideUp').delay(3000).fadeOut(600, function(){ $(this).show().css({'visibility':'hidden'}); }).slideUp(600);</script>
+ 		{% endif %}   
+ 	<div class="panel panel-default">
+        <div class="panel-heading">
+                     <h3 class="panel-title"><i class="fa fa-list"></i>&nbsp;<span style="vertical-align:middle;font-weight:bold;">{{ text_module_settings }}</span></h3>
+            <div class="storeSwitcherWidget">
+            	<div class="form-group">
+                	<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-pushpin"></span>&nbsp;{{ store['name'] }}{{ (store['store_id'] == 0) ? text_default : '' }}&nbsp;<span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button>
+                	<ul class="dropdown-menu" role="menu">
+                    	{% for st in stores %}
+                    		<li><a href="index.php?route={{ module_path }}&store_id={{ st['store_id'] }}&user_token={{ token }}">{{ st['name'] }}</a></li>
+                    	{% endfor %}
+                	</ul>
+            	</div>
+            </div>
+        </div>
+        <div class="panel-body">
+      		<form method="post" enctype="multipart/form-data" id="form">
+                <input type="hidden" name="store_id" value="{{ store['store_id'] }}" />
+                <input type="hidden" name="giftTeaser_status" value="1" />
+                    <div class="tabbable">
+                      <div class="tab-navigation">  
+                      <ul class="nav nav-tabs mainMenuTabs">
+                        <li class="active"><a href="#controlpanel" data-toggle="tab"><i class="icon-wrench"></i> {{ tab_control_panel }} </a></li>
+                        <li><a href="#discount" data-toggle="tab"><i class="icon-arrow-down"></i> {{ tab_discount }} </a></li>
+                        <li class="dropdown">
+                          <a href="#"  data-toggle="dropdown" class="dropdown-toggle"><i class="icon-gift"></i> {{ tab_coupons }}<b class="caret"></b></a>
+                          <ul class="dropdown-menu">
+                            <li><a href="#givenCoupons" data-toggle="tab"/><i class="icon-gift"></i> {{ tab_given_coupons }}</a></li>
+                            <li><a href="#usedCoupons" data-toggle="tab"/><i class="icon-ok"></i>{{ tab_used_coupons }}</a></li>
+                          </ul>
+                        </li>        
+                      </ul>     
+                      <div class="tab-buttons">
+                        <button type="submit" class="btn btn-primary save-changes"><i class="icon-ok"></i> {{ button_save }}</button> 
+                        <a onclick="location = '{{ cancel }}'" class="btn" a>{{ button_cancel }}</a>   
+                      </div>
+                  </div>    
+
+          <div class="tab-content">              
+            <div id="controlpanel" class="tab-pane active">{{ include('/' ~ module_path ~ '/tab_controlpanel.twig') }}</div>
+            <div id="discount" class="tab-pane">{{ include('/' ~ module_path ~ '/tab_discount_list.twig') }}</div>
+            <div id="template" class="tab-pane">{{ include('/' ~ module_path ~ '/tab_templates.twig') }}</div>	
+            <div id="givenCoupons" class="tab-pane"></div>
+            <div id="usedCoupons" class="tab-pane"></div>	
+        </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script> 
+    if (window.localStorage && window.localStorage['currentTab']) {
+    	$('.mainMenuTabs a[href='+window.localStorage['currentTab']+']').trigger('click');  
+    }
+
+    if (window.localStorage && window.localStorage['currentSubTab']) {
+    	$('a[href='+window.localStorage['currentSubTab']+']').trigger('click');  
+    }
+
+    $('.fadeInOnLoad').css('visibility','visible');
+
+    $('.mainMenuTabs a[data-toggle="tab"]').click(function() {
+    	if (window.localStorage) {
+    		window.localStorage['currentTab'] = $(this).attr('href');
+    	}
+    });
+
+    $('a[data-toggle="tab"]:not(.mainMenuTabs a[data-toggle="tab"])').click(function() {
+    	if (window.localStorage) {
+    		window.localStorage['currentSubTab'] = $(this).attr('href');
+    	}
+    });
+
+      $.ajax({
+         url: "index.php?route={{ module_path }}/usedCoupons&user_token={{ token }}",
+         type: 'get',
+         dataType: 'html',
+         success: function(data) { 
+            $('#usedCoupons').html(data);
+          }
+      });
+      $.ajax({
+         url: "index.php?route={{ module_path }}/givenCoupons&user_token={{ token }}",
+         type: 'get',
+         dataType: 'html',
+         success: function(data) { 
+          $('#givenCoupons').html(data);
+        }
+      });
+</script>
+{{ footer }}

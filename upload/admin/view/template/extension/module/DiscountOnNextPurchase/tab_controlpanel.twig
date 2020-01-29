@@ -1,0 +1,34 @@
+<table class="table mainSettingsTable">
+	<tr>
+        <td class="col-xs-2"><h5><strong><span class="required">* </span>{{ module_status_text }}</strong></h5>
+            <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ module_status_text_help }}</span>
+        </td>
+        <td>
+          <div class="col-xs-3">
+              <select name="DiscountOnNextPurchase[Enabled]" class="DiscountOnNextPurchaseEnabled form-control">
+              {% if (data.DiscountOnNextPurchase.Enabled is empty) %}
+                 <option value="yes"  selected=selected>{{ text_enabled }}</option>
+                 <option value="no" selected=selected>{{ text_disabled }}</option>
+                 {% else %}
+                  <option value="yes" {{ ((data.DiscountOnNextPurchase.Enabled is not empty and data.DiscountOnNextPurchase.Enabled == 'yes') ) ? 'selected=selected'  : '' }}>{{ text_enabled }}</option>
+                 <option value="no" {{ ((data.DiscountOnNextPurchase.Enabled is empty or data.DiscountOnNextPurchase.Enabled == 'no') ) ? 'selected=selected'  : '' }}>{{ text_disabled }}</option>
+              {% endif %}
+              </select>
+           </div>
+     	</td>
+     </tr>
+	<tr>
+        <td class="col-xs-2"><h5><strong><span class="required">* </span>{{ admin_notification }}</strong></h5>
+            <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ admin_notification_help|replace({'{email}': email}) }}</span>
+        </td>
+        <td>
+          <div class="col-xs-3">
+              <select name="DiscountOnNextPurchase[admin_notification]" class="form-control">
+                 <option value="yes" {{ ((data.DiscountOnNextPurchase.admin_notification is not empty and data.DiscountOnNextPurchase.admin_notification == 'yes') ) ? 'selected=selected'  : '' }}>{{ text_enabled }}</option>
+                 <option value="no" {{ ((data.DiscountOnNextPurchase.admin_notification is empty or data.DiscountOnNextPurchase.admin_notification == 'no') ) ? 'selected=selected'  : '' }}>{{ text_disabled }}</option>
+              </select>
+           </div>
+         </td>
+     </tr>
+   </tbody>
+</table> 

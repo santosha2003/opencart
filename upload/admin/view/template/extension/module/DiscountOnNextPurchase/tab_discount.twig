@@ -1,0 +1,375 @@
+{% set discount_name = moduleName ~ '[Discount][' ~ discount.id ~ ']' %}
+{% if moduleData.Discount[discount.id] is defined %}
+	{% set discount_data = moduleData.Discount[discount.id] %}
+{% else %}
+	{% set discount_data = {} %}
+{% endif %}
+
+<table id="discount_{{ discount.id }}" class="table tab-pane discounts">
+<input type="hidden" id="tabId" value="{{ discount.id }} ">
+
+	<tr>
+    	<td  class="col-xs-3">
+        	<h5><span class="required">* </span><strong>Статус {{ discount.id }} скидки</strong></h5>
+			<span class="help"><i class="fa fa-info-circle"></i>&nbsp;Включить или отключить скидку.</span>	
+        </td>
+        <td>
+        	<div  class="col-xs-4">
+                <select id="Checker" name="{{ discount_name }}[Enabled]" class="form-control">
+                      <option value="yes" {{ ((discount_data.Enabled is not empty and discount_data.Enabled == 'yes') ) ? 'selected=selected'  : ''  }}>Включено</option>
+                      <option value="no"  {{ ((discount_data.Enabled is empty or discount_data.Enabled== 'no') ) ? 'selected=selected'  : ''  }}>Отключено</option>
+                </select>
+            </div>        	
+        </td>
+    </tr>
+	<tr>
+        <td class="col-xs-3"><h5><strong><span class="required">* </span>{{ select_order_status_text }}</strong></h5>
+            <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ select_order_status_text_help }}</span>
+        </td>
+        <td>
+          <div class="col-xs-4">
+            <select required name="{{ discount_name }}[order_status_id]" class="form-control">
+              <option disabled selected value="">{{ select_order_status }}</option>
+              {% if (orderStatuses is not empty) %}
+              {% for orderStatus in orderStatuses %}
+              <option value="{{ orderStatus.order_status_id }}" 
+                {% if(discount_data.order_status_id is not empty and orderStatus.order_status_id == discount_data.order_status_id) %}
+                {{ 'selected="selected"' }}{% elseif (discount_data.order_status_id is empty and orderStatus.name == 'Complete') %}{{'selected="selected"'}}{% endif %}>{{ orderStatus.name }} 
+                </option>
+              {% endfor %}
+              {% endif %}
+            </select> 
+           </div>
+      </td>
+    </tr>
+	<tr> 
+      <td><h5><span class="required">* </span><strong>{{ discount_order_total }}</strong></h5></td> 
+      <td> 
+        <div class="col-xs-4">
+            <div class="input-group"> 
+              <input class="brSmallField form-control" type="number" required="required" min="0" name="{{ discount_name }}[order_total]" value="{{ (discount_data.order_total is not empty) ? discount_data.order_total : '0' }}"> 
+              <span class="input-group-addon" style="border-radius: 0px 3px 3px 0px; border-left:0px;">{{ currency }}</span>
+            </div> 
+         </div>
+      </td> 
+    </tr>
+	<tr>
+        <td class="col-xs-3"><h5><strong><span class="required">* </span>{{ text_discount_type }}</strong></h5>
+        </td>
+      <td> 
+		<div class="col-xs-4">
+            <select id="discount_type_{{ discount.id }}" name="{{ discount_name }}[discount_type]" class="form-control">  
+              <option value="P">{{ text_percentage }}</option> 
+              <option value="F" {{ (discount_data.discount_type is not empty and discount_data.discount_type == "F") ? 'selected' : '' }}>{{ text_fixed_amount }}</option> 
+            </select> 
+         </div>
+      </td> 
+    </tr> 
+	<tr>
+        <td class="col-xs-3"><h5><strong><span class="required">* </span>{{ text_discount }}</strong></h5>
+        </td>
+      <td> 
+      	<div class="col-xs-4">
+            <div class="input-group"> 
+              <input id="discount_{{ discount.id }}" type="number" required="required" min="0" name="{{ discount_name }}[discount]" class="brSmallField form-control" value="{{ (discount_data.discount is not empty) ? discount_data.discount : 5 }}" > 
+              <span class="input-group-addon" style="border-radius: 0px 3px 3px 0px; border-left:0px;"> 
+                <p style="display:none; margin-bottom:0px;" id="currencyAddonForm_{{ discount.id }}">{{ currency }}</p> 
+                <p style="display:none; margin-bottom:0px;" id="percentageAddonForm_{{ discount.id }}">%</p> 
+              </span> 
+            {% if (err_discount is not empty) %}
+                <span class="error">{{ err_discount }}foo</span>
+            {% endif %}
+            </div>
+         </div>
+      </td> 
+    </tr> 
+	<tr>
+        <td class="col-xs-3"><h5><strong><span class="required">* </span>{{ total_amount }}</strong></h5>
+        <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ total_amount_help }}</span>
+        </td>
+      	<td> 
+            <div class="col-xs-4">
+                <div class="input-group"> 
+                  <input class="brSmallField form-control" type="number" required="required" min="0" name="{{ discount_name }}[total_amount]" value="{{ (discount_data.total_amount is not empty) ? discount_data.total_amount : 0 }}"> 
+                  <span class="input-group-addon" style="border-radius: 0px 3px 3px 0px; border-left:0px;">{{ currency }}</span>
+                {% if (err_total_amount is defined) %}
+                    <span class="error">{{ err_total_amount }}</span>
+                {% endif %}
+                </div> 
+             </div>
+      	</td> 
+    </tr>
+    <tr>
+        <td class="col-xs-3"><h5><strong><span class="required">* </span>{{ customer_login }}</strong></h5>
+        <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ customer_login_help }}</span>
+        </td>
+       <td> 
+		<div class="col-xs-4">
+            <select name="{{ discount_name }}[customer_login]" class="form-control">  
+              <option value="1">{{ text_enabled }}</option> 
+              <option value="0" {{ (discount_data.customer_login is defined and discount_data.customer_login == "0") ? 'selected' : '' }}>{{ text_disabled }}</option> 
+            </select> 
+         </div>
+      </td> 
+    </tr>
+    <tr>
+        <td class="col-xs-3"><h5><strong><span class="required">* </span>{{ coupon_validity }}</strong></h5>
+        <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ coupon_validity_help }}</span>
+        </td>
+      	<td> 
+            <div class="col-xs-4">
+                <div class="input-group">
+                  <input type="number" required="required" min='1' value="{{ (discount_data.days_after is not empty) ? discount_data.days_after : 7 }}" class="brSmallField form-control" name="{{ discount_name }}[days_after]">
+                  <span class="input-group-addon" style="border-radius: 0px 3px 3px 0px; border-left:0px;">дней</span>
+                  {% if (err_coupon_validity is defined) %}
+                    <span class="error">{{ err_coupon_validity }}</span>
+                {% endif %}
+                </div>
+            </div>
+       </td>
+    </tr>
+    
+   <tr>
+        <td class="col-xs-3"><h5><strong><span class="required">* </span>{{ entry_product }}</strong></h5>
+        </td>
+      	<td> 
+            <div class="col-xs-4">
+                <select class="toggle-fade-next form-control select_products" name="{{ discount_name }}[selected_products]" style="margin:15px auto;">
+                  <option value="all" {{ (discount_data.selected_products is not empty and discount_data.selected_products=='all' ) ? 'selected="selected"' : '' }}>{{ text_all_products }}</option>
+                  <option value="specific" {{ (discount_data.selected_products is not empty and discount_data.selected_products=='specific' ) ? 'selected="selected"' : '' }}>{{ text_products }}</option>
+                </select>
+                <div style="display:block; display:none;">
+                  <input type="text" name="{{ discount_name }}[product]" value="" class="category-autocomplete form-control" placeholder="Type a product name here.." />
+                  <div id="coupon-product_{{ discount.id }}" class="scrollbox well well-sm" style="height:140px;">
+                    {% if (discount_data.coupon_product is defined) %}
+                    {% for coupon_product in discount_data.coupon_product %}
+                    
+                    <div id="coupon-product{{ coupon_product.product_id }}">
+                      <i class="fa fa-minus-circle" style="margin-right: 5px;"></i>{{ coupon_product.name }}
+                      <input type="hidden" name="{{ discount_name }}[coupon_product][]" value="{{ coupon_product.product_id }}" />
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                  </div>
+                </div>
+           </div>
+      </td>
+    </tr>
+
+  <tr>
+        <td class="col-xs-3"><h5><strong><span class="required">* </span>{{ entry_category }}</strong></h5>
+        </td>
+        <td>
+            <div class="col-xs-4">  
+            <select class="toggle-fade-next form-control select_categories" name="{{ discount_name }}[selected_categories]" style="margin:15px auto;">
+              <option value="all" {{ (discount_data.selected_products is not empty and discount_data.selected_categories=='all' ) ? 'selected="selected"' : '' }}>{{ text_all_categories }}</option>
+              <option value="specific" {{ (discount_data.selected_products is not empty and discount_data.selected_categories=='specific') ? 'selected="selected"' : '' }}>{{ text_categories }}</option>
+            </select>
+            <div style="display:block; display:none;">
+              <input type="text" name="{{ discount_name }}[category]" value="" class="category-autocomplete form-control" placeholder="Type a category name here.." />
+              <div id="coupon-category_{{ discount.id }}" class="scrollbox well well-sm" style="height:140px;">
+                {% if (discount_data.coupon_category is not empty) %}
+                {% for coupon_category in discount_data.coupon_category %}
+                <div id="coupon-category{{ coupon_category.category_id }}">
+                  <i class="fa fa-minus-circle"></i>{{ coupon_category.name }}
+                  <input type="hidden" name="{{ discount_name }}[coupon_category][]" value="{{ coupon_category.category_id }}" />
+                </div>
+                {% endfor %}
+                {% endif %}
+              </div>
+            </div>
+         </div>
+      </td>
+    </tr>
+    <tr>
+    	 <td class="userMessageLegend"><h5><strong><span class="required">*</span> {{ user_mail }}</strong></h5>
+      		<span class="help"><i class="fa fa-info-circle"></i>{{ user_mail_help }}</span>
+	  	</td>
+        <td>
+        	<ul class="nav nav-tabs followup_tabs">
+                <h5><strong>Многоязычные настройки:</strong></h5>
+                {% for language in languages %}
+                    <li {{ (loop.first) ? 'class="active"' : '' }}><a href="#tab-{{ discount.id }}-{{ language.language_id }}" data-toggle="tab"><img src="{{ language.flag_url }}"/> {{ language.name }}</a></li>
+                {% endfor %}
+			</ul>
+              <div class="tab-content">
+		{% for language in languages %}
+            <div id="tab-{{ discount.id }}-{{ language.language_id }}" language-id="{{ language.language_id }}" class="row-fluid tab-pane language {{ (loop.first) ? 'active' : '' }}">
+                <div class="row">
+                	<div class="col-md-6">
+                 <label for="{{ discount_name }}[subject][{{ language.language_id }}]">
+                    <span class="required">*</span> {{ subject_text }} :
+                  </label>  
+                  <input type="text" required="required" class="subject form-control" name="{{ discount_name }}[subject][{{ language.language_id }}]" value="{{ (discount_data.subject[language.language_id] is not empty) ? discount_data.subject[language.language_id] : default_subject }}" />    
+                   </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-6">
+                    	<textarea name="{{ discount_name }}[message][{{ language.language_id }}]"  class="form-control" id="message_{{ language.language_id }}_{{ discount.id }}">
+                            {{ (discount_data.message[language.language_id] is not empty) ? discount_data.message[language.language_id] : default_message }}
+                  		</textarea>
+                    </div>
+                </div>
+			</div>
+        {% endfor %}
+	</div>
+        </td>      
+    </tr>
+  </tbody>
+  <script type="text/javascript"><!--
+     {% for language in languages %}
+         $("#message_{{ language.language_id }}_{{ discount.id }}").summernote({height: 300});
+     {% endfor %}
+</script>
+  <script> 
+if($('#discount_type_{{ discount.id }}').val() == 'P'){ 
+  $('#percentageAddonForm_{{ discount.id }}').show(); 
+} else { 
+  $('#currencyAddonForm_{{ discount.id }}').show(); 
+} 
+
+$('#discount_type_{{ discount.id }}').on('change', function(e){  
+  if($(this).val() == 'P') { 
+    $('#percentageAddonForm_{{ discount.id }}').show(); 
+    $('#currencyAddonForm_{{ discount.id }}').hide();     } else { 
+      $('#currencyAddonForm_{{ discount.id }}').show(); 
+      $('#percentageAddonForm_{{ discount.id }}').hide(); 
+    }  
+  });     
+
+function validateNumber(input) {  
+  var regex = /[0-9]|\./; 
+  if(!regex.test(input.val())) { 
+    input.css({'background':'#f2dede'}); 
+    return false; 
+  } else { 
+    input.css({'background':'#fff'}); 
+    return true; 
+  } 
+}    
+
+if ($('#discount_type_{{ discount.id }}').val() == 'P') {
+  $('#percentageAddon').show();
+  $('#discount_{{ discount.id }}').attr('max','100');
+} else {
+  $('#currencyAddon').show();
+  $('#discount_{{ discount.id }}').attr('max','');
+}
+
+$('#discount_type_{{ discount.id }}').on('change', function (e) { 
+  if ($(this).val() == 'P') {
+    $('#percentageAddon').show();
+    $('#currencyAddon').hide();
+    $('#discount_{{ discount.id }}').attr('max','100');
+  } else {
+    $('#currencyAddon').show();
+    $('#percentageAddon').hide();
+    $('#discount_{{ discount.id }}').attr('max','');
+  }
+});
+
+// coupon products, categories
+   
+
+
+   $('input[name=\'{{ discount_name }}[product]\']').autocomplete({
+    delay: 500,
+    source: function (request, response) {
+      $.ajax({
+        url: 'index.php?route=catalog/product/autocomplete&user_token=' + getURLVar('user_token') + '&filter_name=' + encodeURIComponent(request),
+        dataType: 'json',
+        success: function (json) {
+          response($.map(json, function (item) {
+            return {
+              label: item.name,
+              value: item.product_id
+            }
+          }));
+        }
+      });
+    },	
+		'select': function(item) {
+		  $('input[name=\'{{ discount_name }}[product]\']').val('');
+		  ////debugger;
+//			console.log($(this).parents('table').children('#tabId').val());
+//			var currenttab;
+//			currenttab = $(this).parents('table').children('#tabId').val()
+		  $('#coupon-product_{{ discount.id }}'+ item['value']).remove();
+		  $('#coupon-product_{{ discount.id }}').append('<div id="coupon-product' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="{{ discount_name }}[coupon_product][]" value="' + item['value'] + '" /></div>');	
+		  $('input[name=\'product\']').val('');
+
+		}
+	});
+	$('#coupon-product_{{ discount.id }}').delegate('.fa-minus-circle', 'click', function() {
+		$(this).parent().remove();
+	});	  
+
+
+    $('input[name=\'{{ discount_name }}[category]\']').autocomplete({
+    delay: 500,
+    source: function (request, response) {
+      $.ajax({
+        url: 'index.php?route=catalog/category/autocomplete&user_token=' + getURLVar('user_token') + '&filter_name=' + encodeURIComponent(request),
+        dataType: 'json',
+        success: function (json) {
+          response($.map(json, function (item) {
+            return {
+              label: item.name,
+              value: item.category_id
+            }
+          }));
+        }
+      });
+    },	
+		'select': function(item) {
+		  $('input[name=\'{{ discount_name }}[category]\']').val('');
+		  $('#coupon-category_{{ discount.id }}' + item['value']).remove();
+		  
+		 $('#coupon-category_{{ discount.id }}').append('<div id="coupon-category' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="{{ discount_name }}[coupon_category][]" value="' + item['value'] + '" /></div>');	
+		 
+
+		}
+	});
+	$('#coupon-category_{{ discount.id }}').delegate('.fa-minus-circle', 'click', function() {
+		$(this).parent().remove();
+	});	  
+                      
+
+$(document).ready(function(e) {
+  if ($('select[name="{{ discount_name }}[selected_products]"]').val() == 'all') {
+    $('select[name="{{ discount_name }}[selected_products]"]').next('div').fadeOut();
+  } else {
+    $('select[name="{{ discount_name }}[selected_products]"]').next('div').fadeIn(); 
+  }
+
+  if ($('select[name="{{ discount_name }}[selected_categories]"]').val() == 'all') {
+    $('select[name="{{ discount_name }}[selected_categories]"]').next('div').fadeOut();
+  } else {
+    $('select[name="{{ discount_name }}[selected_categories]"]').next('div').fadeIn(); 
+  }
+});
+
+
+$(document).on('change','.toggle-fade-next', function(){
+  if ($(this).val() == 'all') {
+    $(this).next('div').fadeOut();
+  } else {
+    $(this).next('div').fadeIn();  
+  }
+});
+
+$(document).on('change','.select_products', function(){
+  if ($(this).val() == 'all') {
+	$('input[name="{{ discount_name }}[coupon_product][]"]').parent().remove();
+  } else {  }
+});
+
+$(document).on('change','.select_categories', function(){
+  if ($(this).val() == 'all') {
+	$('input[name="{{ discount_name }}[coupon_category][]"]').parent().remove();
+  } else { }
+});
+
+</script>
+</table>

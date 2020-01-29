@@ -15,6 +15,7 @@ $_['text_content_top']          = 'Вверху страницы';
 $_['text_content_bottom']       = 'Внизу страницы';
 $_['text_column_left']          = 'Левая колонка';
 $_['text_column_right']         = 'Правая колонка';
+$_['text_footer_new'] = 'Футер';
 
 // Column
 $_['column_name']          		= 'Название макета';

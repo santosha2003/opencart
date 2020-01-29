@@ -913,6 +913,7 @@ h1 {
 }
 
 .page-prev {
+	height: 415px;
 	min-height: 415px;
 	margin-bottom: 40px;
 	text-align: center;

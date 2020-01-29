@@ -1,0 +1,96 @@
+<div id="couponsList">
+<table class="table list">
+  <thead>
+    <tr>
+         <td class="left">{% if (sort == 'oc.name') %}
+        <a href="{{ sort_name }}" class="{{ order|lower }}">{{ column_name }}</a>
+        {% else %}
+        <a href="{{ sort_name }}">{{ column_name }}</a>
+        {% endif %}</td>
+        
+       <td class="left">{% if (sort == 'ord.email') %}
+        <a href="{{ sort_email }}" class="{{ order|lower }}">{{ column_email }}</a>
+        {% else %}
+        <a href="{{ sort_email }}">{{ column_email }}</a>
+        {% endif %}</td>
+        
+      <td class="left">{% if (sort == 'dc.code') %}
+        <a href="{{ sort_code }}" class="{{ order|lower }}">{{ column_code }}</a>
+        {% else %}
+        <a href="{{ sort_code }}">{{ column_code }}</a>
+        {% endif %}</td>
+      <td class="right">{% if (sort == 'oc.discount') %}
+        <a href="{{ sort_discount }}" class="{{ order|lower }}">{{ column_discount }}</a>
+        {% else %}
+        <a href="{{ sort_discount }}">{{ column_discount }}</a>
+        {% endif %}</td>
+      <td class="left">{% if (sort == 'oc.date_start') %}
+        <a href="{{ sort_date_start }}" class="{{ order|lower }}">{{ column_date_start }}</a>
+        {% else %}
+        <a href="{{ sort_date_start }}">{{ column_date_start }}</a>
+        {% endif %}</td>
+      <td class="left">{% if (sort == 'oc.date_end') %}
+        <a href="{{ sort_date_end }}" class="{{ order|lower }}">{{ column_date_end }}</a>
+        {% else %}
+        <a href="{{ sort_date_end }}">{{ column_date_end }}</a>
+        {% endif %}</td>
+      <td class="left">{% if (sort == 'oc.status') %}
+        <a href="{{ sort_status }}" class="{{ order|lower }}">{{ column_status }}</a>
+        {% else %}
+        <a href="{{ sort_status }}">{{ column_status }}</a>
+        {% endif %}</td> 
+    </tr>
+  </thead>
+ 
+  <tbody>
+    {% if (coupons is not empty) %}
+    {% for coupon in coupons %}
+    <tr>
+      <td class="left">{{ coupon.name }}</td>
+      <td class="left">{{ coupon.email }}</td>
+      <td class="left">{{ coupon.code }}</td>
+      <td class="right">{{ coupon.discount }}</td>
+      <td class="left">{{ coupon.date_start }}</td>
+      <td class="left">{{ coupon.date_end }}</td>
+      <td class="left">{{ coupon.status }}</td>
+    </tr>
+    {% endfor %}
+    {% else %}
+    <tr>
+      <td class="center" colspan="7">{{ text_no_results }}</td>
+    </tr>
+    {% endif %}
+  </tbody>
+</table>
+
+<div class="pagination">{{ pagination }}</div>
+</div>      
+<script>
+$(document).ready(function(){
+	$(document).on('click', '.pagination li a', function(e){
+		e.preventDefault();
+		$.ajax({
+			url: this.href,
+			type: 'get',
+			dataType: 'html',
+			success: function(data) {				
+				$("#couponsList").html(data);
+			}
+		});
+	 });
+   });
+   
+  $(document).ready(function(){
+	$('#couponsList .list thead tr td a').click(function(e){
+		e.preventDefault();
+		$.ajax({
+			url: this.href,
+			type: 'get',
+			dataType: 'html',
+			success: function(data) {				
+				$("#couponsList").html(data);
+			}
+		});
+	 });
+   });
+  </script>

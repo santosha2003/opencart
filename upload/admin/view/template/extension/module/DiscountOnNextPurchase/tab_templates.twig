@@ -1,0 +1,38 @@
+  <table class="table templateForm"> 
+    <tr>
+      <td class="userMessageLegend"><h5><strong><span class="required">*</span> {{ user_mail }}</strong></h5>
+      	<span class="help"><i class="fa fa-info-circle"></i>{{ user_mail_help }}</span>
+	  </td>
+      <td>
+        <div class="tabbable">
+          <div class="tab-navigation">
+            <ul class="nav nav-tabs mainMenuTabs">
+            {% for language in languages %}
+              <li class="{{ (loop.first) ? 'active' : '' }}"><a href="#email_{{ language.language_id }}" data-toggle="tab"><img src="{{ language.flag_url }}" title="{{ language.name }}" /></a></li>
+            {% endfor %}
+          </div>
+          <div class="tab-content">
+            {% for language in languages %}
+                <div class="emailLanguageWrapper tab-pane {{ (loop.first) ? 'active' : '' }}" id="email_{{ language.language_id }}">
+                  <label for="DiscountOnNextPurchase[subject][{{ language.language_id }}]">
+                    <span class="required">*</span> {{ subject_text }} :
+                  </label>  
+                  <input type="text" required="required" class="subject form-control" name="DiscountOnNextPurchase[subject][{{ language.language_id }}]" value="{{ (data.DiscountOnNextPurchase.subject[language.language_id] is not empty) ? data.DiscountOnNextPurchase.subject[language.language_id] : default_subject }}" />    
+                   {% if (error_subject[language.language_id] is defined) %}
+                      <span class="error">{{ error_subject[language.language_id] }}</span>
+                   {% endif %}
+                  <textarea name="DiscountOnNextPurchase[message][{{ language.language_id }}]"  class="form-control" id="message_{{ language.language_id }}">
+                    {{ (data.DiscountOnNextPurchase.message[language.language_id] is not empty) ? data.DiscountOnNextPurchase.message[language.language_id] : default_message }}
+                  </textarea>
+                </div>
+            {% endfor %}
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
+<script type="text/javascript"><!--
+    {% for language in languages %}
+		$("#message_{{ language.language_id }}").summernote({height: 300});
+    {% endfor %}
+</script> 

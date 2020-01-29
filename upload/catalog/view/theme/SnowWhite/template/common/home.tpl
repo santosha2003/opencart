@@ -27,12 +27,6 @@
             </div>
         </div>
     </section>
-    <section class="tags">
-        <div class="container">
-            <div class="row">
-                <p><?=$column_right?></p>
-            </div>
-        </div>
-    </section>
+    <?=$column_right?>
    
 <?=$footer?>

@@ -1,0 +1,88 @@
+<div class="tabbable tabs-left" id="discount_tabs">
+	
+    <ul class="nav nav-tabs discount-list">
+        <li class="static"><a class="addNewDiscount"><i class="fa fa-plus"></i> {{text_add_discount}} </a></li>
+        {% if (moduleData.Discount is defined) %}
+            {% for discount in moduleData.Discount %}
+            <li><a href="#discount_{{ discount.id }}" data-toggle="tab" data-discount-id="{{ discount.id }}"><i class="fa fa-list-alt"></i> Скидка {{ discount.id }} <i class="fa fa-minus-circle removeDiscount"></i>
+                <input type="hidden" name="{{ moduleName }}[Discount][{{ discount.id }}][id]" value="{{ discount.id }}" />
+                </a> </li>
+            {% endfor %}
+        {% endif %}
+    </ul>
+    <div class="tab-content discount-settings">
+		{% if moduleData.Discount is defined %}
+			{% for discount in moduleData.Discount %}
+				{{ include('/' ~ module_path ~ '/tab_discount.twig') }}
+			{% endfor %}
+		{% endif %}
+    </div>
+</div>
+<script type="text/javascript"><!--
+// Add discount
+function addNewDiscount() {
+	count = $('.discount-list li:last-child > a').data('discount-id') + 1 || 1;
+
+	var ajax_data = {};
+	ajax_data.user_token = '{{ token }}';
+	ajax_data.store_id = '{{ store.store_id }}';
+	ajax_data.discount_id = count;
+	
+	$.ajax({
+		url: 'index.php?route={{ module_path }}/get_discount_settings',
+		data: ajax_data,
+		dataType: 'html',
+		beforeSend: function() {
+			NProgress.start();
+		},
+		success: function(settings_html) {
+		$('.discount-settings').append(settings_html);
+	
+			if (count == 1) { $('a[href="#discount_'+ count +'"]').tab('show'); }
+			tpl 	= '<li>';
+			tpl 	+= '<a href="#discount_'+ count +'" data-toggle="tab" data-discount-id="'+ count +'">';
+			tpl 	+= '<i class="fa fa-list-alt"></i> Скидка '+ count;
+			tpl 	+= '<i class="fa fa-minus-circle removeDiscount"></i>';
+			tpl 	+= '<input type="hidden" name="{{ moduleName }}[Discount]['+ count +'][id]" value="'+ count +'"/>';
+			tpl 	+= '</a>';
+			tpl	+= '</li>';
+			
+			$('.discount-list').append(tpl);
+			
+			NProgress.done();
+			$('.discount-list').children().last().children('a').trigger('click');
+			window.localStorage['currentSubTab'] = $('.discount-list').children().last().children('a').attr('href');
+			$('.removeDiscount').on('click', function(e) { removeDiscount(this); });
+		}
+	});
+}
+
+// Remove discount
+function removeDiscount(e) {
+	tab_link = $(e).parent();
+	tab_pane_id = tab_link.attr('href');
+	
+	var confirmRemove = confirm('Are you sure you want to remove ' + tab_link.text().trim() + '?');
+	
+	if (confirmRemove == true) {
+		tab_link.parent().remove();
+		$(tab_pane_id).remove();
+		
+		if ($('.discount-list').children().length > 1) {
+			$('.discount-list > li:nth-child(2) a').tab('show');
+			window.localStorage['currentSubTab'] = $('.discount-list > li:nth-child(2) a').attr('href');
+		}
+	}
+	
+}
+
+// Events for the Add and Remove buttons
+$(document).ready(function() {
+	// Add New Label
+	$('.addNewDiscount').click(function(e) { addNewDiscount(); });
+	// Remove Label
+	$('.removeDiscount').on('click', function(e) { removeDiscount(this); });
+});
+
+
+</script>

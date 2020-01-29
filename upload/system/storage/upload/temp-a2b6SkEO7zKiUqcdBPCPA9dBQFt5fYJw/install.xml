@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <name>Y.CMS for Opencart 3.x</name>
+    <code>ycms.2.0</code>
+    <version>1.2.6</version>
+    <author>Yandex.Money</author>
+    <!-- Вставка кнопки в историю заказов-->
+    <file path="catalog/controller/account/order.php">
+        <operation error="skip">
+            <search><![CDATA[// History]]></search>
+            <add position="before"><![CDATA[
+            $this->language->load('extension/payment/yandex_money');
+            if ($order_info['payment_method'] == $this->language->get('kassa_title') || $order_info['payment_method'] == $this->language->get('p2p_title')) {
+               $this->session->data['order_id'] = $this->request->get['order_id'];
+               $data['yandex_money'] = $this->load->controller('extension/payment/yandex_money');
+            }]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/account/order_info.twig">
+        <operation error="skip">
+            <search><![CDATA[</tfoot>]]></search>
+            <add position="before"><![CDATA[
+            {% if yandex_money is defined and yandex_money %}
+            <tr>
+                <td colspan="{{ products ? '6' : '5' }}">{{ yandex_money }}</td>
+            </tr>
+            {% endif %}
+        ]]></add>
+        </operation>
+    </file>
+    <!-- загружаем вместе с заказами код способа оплаты -->
+    <file path="admin/model/sale/order.php">
+        <operation error="skip">
+            <search regex="true"><![CDATA[~o.date_added, o.date_modified FROM~]]></search>
+            <add><![CDATA[o.date_added, o.date_modified, o.payment_code, o.email, o.order_status_id FROM]]></add>
+        </operation>
+        <operation error="skip">
+            <search regex="true"><![CDATA[/\$query\s=\s\$this->db->query\(\$sql\);\s+return\s\$query->rows;/]]></search>
+            <add><![CDATA[
+        $query = $this->db->query($sql);
+
+        $result = array();
+        $orderIds = array();
+        foreach ($query->rows as $record) {
+            if ($record['payment_code'] === 'yandex_money') {
+                $orderIds[] = $record['order_id'];
+            }
+            $result[$record['order_id']] = $record;
+        }
+        if (!empty($orderIds)) {
+            $sql = 'SELECT `order_id`, `payment_id`, `status` FROM `' . DB_PREFIX . 'ya_money_payment` WHERE `order_id` IN (' . implode(',', $orderIds) . ')';
+            $recordSet = $this->db->query($sql);
+            foreach ($recordSet->rows as $record) {
+                $result[$record['order_id']]['yandex_money_payment_id'] = $record['payment_id'];
+                $result[$record['order_id']]['yandex_money_payment_status'] = $record['status'];
+            }
+            $sql = 'SELECT `order_id`, `refund_id`, `status`, `amount` FROM `' . DB_PREFIX . 'ya_money_refunds` WHERE `order_id` IN (' . implode(',', $orderIds) . ') AND `status` <> \'canceled\'';
+            $recordSet = $this->db->query($sql);
+            foreach ($recordSet->rows as $record) {
+                if (!isset($result[$record['order_id']]['refund_amount'])) {
+                    $result[$record['order_id']]['refund_amount'] = 0;
+                }
+                $result[$record['order_id']]['refund_amount'] += $record['amount'];
+            }
+        }
+
+        return array_values($result);
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/language/{english,russian,en-gb,ru-ru}/sale/order.php">
+        <operation error="skip">
+            <search regex="true"><![CDATA[~(\$_\[\'text_add\'\])~]]></search>
+            <add><![CDATA[
+                $_['button_invoice_kassa'] = 'Выставление счета';
+                $_['text_add']
+            ]]></add>
+        </operation>
+    </file>
+    <file path="system/library/mail.php">
+        <operation error="skip">
+            <search><![CDATA[basename(urlencode($attachment))]]></search>
+            <add><![CDATA[urlencode(basename($attachment))]]></add>
+        </operation>
+    </file>
+    <!-- -->
+    <file path="admin/controller/sale/order.php">
+        <operation error="skip">
+            <search><![CDATA['shipping_code' => $result['shipping_code'],]]></search>
+            <add position="after"><![CDATA[
+                'payment_code'   => (isset($result['payment_code']) && $this->config->get('yandex_money_kassa_enabled') && $this->config->get('yandex_money_kassa_invoice') && $result['order_status_id'] == 1) ? $result['payment_code'] : '',
+                'payment_status' => (isset($result['yandex_money_payment_status']) ? $result['yandex_money_payment_status'] : ''),
+                'email'          => (isset($result['email']) && $this->config->get('yandex_money_kassa_enabled')) ? $result['email'] : '',
+                'refund_amount'  => (isset($result['refund_amount']) ? $result['refund_amount'] : ''),
+                'refund_url'     => (isset($result['payment_code']) && $result['payment_code'] == 'yandex_money') ? $this->url->link('extension/payment/yandex_money/refund', 'order_id='.$result['order_id'].'&user_token='.$this->session->data['user_token'], true) : '',
+                'capture_url'    => (isset($result['payment_code']) && $result['payment_code'] == 'yandex_money') ? $this->url->link('extension/payment/yandex_money/capture', 'order_id='.$result['order_id'].'&user_token='.$this->session->data['user_token'], true) : '',
+            ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$data['user_token'] = $this->session->data['user_token'];]]></search>
+            <add position="after"><![CDATA[
+        if ($this->config->get('yandex_money_kassa_enabled')) {
+            $data['button_invoice_kassa'] = $this->language->get('button_invoice_kassa');
+            $data['store_url'] = $this->request->server['HTTPS'] ? HTTPS_CATALOG : HTTP_CATALOG;
+        }
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/view/template/sale/order_list.twig">
+        <operation error="skip">
+            <search>
+                <![CDATA[<li><a href="{{ order.edit }}"><i class="fa fa-pencil"></i> {{ button_edit }}</a></li>]]></search>
+            <add position="after"><![CDATA[
+                {% if order.payment_code is defined and order.payment_code == 'yandex_money' %}
+                    <li><a href="javascript://" class="invoice-button" data-order_id="{{ order.order_id }}" data-customer="{{ order.customer }}" data-email="{{ order.email }}"><i class="fa fa-envelope"></i> Выставить счёт</a></li>
+                {% endif %}
+                {% if order.payment_status is defined and order.payment_status == 'succeeded' %}
+                    <li><a href="{{ order.refund_url }}"><i class="fa fa-repeat"></i> Возвраты</a></li>
+                {% endif %}
+                {% if order.payment_status is defined and order.payment_status == 'waiting_for_capture' %}
+                    <li><a href="{{ order.capture_url }}"><i class="fa fa-check"></i> Подтверждение платежа</a></li>
+                {% endif %}
+            ]]></add>
+        </operation>
+        <operation error="skip">
+            <search><![CDATA[$('input[name^=\'selected\']:first').trigger('change');]]></search>
+            <add position="after"><![CDATA[//
+            jQuery('.invoice-button').click(function(e) {
+                var node = this;
+                var text = 'Вы действительно хотите отправить счёт пользователю ' + node.dataset.customer + ' на адрес ' + node.dataset.email + '?';
+                if (confirm(text)) {
+                    jQuery.ajax({
+                        url: '{{ store_url }}admin/index.php?route=extension/payment/yandex_money/sendmail&user_token={{ user_token }}&order_id=' + node.dataset.order_id,
+                        dataType: 'json',
+                        crossDomain: true,
+                        beforeSend: function() {
+                            jQuery(node).button('loading');
+                        },
+                        complete: function() {
+                            jQuery(node).button('reset');
+                        },
+                        success: function(json_main) {
+                            jQuery('.alert').remove();
+                            if (json_main['error']) {
+                                $('#content > .container-fluid').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json_main['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                            }
+                            if (json_main['success']) {
+                                $('#content > .container-fluid').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json_main['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                                var token = '';
+                                $.ajax({
+                                    url: '{{ store_url }}index.php?route=api/login',
+                                    type: 'post',
+                                    data: 'key={{ api_key }}',
+                                    dataType: 'json',
+                                    crossDomain: true,
+                                    success: function(json) {
+                                        if (json['error']) {
+                                            if (json['error']['key']) {
+                                                $('#content > .container-fluid').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error']['key'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                                            }
+                                            if (json['error']['ip']) {
+                                                $('#content > .container-fluid').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error']['ip'] + ' <button type="button" id="button-ip-add" data-loading-text="{{ text_loading }}" class="btn btn-danger btn-xs pull-right"><i class="fa fa-plus"></i> {{ button_ip_add }}</button></div>');
+                                            }
+                                        }
+                                        if (json['token']) {
+                                            token = json['token'];
+                                            $.ajax({
+                                                url: '{{ store_url }}index.php?route=api/order/history&user_token='+ token +'&order_id=' + $(node).val(),
+                                                type: 'post',
+                                                data: 'order_status_id=1&notify=0&override=0&append=0&comment='+json_main['success'],
+                                                dataType: 'json',
+                                                error: function(xhr, ajaxOptions, thrownError) {
+                                                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                                                }
+                                            });
+                                        }
+                                    },
+                                    error: function(xhr, ajaxOptions, thrownError) {
+                                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                                    }
+                                });
+                            }
+                        },
+                        error: function(xhr, ajaxOptions, thrownError) {
+                            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                        }
+                    });
+                }
+            });
+            //
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/common/footer.php">
+        <operation error="skip">
+            <search><![CDATA[$data['newsletter'] = $this->url->link('account/newsletter']]></search>
+            <add position="after"><![CDATA[
+            $data['yandex_metrika_html_code'] = $this->config->get('yandex_money_metrika_active') && $this->config->get('yandex_money_metrika_code')
+                ? html_entity_decode($this->config->get('yandex_money_metrika_code'), ENT_QUOTES, 'UTF-8')
+                : '';
+            $data['yandex_money_kassa_show_in_footer'] = $this->config->get('yandex_money_kassa_enabled') && $this->config->get('yandex_money_kassa_show_in_footer');
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/checkout/success.php">
+        <operation>
+            <search><![CDATA[if (isset($this->session->data['order_id'])) {]]></search>
+            <add position="after"><![CDATA[
+                $this->load->model('extension/payment/yandex_money');
+                $data['script_order'] = $this->model_extension_payment_yandex_money->getMetricsJavaScript($this->session->data['order_id']);
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/common/success.twig">
+        <operation>
+            <search position="replace"><![CDATA[{{ footer }}]]></search>
+            <add><![CDATA[
+            {% if script_order is defined %}
+            {{ script_order }}
+            {% endif %}
+            {{ footer }}
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/common/footer.twig">
+        <operation>
+            <search><![CDATA[<footer]]></search>
+            <add position="before"><![CDATA[
+            {{ yandex_metrika_html_code }}
+            <script type="text/javascript">
+                window.dataLayer = window.dataLayer || [];
+                function sendEcommerceAdd(id, quantity) {
+                   $.ajax({
+                        url: 'index.php?route=extension/payment/yandex_money/productInfo',
+                        type: 'post',
+                        data: 'id=' + id,
+                        dataType: 'json',
+                        success: function(json) {
+                            json.quantity = quantity;
+                            dataLayer.push({ecommerce: {add: {products: [json]}}});
+                        }
+                    });
+                }
+                $(window).on("load", function () {
+                    var opencartCartAdd = cart.add;
+                    cart.add = function (product_id, quantity) {
+                        opencartCartAdd(product_id, quantity);
+                        sendEcommerceAdd(product_id, typeof(quantity) !== 'undefined' ? parseInt(quantity) : 1);
+                    };
+
+                    $('#button-cart').on('click', function() {
+                        var ecommerce_product = new Array();
+                        sendEcommerceAdd($('#product input[name="product_id"]').val(), parseInt($('#product input[name="quantity"]').val()));
+                    });
+                });
+            </script>
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[<p>{{ powered }}</p>]]></search>
+            <add position="after"><![CDATA[
+            {% if yandex_money_kassa_show_in_footer is defined and yandex_money_kassa_show_in_footer %}
+            <p><a href="https://kassa.yandex.ru/?_openstat=promo;merchants;opencart2">Работает Яндекс.Касса</a></p>
+            {% endif %}
+            ]]></add>
+        </operation>
+    </file>
+    <!-- Вставка скрипта кнопки "Заплатить по частям" -->
+    <file path="catalog/view/theme/*/template/common/header.twig" error="skip">
+        <operation>
+            <search><![CDATA[</head]]></search>
+            <add position="before">
+                <![CDATA[<script src="https://static.yandex.net/kassa/pay-in-parts/ui/v1/"></script>]]></add>
+        </operation>
+    </file>
+    <!-- Получение данных для виджета "Заплатить по частям" -->
+    <file path="catalog/controller/product/product.php" error="skip">
+        <operation>
+            <search trim="true"><![CDATA[if ($product_info) {]]></search>
+            <add position="after"><![CDATA[
+                $enableCreditInEpl = $this->config->get('yandex_money_kassa_payment_mode') === 'kassa'
+                    && $this->config->get('yandex_money_kassa_use_installments_button');
+                $enableCreditInShopSide = $this->config->get('yandex_money_kassa_payment_mode') === 'shop'
+                    && $this->config->get('yandex_money_kassa_payment_method_installments');
+                $showInstallmentsBlock = $this->config->get('yandex_money_kassa_enabled') && ($enableCreditInEpl || $enableCreditInShopSide)
+                    && $this->config->get('yandex_money_kassa_add_installments_block');
+
+                $data['yamoney_showInstallmentsBlock'] = $showInstallmentsBlock;
+                $data['yamoney_shop_id'] = $this->config->get('yandex_money_kassa_shop_id');
+                $data['yamoney_language_code'] = $this->language->get('code');
+            ]]></add>
+        </operation>
+        <operation>
+            <search trim="true">
+                <![CDATA[$data['price'] = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);]]></search>
+            <add position="after"><![CDATA[
+                $data['cost'] = $this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax'));
+            ]]></add>
+        </operation>
+    </file>
+    <!-- Отображение виджета "Заплатить по частям" -->
+    <file path="catalog/view/theme/*/template/product/product.twig" error="skip">
+        <operation>
+            <search><![CDATA[<div id="product"> {% if options %}]]></search>
+            <add position="before"><![CDATA[
+                {% if yamoney_showInstallmentsBlock %}
+                    <ul class="list-unstyled"><li class="installments-info"></li></ul>
+                {% endif %}
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[{{ footer }}]]></search>
+            <add position="before"><![CDATA[
+                <script>
+                    {% if yamoney_showInstallmentsBlock %}
+                        if (typeof YandexCheckoutCreditUI !== "undefined") {
+                            const yamoneyCheckoutCreditUI = YandexCheckoutCreditUI({
+                                shopId: '{{ yamoney_shop_id }}',
+                                sum: parseFloat('{{ cost }}'),
+                                language: '{{ yamoney_language_code }}'
+                            });
+                            yamoneyCheckoutCreditUI({
+                                type: 'info',
+                                domSelector: '.installments-info'
+                            });
+                        }
+                    {% endif %}
+                    $(window).on("load", function () {
+                        window.dataLayer = window.dataLayer || [];
+                        dataLayer.push({ecommerce: {detail: {products: [{
+                            id: "{{ product_id }}",
+                            name: "{{ heading_title }}",
+                            price: parseFloat("0"+"{{ price }}".replace(/[^.\d]+/g,"")),
+                            brand: "{{ manufacturer }}",
+                            variant: "{{ model }}"
+                        }]}}});
+                    });
+                </script>
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/view/template/catalog/product_form.twig" error="skip">
+        <operation error="skip" info="Add Product Properties">
+            <search position="after"><![CDATA[<input type="text" name="sort_order" value="{{ sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />]]></search>
+            <add><![CDATA[
+                    <input type="text" name="sort_order" value="{{ sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />
+                 </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-ym_payment_mode"><span data-toggle="tooltip" title="">Признак способа расчета</span></label>
+                <div class="col-sm-10">
+                  <select name="ym_payment_mode" id="ym_payment_mode" class="form-control">
+
+                    {% for pmValue,pmTitle in paymentModeEnum %}
+
+                    <option value="{{ pmValue }}" {{ product_ym_payment_mode == pmValue ? ' selected' : '' }}>{{ pmTitle }}</option>
+
+                    {% endfor %}
+
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="ym_payment_subject"><span data-toggle="tooltip" title="">Признак предмета расчета</span></label>
+                <div class="col-sm-10">
+                  <select name="ym_payment_subject" id="ym_payment_subject" class="form-control">
+
+                    {% for psValue,psTitle in paymentSubjectEnum %}
+
+                    <option value="{{ psValue }}" {{ product_ym_payment_subject == psValue ? ' selected' : '' }}>{{ psTitle }}</option>
+
+                    {% endfor %}
+
+                  </select>
+            ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/controller/catalog/product.php" error="skip">
+        <operation error="skip" info="Add Capture Link">
+            <search position="after"><![CDATA[$data['layouts'] = $this->model_design_layout->getLayouts();]]></search>
+            <add><![CDATA[
+                $data['layouts'] = $this->model_design_layout->getLayouts();
+                if(!empty($this->request->get['product_id'])) {
+                    $res = $this->db->query('SELECT * FROM `'.DB_PREFIX.'ya_money_product_properties` WHERE product_id='.$this->request->get['product_id']);
+                    $productProp = $res->row;
+                }
+                $data['product_ym_payment_mode'] = !empty($productProp['payment_mode']) ? $productProp['payment_mode'] : '';
+                $data['product_ym_payment_subject'] = !empty($productProp['payment_subject']) ? $productProp['payment_subject'] : '';
+
+                $data['paymentModeEnum'] = array(
+                    'full_prepayment'    => 'Полная предоплата (\'full_prepayment\')',
+                    'partial_prepayment' => 'Частичная предоплата (\'partial_prepayment\')',
+                    'advance'            => 'Аванс (\'advance\')',
+                    'full_payment'       => 'Полный расчет (\'full_payment\')',
+                    'partial_payment'    => 'Частичный расчет и кредит (\'partial_payment\')',
+                    'credit'             => 'Кредит (\'credit\')',
+                    'credit_payment'     => 'Выплата по кредиту (\'credit_payment\')',
+                );
+                $data['paymentSubjectEnum'] = array(
+                    'commodity'             => 'Товар (\'commodity\')',
+                    'excise'                => 'Подакцизный товар (\'excise\')',
+                    'job'                   => 'Работа (\'job\')',
+                    'service'               => 'Услуга (\'service\')',
+                    'gambling_bet'          => 'Ставка в азартной игре (\'gambling_bet\')',
+                    'gambling_prize'        => 'Выигрыш в азартной игре (\'gambling_prize\')',
+                    'lottery'               => 'Лотерейный билет (\'lottery\')',
+                    'lottery_prize'         => 'Выигрыш в лотерею (\'lottery_prize\')',
+                    'intellectual_activity' => 'Результаты интеллектуальной деятельности (\'intellectual_activity\')',
+                    'payment'               => 'Платеж (\'payment\')',
+                    'agent_commission'      => 'Агентское вознаграждение (\'agent_commission\')',
+                    'composite'             => 'Несколько вариантов (\'composite\')',
+                    'another'               => 'Другое (\'another\')',
+                );
+            ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/controller/catalog/product.php" error="skip">
+        <operation error="skip" info="Add Capture Link">
+            <search position="after"><![CDATA[$this->model_catalog_product->editProduct($this->request->get['product_id'], $this->request->post);]]></search>
+            <add><![CDATA[
+                $this->model_catalog_product->editProduct($this->request->get['product_id'], $this->request->post);
+                if(!empty($this->request->post['ym_payment_mode']) && !empty($this->request->post['ym_payment_subject'])) {
+                    $res = $this->db->query('INSERT INTO `'.DB_PREFIX.'ya_money_product_properties` (product_id, payment_mode, payment_subject)
+                        VALUES('.$this->request->get['product_id'].', "'.$this->request->post['ym_payment_mode'].'", "'.$this->request->post['ym_payment_subject'].'")
+                        ON DUPLICATE KEY UPDATE  payment_mode="'.$this->request->post['ym_payment_mode'].'", payment_subject="'.$this->request->post['ym_payment_subject'].'"'
+                    );
+                }
+            ]]></add>
+        </operation>
+    </file>
+</modification>
