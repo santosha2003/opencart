@@ -41,12 +41,7 @@
                 <option value="customer"><?php echo $text_customer; ?></option>
                 <option value="affiliate_all"><?php echo $text_affiliate_all; ?></option>
                 <option value="affiliate"><?php echo $text_affiliate; ?></option>
-                
                 <option value="product"><?php echo $text_product; ?></option>
-                <!-- newsletter -->
-                <option value="newsletter_all"><?php echo $text_newsletter_all; ?></option>
-                <!-- /newsletter -->
-                
               </select>
             </div>
           </div>

@@ -25,21 +25,6 @@ class ControllerCommonContentTop extends Controller {
 			$layout_id = $this->model_catalog_product->getProductLayoutId($this->request->get['product_id']);
 		}
 
-
-      if ($route == 'newsblog/category' && isset($this->request->get['newsblog_path'])) {
-			$this->load->model('newsblog/category');
-
-			$path = explode('_', (string)$this->request->get['newsblog_path']);
-
-			$layout_id = $this->model_newsblog_category->getCategoryLayoutId(end($path));
-		}
-
-		if ($route == 'newsblog/article' && isset($this->request->get['newsblog_article_id'])) {
-			$this->load->model('newsblog/article');
-
-			$layout_id = $this->model_newsblog_article->getArticleLayoutId($this->request->get['newsblog_article_id']);
-		}
-      
 		if ($route == 'information/information' && isset($this->request->get['information_id'])) {
 			$this->load->model('catalog/information');
 

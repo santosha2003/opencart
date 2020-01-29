@@ -50,11 +50,6 @@
               <?php } ?>
               <?php if ($shipping_method) { ?>
               <b><?php echo $text_shipping_method; ?></b> <?php echo $shipping_method; ?>
-
-              <?php } ?>
-              <?php if ($track_no) { ?>
-              <br /><b>Трек-номер:</b> <?php echo $track_no; ?>
-				
               <?php } ?></td>
           </tr>
         </tbody>

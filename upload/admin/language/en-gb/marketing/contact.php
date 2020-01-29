@@ -13,13 +13,7 @@ $_['text_customer_group']  = 'Customer Group';
 $_['text_customer']        = 'Customers';
 $_['text_affiliate_all']   = 'All Affiliates';
 $_['text_affiliate']       = 'Affiliates';
-
 $_['text_product']         = 'Products';
-
-// newsletter
-$_['text_newsletter_all']   = 'All Newsletter';
-// newsletter
-                
 
 // Entry
 $_['entry_store']          = 'From';

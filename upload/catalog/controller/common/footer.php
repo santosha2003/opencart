@@ -50,14 +50,6 @@ class ControllerCommonFooter extends Controller {
 
 		$data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));
 
-				$this->load->model('setting/setting');
-				$current_language_id = $this->config->get('config_language_id');
-				$data['loadmore_button'] = $this->config->get('loadmore_button_name_'.$current_language_id);
-				$data['loadmore_status'] = $this->config->get('loadmore_status');
-				$data['loadmore_style'] = $this->config->get('loadmore_style');
-				$data['loadmore_arrow_status'] = $this->config->get('loadmore_arrow_status');
-            
-
 		// Whos Online
 		if ($this->config->get('config_customer_online')) {
 			$this->load->model('tool/online');

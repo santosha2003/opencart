@@ -70,12 +70,7 @@ class User {
 
 	public function hasPermission($key, $value) {
 		if (isset($this->permission[$key])) {
-			
-            //d_shopunity_oc230_patch.xml
-            $part = explode('/', $value);
-            unset($part[0]);
-            return (in_array($value, $this->permission[$key]) || in_array(implode('/', $part), $this->permission[$key])) ? true: false;
-            
+			return in_array($value, $this->permission[$key]);
 		} else {
 			return false;
 		}

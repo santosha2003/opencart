@@ -1,15 +1,6 @@
 <?php
 class ControllerCheckoutCheckout extends Controller {
 	public function index() {
-
-            if ($this->config->get('oplata_status')) { //Fondy Payment Method
-                $this->document->addScript('https://api.fondy.eu/static_common/v1/checkout/ipsp.js');
-            }
-            if (isset($this->session->data['oplata_error'])){
-			$data['oplata_error']=$this->session->data['oplata_error'];
-			 
-			}unset($this->session->data['oplata_error']);
-			
 		// Validate cart has products and has stock.
 		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
 			$this->response->redirect($this->url->link('checkout/cart'));
@@ -101,22 +92,9 @@ class ControllerCheckoutCheckout extends Controller {
 		$data['content_top'] = $this->load->controller('common/content_top');
 		$data['content_bottom'] = $this->load->controller('common/content_bottom');
 		$data['footer'] = $this->load->controller('common/footer');
-
-		if($this->config->get('d_quickcheckout_status')){
-			$data['d_quickcheckout'] = $this->load->controller('extension/module/d_quickcheckout');
-		}
-		
 		$data['header'] = $this->load->controller('common/header');
 
-		
-			// a_vqmod_d_quickcheckout.xml
-			if($this->config->get('d_quickcheckout_status')){
-				$template = 'd_quickcheckout';
-			}else{
-				$template = 'checkout';
-			}
-			
-			$this->response->setOutput($this->load->view('checkout/'.$template, $data));
+		$this->response->setOutput($this->load->view('checkout/checkout', $data));
 	}
 
 	public function country() {

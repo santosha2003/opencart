@@ -28,9 +28,6 @@ $_['column_action']          = 'Action';
 // Entry
 $_['entry_main_category']    = 'Main category';
 $_['entry_name']             = 'Product Name';
-
-		$_['entry_ext_description'] = 'Additional description';
-	  
 $_['entry_description']      = 'Description';
 $_['entry_meta_title'] 	     = 'Meta Tag Title';
 $_['entry_meta_h1']          = 'HTML Tag H1';

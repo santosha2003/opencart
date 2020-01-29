@@ -88,16 +88,6 @@
                   <?php } ?></td>
               </tr>
               <tr>
-
-			<?php if ($track_no_on) { ?>
-                <td>Трек-номер:</td>
-                <td class="text-right"><input type="text" name="order_track_no" value="<?php echo $track_no; ?>" /></td>
-                <td class="text-center">
-                  <button id="button-track_no-add" data-loading-text="<?php echo $text_loading; ?>" data-toggle="tooltip" title="Сохранить трек-номер" class="btn btn-success btn-xs"><i class="fa fa-plus-circle"></i></button>
-              </tr>
-              <tr>
-			<?php } ?>  
-				
                 <td><?php echo $text_reward; ?></td>
                 <td class="text-right"><?php echo $reward; ?></td>
                 <td class="text-center"><?php if ($customer && $reward) { ?>
@@ -663,39 +653,4 @@ $('select[name="order_status_id"]').change(function(){
 });
 //--></script> 
 </div>
-
-<?php if ($track_no_on) { ?>
-<script type="text/javascript"><!--
-$('#button-track_no-add').on('click', function() {
-	$.ajax({
-		url: '<?php echo $store_url; ?>index.php?route=api/track_no/save&token=' + token + '&order_id=<?php echo $order_id; ?>',
-		type: 'post',
-		dataType: 'json',
-		data: 'track_no=' + encodeURIComponent($('input[name=\'order_track_no\']').val()),
-		beforeSend: function() {
-			$('.track_no_alert').remove();
-			$('#button-track_no-add').attr('disabled', 'disabled');
-			$('#button-track_no-add').button('loading');
-		},
-		complete: function() {
-			$('#button-track_no-add').button('reset');
-			$('#button-track_no-add').attr('disabled', 'disabled');
-		},
-		success: function(json) {
-			$('.alert').remove();
-
-			if (json['error']) {
-				$('.container-fluid').eq(1).find('.row').eq(0).before('<div class="track_no_alert alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button data-dismiss="alert" class="close" type="button">×</button></div>');
-			}
-
-			if (json['success']) {
-				$('.container-fluid').eq(1).find('.row').eq(0).before('<div class="track_no_alert alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + ' <button data-dismiss="alert" class="close" type="button">×</button></div>');
-				$('#history').load('index.php?route=sale/order/history&token=<?php echo $token; ?>&order_id=<?php echo $order_id; ?>');
-			}
-		},
-	});
-});
-//--></script>
-<?php } ?>
-				
 <?php echo $footer; ?> 

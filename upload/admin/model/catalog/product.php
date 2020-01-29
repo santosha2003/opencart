@@ -1,27 +1,7 @@
 <?php
 class ModelCatalogProduct extends Model {
 	public function addProduct($data) {
-		
-      // handle item id and batch name for universal import
-      $univimp_extra = '';
-      
-      if (!empty($data['product_id']) && defined('GKD_UNIV_IMPORT')) {
-        $univimp_extra .= 'product_id = "' . (int) $data['product_id'] . '", ';
-      }
-      
-      if (!empty($data['import_batch']) && defined('GKD_UNIV_IMPORT')) {
-        $univimp_extra .= 'import_batch = "' . $this->db->escape($data['import_batch']) . '", ';
-      }
-      
-      if (!empty($data['gkd_extra_fields']) && defined('GKD_UNIV_IMPORT')) {
-        foreach ($data['gkd_extra_fields'] as $extra_field) {
-          if (isset($data[$extra_field])) {
-            $univimp_extra .= '`' . $this->db->escape($extra_field) .'` = "' . $this->db->escape($data[$extra_field]) . '", ';
-          }
-        }
-      }
-      
-			$this->db->query("INSERT INTO " . DB_PREFIX . "product SET " . $univimp_extra . " model = '" . $this->db->escape($data['model']) . "', sku = '" . $this->db->escape($data['sku']) . "', upc = '" . $this->db->escape($data['upc']) . "', ean = '" . $this->db->escape($data['ean']) . "', jan = '" . $this->db->escape($data['jan']) . "', isbn = '" . $this->db->escape($data['isbn']) . "', mpn = '" . $this->db->escape($data['mpn']) . "', location = '" . $this->db->escape($data['location']) . "', quantity = '" . (int)$data['quantity'] . "', minimum = '" . (int)$data['minimum'] . "', subtract = '" . (int)$data['subtract'] . "', stock_status_id = '" . (int)$data['stock_status_id'] . "', date_available = '" . $this->db->escape($data['date_available']) . "', manufacturer_id = '" . (int)$data['manufacturer_id'] . "', shipping = '" . (int)$data['shipping'] . "', price = '" . (float)$data['price'] . "', points = '" . (int)$data['points'] . "', weight = '" . (float)$data['weight'] . "', weight_class_id = '" . (int)$data['weight_class_id'] . "', length = '" . (float)$data['length'] . "', width = '" . (float)$data['width'] . "', height = '" . (float)$data['height'] . "', length_class_id = '" . (int)$data['length_class_id'] . "', status = '" . (int)$data['status'] . "', tax_class_id = '" . (int)$data['tax_class_id'] . "', sort_order = '" . (int)$data['sort_order'] . "', date_added = NOW()");
+		$this->db->query("INSERT INTO " . DB_PREFIX . "product SET model = '" . $this->db->escape($data['model']) . "', sku = '" . $this->db->escape($data['sku']) . "', upc = '" . $this->db->escape($data['upc']) . "', ean = '" . $this->db->escape($data['ean']) . "', jan = '" . $this->db->escape($data['jan']) . "', isbn = '" . $this->db->escape($data['isbn']) . "', mpn = '" . $this->db->escape($data['mpn']) . "', location = '" . $this->db->escape($data['location']) . "', quantity = '" . (int)$data['quantity'] . "', minimum = '" . (int)$data['minimum'] . "', subtract = '" . (int)$data['subtract'] . "', stock_status_id = '" . (int)$data['stock_status_id'] . "', date_available = '" . $this->db->escape($data['date_available']) . "', manufacturer_id = '" . (int)$data['manufacturer_id'] . "', shipping = '" . (int)$data['shipping'] . "', price = '" . (float)$data['price'] . "', points = '" . (int)$data['points'] . "', weight = '" . (float)$data['weight'] . "', weight_class_id = '" . (int)$data['weight_class_id'] . "', length = '" . (float)$data['length'] . "', width = '" . (float)$data['width'] . "', height = '" . (float)$data['height'] . "', length_class_id = '" . (int)$data['length_class_id'] . "', status = '" . (int)$data['status'] . "', tax_class_id = '" . (int)$data['tax_class_id'] . "', sort_order = '" . (int)$data['sort_order'] . "', date_added = NOW()");
 
 		$product_id = $this->db->getLastId();
 
@@ -30,27 +10,7 @@ class ModelCatalogProduct extends Model {
 		}
 
 		foreach ($data['product_description'] as $language_id => $value) {
-			
-      // handle item id and batch name for universal import
-      $univimp_extra_desc = '';
-
-      if (!empty($data['gkd_extra_desc_fields']) && defined('GKD_UNIV_IMPORT')) {
-        foreach ($data['gkd_extra_desc_fields'] as $extra_field) {
-          if (isset($value[$extra_field])) {
-            $univimp_extra_desc .= '`' . $this->db->escape($extra_field) .'` = "' . $this->db->escape($value[$extra_field]) . '", ';
-          }
-        }
-      }
-      
-			$this->db->query("INSERT INTO " . DB_PREFIX . "product_description SET " . $univimp_extra_desc . " product_id = '" . (int)$product_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', 
-		description = '" . $this->db->escape($value['description']) . "', ext_description = '" . $this->db->escape($value['ext_description']) . "',
-	   tag = '" . $this->db->escape($value['tag']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_h1 = '" . $this->db->escape($value['meta_h1']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
-
-if (isset($data['image'])) {
-	if (isset($data['image_description']))
-		$this->db->query("UPDATE " . DB_PREFIX . "product_description SET image_description = '" . $this->db->escape(serialize($data['image_description'][$language_id])) . "' WHERE product_id = '" . (int)$product_id . "' AND language_id = '" . (int)$language_id . "'");
-}
-			
+			$this->db->query("INSERT INTO " . DB_PREFIX . "product_description SET product_id = '" . (int)$product_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', description = '" . $this->db->escape($value['description']) . "', tag = '" . $this->db->escape($value['tag']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_h1 = '" . $this->db->escape($value['meta_h1']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
 		}
 
 		if (isset($data['product_store'])) {
@@ -107,13 +67,6 @@ if (isset($data['image'])) {
 		if (isset($data['product_image'])) {
 			foreach ($data['product_image'] as $product_image) {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "product_image SET product_id = '" . (int)$product_id . "', image = '" . $this->db->escape($product_image['image']) . "', sort_order = '" . (int)$product_image['sort_order'] . "'");
-
-$image_id = $this->db->getLastId();
-if (isset($product_image['image_description'])) {
-	$this->db->query("UPDATE " . DB_PREFIX . "product_image SET image_description = '" . $this->db->escape(serialize($product_image['image_description'])). "'
-	WHERE `product_image_id` = " . $image_id);
-}
-			
 			}
 		}
 
@@ -139,18 +92,6 @@ if (isset($product_image['image_description'])) {
 		if (isset($data['product_filter'])) {
 			foreach ($data['product_filter'] as $filter_id) {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "product_filter SET product_id = '" . (int)$product_id . "', filter_id = '" . (int)$filter_id . "'");
-
-      // Universal Import/Export - apply filters to cateogories
-        if (!empty($data['uiep_filter_to_category'])) {
-          if (!empty($data['product_filter']) && !empty($data['product_category'])) {
-            foreach ($data['product_category'] as $category_id) {
-              foreach ($data['product_filter'] as $filter_id) {
-                $this->db->query("INSERT IGNORE INTO " . DB_PREFIX . "category_filter SET category_id = '" . (int)$category_id . "', filter_id = '" . (int)$filter_id . "'");
-              }
-            }
-          }
-  			}
-      
 			}
 		}
 
@@ -193,23 +134,7 @@ if (isset($product_image['image_description'])) {
 	}
 
 	public function editProduct($product_id, $data) {
-		
-      // handle item id and batch name for universal import
-      $univimp_extra = '';
-      
-      if (!empty($data['import_batch']) && defined('GKD_UNIV_IMPORT')) {
-        $univimp_extra .= 'import_batch = "' . $this->db->escape($data['import_batch']) . '", ';
-      }
-      
-      if (!empty($data['gkd_extra_fields']) && defined('GKD_UNIV_IMPORT')) {
-        foreach ($data['gkd_extra_fields'] as $extra_field) {
-          if (isset($data[$extra_field])) {
-            $univimp_extra .= '`' . $this->db->escape($extra_field) .'` = "' . $this->db->escape($data[$extra_field]) . '", ';
-          }
-        }
-      }
-      
-			$this->db->query("UPDATE " . DB_PREFIX . "product SET model = '" . $this->db->escape($data['model']) . "', " . $univimp_extra . " sku = '" . $this->db->escape($data['sku']) . "', upc = '" . $this->db->escape($data['upc']) . "', ean = '" . $this->db->escape($data['ean']) . "', jan = '" . $this->db->escape($data['jan']) . "', isbn = '" . $this->db->escape($data['isbn']) . "', mpn = '" . $this->db->escape($data['mpn']) . "', location = '" . $this->db->escape($data['location']) . "', quantity = '" . (int)$data['quantity'] . "', minimum = '" . (int)$data['minimum'] . "', subtract = '" . (int)$data['subtract'] . "', stock_status_id = '" . (int)$data['stock_status_id'] . "', date_available = '" . $this->db->escape($data['date_available']) . "', manufacturer_id = '" . (int)$data['manufacturer_id'] . "', shipping = '" . (int)$data['shipping'] . "', price = '" . (float)$data['price'] . "', points = '" . (int)$data['points'] . "', weight = '" . (float)$data['weight'] . "', weight_class_id = '" . (int)$data['weight_class_id'] . "', length = '" . (float)$data['length'] . "', width = '" . (float)$data['width'] . "', height = '" . (float)$data['height'] . "', length_class_id = '" . (int)$data['length_class_id'] . "', status = '" . (int)$data['status'] . "', tax_class_id = '" . (int)$data['tax_class_id'] . "', sort_order = '" . (int)$data['sort_order'] . "', date_modified = NOW() WHERE product_id = '" . (int)$product_id . "'");
+		$this->db->query("UPDATE " . DB_PREFIX . "product SET model = '" . $this->db->escape($data['model']) . "', sku = '" . $this->db->escape($data['sku']) . "', upc = '" . $this->db->escape($data['upc']) . "', ean = '" . $this->db->escape($data['ean']) . "', jan = '" . $this->db->escape($data['jan']) . "', isbn = '" . $this->db->escape($data['isbn']) . "', mpn = '" . $this->db->escape($data['mpn']) . "', location = '" . $this->db->escape($data['location']) . "', quantity = '" . (int)$data['quantity'] . "', minimum = '" . (int)$data['minimum'] . "', subtract = '" . (int)$data['subtract'] . "', stock_status_id = '" . (int)$data['stock_status_id'] . "', date_available = '" . $this->db->escape($data['date_available']) . "', manufacturer_id = '" . (int)$data['manufacturer_id'] . "', shipping = '" . (int)$data['shipping'] . "', price = '" . (float)$data['price'] . "', points = '" . (int)$data['points'] . "', weight = '" . (float)$data['weight'] . "', weight_class_id = '" . (int)$data['weight_class_id'] . "', length = '" . (float)$data['length'] . "', width = '" . (float)$data['width'] . "', height = '" . (float)$data['height'] . "', length_class_id = '" . (int)$data['length_class_id'] . "', status = '" . (int)$data['status'] . "', tax_class_id = '" . (int)$data['tax_class_id'] . "', sort_order = '" . (int)$data['sort_order'] . "', date_modified = NOW() WHERE product_id = '" . (int)$product_id . "'");
 
 		if (isset($data['image'])) {
 			$this->db->query("UPDATE " . DB_PREFIX . "product SET image = '" . $this->db->escape($data['image']) . "' WHERE product_id = '" . (int)$product_id . "'");
@@ -218,27 +143,7 @@ if (isset($product_image['image_description'])) {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_description WHERE product_id = '" . (int)$product_id . "'");
 
 		foreach ($data['product_description'] as $language_id => $value) {
-			
-      // handle item id and batch name for universal import
-      $univimp_extra_desc = '';
-
-      if (!empty($data['gkd_extra_desc_fields']) && defined('GKD_UNIV_IMPORT')) {
-        foreach ($data['gkd_extra_desc_fields'] as $extra_field) {
-          if (isset($value[$extra_field])) {
-            $univimp_extra_desc .= '`' . $this->db->escape($extra_field) .'` = "' . $this->db->escape($value[$extra_field]) . '", ';
-          }
-        }
-      }
-      
-			$this->db->query("INSERT INTO " . DB_PREFIX . "product_description SET " . $univimp_extra_desc . " product_id = '" . (int)$product_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', 
-		description = '" . $this->db->escape($value['description']) . "', ext_description = '" . $this->db->escape($value['ext_description']) . "',
-	   tag = '" . $this->db->escape($value['tag']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_h1 = '" . $this->db->escape($value['meta_h1']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
-
-if (isset($data['image'])) {
-	if (isset($data['image_description']))
-		$this->db->query("UPDATE " . DB_PREFIX . "product_description SET image_description = '" . $this->db->escape(serialize($data['image_description'][$language_id])) . "' WHERE product_id = '" . (int)$product_id . "' AND language_id = '" . (int)$language_id . "'");
-}
-			
+			$this->db->query("INSERT INTO " . DB_PREFIX . "product_description SET product_id = '" . (int)$product_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', description = '" . $this->db->escape($value['description']) . "', tag = '" . $this->db->escape($value['tag']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_h1 = '" . $this->db->escape($value['meta_h1']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
 		}
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_store WHERE product_id = '" . (int)$product_id . "'");
@@ -271,24 +176,16 @@ if (isset($data['image'])) {
 			foreach ($data['product_option'] as $product_option) {
 				if ($product_option['type'] == 'select' || $product_option['type'] == 'radio' || $product_option['type'] == 'checkbox' || $product_option['type'] == 'image') {
 					if (isset($product_option['product_option_value'])) {
-
-        $gkd_prod_opt_id = defined('GKD_UNIV_IMPORT') && !empty($product_option['product_option_id']) ? "product_option_id = '" . (int) $product_option['product_option_id'] . "'," : '';
-        $gkd_prod_opt_val_id = defined('GKD_UNIV_IMPORT') && !empty($product_option['product_option_value_id']) ? "product_option_value_id = '" . (int) $product_option['product_option_value_id'] . "'," : '';
-      
-						$this->db->query("INSERT INTO " . DB_PREFIX . "product_option SET ".$gkd_prod_opt_id." product_id = '" . (int)$product_id . "', option_id = '" . (int)$product_option['option_id'] . "', required = '" . (int)$product_option['required'] . "'");
+						$this->db->query("INSERT INTO " . DB_PREFIX . "product_option SET product_option_id = '" . (int)$product_option['product_option_id'] . "', product_id = '" . (int)$product_id . "', option_id = '" . (int)$product_option['option_id'] . "', required = '" . (int)$product_option['required'] . "'");
 
 						$product_option_id = $this->db->getLastId();
 
 						foreach ($product_option['product_option_value'] as $product_option_value) {
-							$this->db->query("INSERT INTO " . DB_PREFIX . "product_option_value SET ".$gkd_prod_opt_id." product_option_id = '" . (int)$product_option_id . "', product_id = '" . (int)$product_id . "', option_id = '" . (int)$product_option['option_id'] . "', option_value_id = '" . (int)$product_option_value['option_value_id'] . "', quantity = '" . (int)$product_option_value['quantity'] . "', subtract = '" . (int)$product_option_value['subtract'] . "', price = '" . (float)$product_option_value['price'] . "', price_prefix = '" . $this->db->escape($product_option_value['price_prefix']) . "', points = '" . (int)$product_option_value['points'] . "', points_prefix = '" . $this->db->escape($product_option_value['points_prefix']) . "', weight = '" . (float)$product_option_value['weight'] . "', weight_prefix = '" . $this->db->escape($product_option_value['weight_prefix']) . "'");
+							$this->db->query("INSERT INTO " . DB_PREFIX . "product_option_value SET product_option_value_id = '" . (int)$product_option_value['product_option_value_id'] . "', product_option_id = '" . (int)$product_option_id . "', product_id = '" . (int)$product_id . "', option_id = '" . (int)$product_option['option_id'] . "', option_value_id = '" . (int)$product_option_value['option_value_id'] . "', quantity = '" . (int)$product_option_value['quantity'] . "', subtract = '" . (int)$product_option_value['subtract'] . "', price = '" . (float)$product_option_value['price'] . "', price_prefix = '" . $this->db->escape($product_option_value['price_prefix']) . "', points = '" . (int)$product_option_value['points'] . "', points_prefix = '" . $this->db->escape($product_option_value['points_prefix']) . "', weight = '" . (float)$product_option_value['weight'] . "', weight_prefix = '" . $this->db->escape($product_option_value['weight_prefix']) . "'");
 						}
 					}
 				} else {
-
-        $gkd_prod_opt_id = defined('GKD_UNIV_IMPORT') && !empty($product_option['product_option_id']) ? "product_option_id = '" . (int) $product_option['product_option_id'] . "'," : '';
-        $gkd_prod_opt_val_id = defined('GKD_UNIV_IMPORT') && !empty($product_option['product_option_value_id']) ? "product_option_value_id = '" . (int) $product_option['product_option_value_id'] . "'," : '';
-      
-					$this->db->query("INSERT INTO " . DB_PREFIX . "product_option SET ".$gkd_prod_opt_id." product_id = '" . (int)$product_id . "', option_id = '" . (int)$product_option['option_id'] . "', value = '" . $this->db->escape($product_option['value']) . "', required = '" . (int)$product_option['required'] . "'");
+					$this->db->query("INSERT INTO " . DB_PREFIX . "product_option SET product_option_id = '" . (int)$product_option['product_option_id'] . "', product_id = '" . (int)$product_id . "', option_id = '" . (int)$product_option['option_id'] . "', value = '" . $this->db->escape($product_option['value']) . "', required = '" . (int)$product_option['required'] . "'");
 				}
 			}
 		}
@@ -314,13 +211,6 @@ if (isset($data['image'])) {
 		if (isset($data['product_image'])) {
 			foreach ($data['product_image'] as $product_image) {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "product_image SET product_id = '" . (int)$product_id . "', image = '" . $this->db->escape($product_image['image']) . "', sort_order = '" . (int)$product_image['sort_order'] . "'");
-
-$image_id = $this->db->getLastId();
-if (isset($product_image['image_description'])) {
-	$this->db->query("UPDATE " . DB_PREFIX . "product_image SET image_description = '" . $this->db->escape(serialize($product_image['image_description'])). "'
-	WHERE `product_image_id` = " . $image_id);
-}
-			
 			}
 		}
 
@@ -352,18 +242,6 @@ if (isset($product_image['image_description'])) {
 		if (isset($data['product_filter'])) {
 			foreach ($data['product_filter'] as $filter_id) {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "product_filter SET product_id = '" . (int)$product_id . "', filter_id = '" . (int)$filter_id . "'");
-
-      // Universal Import/Export - apply filters to cateogories
-        if (!empty($data['uiep_filter_to_category'])) {
-          if (!empty($data['product_filter']) && !empty($data['product_category'])) {
-            foreach ($data['product_category'] as $category_id) {
-              foreach ($data['product_filter'] as $filter_id) {
-                $this->db->query("INSERT IGNORE INTO " . DB_PREFIX . "category_filter SET category_id = '" . (int)$category_id . "', filter_id = '" . (int)$filter_id . "'");
-              }
-            }
-          }
-  			}
-      
 			}
 		}
 
@@ -431,16 +309,6 @@ if (isset($product_image['image_description'])) {
 			$data['product_discount'] = $this->getProductDiscounts($product_id);
 			$data['product_filter'] = $this->getProductFilters($product_id);
 			$data['product_image'] = $this->getProductImages($product_id);
-
-			$data['image_description'] = $this->getProductImageDescription($product_id);
-
-			$product_images = $this->getProductImagesDescription($product_id);
-			if ($product_images) {
-				foreach($data['product_image'] as $key=>$product_image) {
-					$data['product_image'][$key]['image_description'] = $product_images[$key];
-				}
-			}
-			
 			$data['product_option'] = $this->getProductOptions($product_id);
 			$data['product_related'] = $this->getProductRelated($product_id);
 			$data['product_reward'] = $this->getProductRewards($product_id);
@@ -490,12 +358,6 @@ if (isset($product_image['image_description'])) {
 
 	public function getProducts($data = array()) {
 
-		$result_ext_description = $this->db->query("SHOW COLUMNS FROM " . DB_PREFIX . "product_description LIKE 'ext_description';");
-		if ($result_ext_description->num_rows == 0) {
-			$this->db->query("ALTER TABLE " . DB_PREFIX . "product_description ADD COLUMN ext_description TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER  `description` ;");                
-		}
-	  
-
 			$sql = "SELECT * FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id)";
 
 			if (!empty($data['filter_category'])) {
@@ -505,11 +367,6 @@ if (isset($product_image['image_description'])) {
 			$sql .= " WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
 
 
-
-    if (!empty($data['filter_import_batch'])) {
-			$sql .= " AND p.import_batch = '" . $this->db->escape($data['filter_import_batch']) . "'";
-		}
-      
 		if (!empty($data['filter_name'])) {
 			$sql .= " AND pd.name LIKE '" . $this->db->escape($data['filter_name']) . "%'";
 		}
@@ -595,16 +452,10 @@ if (isset($product_image['image_description'])) {
 		foreach ($query->rows as $result) {
 			$product_description_data[$result['language_id']] = array(
 				'name'             => $result['name'],
-				
-		'description'      => $result['description'],
-		'ext_description'  => $result['ext_description']
-	  ,
+				'description'      => $result['description'],
 				'meta_title'       => $result['meta_title'],
 				'meta_h1'          => $result['meta_h1'],
 				'meta_description' => $result['meta_description'],
-
-			'image_description' => isset($result['image_description'])?unserialize($result['image_description']):array(),
-			
 				'meta_keyword'     => $result['meta_keyword'],
 				'tag'              => $result['tag']
 			);
@@ -800,11 +651,6 @@ if (isset($product_image['image_description'])) {
 
 		$sql .= " WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
 
-
-    if (!empty($data['filter_import_batch'])) {
-			$sql .= " AND p.import_batch = '" . $this->db->escape($data['filter_import_batch']) . "'";
-		}
-      
 		if (!empty($data['filter_name'])) {
 			$sql .= " AND pd.name LIKE '" . $this->db->escape($data['filter_name']) . "%'";
 		}
@@ -896,33 +742,6 @@ if (isset($product_image['image_description'])) {
 		return $query->row['total'];
 	}
 
-
-	public function getProductImageDescription($product_id) {
-		$query = $this->db->query("SELECT image_description, language_id FROM " . DB_PREFIX . "product_description WHERE product_id = '" . (int)$product_id . "'");
-		if ($query->num_rows) {
-			$image_decription = array();
-			foreach($query->rows as $row) {
-				$image_description[$row['language_id']] = unserialize($row['image_description']);
-			}
-			return $image_description;
-		} else {
-			return null;
-		}
-	}
-	public function getProductImagesDescription($product_id) {
-		$query = $this->db->query("SELECT image_description FROM " . DB_PREFIX . "product_image WHERE product_id = '" . (int)$product_id . "' ORDER BY sort_order ASC");
-		$images_description = array();
-		if ($query->num_rows) {
-			foreach ($query->rows as $row) {
-				$images_description[] = unserialize($row['image_description']);
-			}
-			return $images_description;
-		} else {
-			return array();
-		}
-	}
-			
-			
 	public function getTotalProductsByLayoutId($layout_id) {
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "product_to_layout WHERE layout_id = '" . (int)$layout_id . "'");
 

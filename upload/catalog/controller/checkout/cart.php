@@ -1,11 +1,6 @@
 <?php
 class ControllerCheckoutCart extends Controller {
 	public function index() {
-		
-			if ($this->cart->hasProducts()){
-				$this->response->redirect($this->url->link('checkout/checkout'));
-			}
-            
 		$this->load->language('checkout/cart');
 
 		$this->document->setTitle($this->language->get('heading_title'));

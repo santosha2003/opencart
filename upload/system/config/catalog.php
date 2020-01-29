@@ -47,19 +47,6 @@ $_['action_pre_action'] = array(
 
 // Action Events
 $_['action_event'] = array(
-
-            //d_shopunity_oc230_patch.xml
-            'controller/extension/analytics/*/before' => 'event/compatibility/controller',
-            'controller/extension/captcha/*/before'   => 'event/compatibility/controller',
-            'controller/extension/feed/*/before'      => 'event/compatibility/controller',
-            'controller/extension/fraud/*/before'     => 'event/compatibility/controller',
-            'controller/extension/module/*/before'    => 'event/compatibility/controller',
-            'controller/extension/payment/*/before'   => 'event/compatibility/controller',
-            'controller/extension/recurring/*/before' => 'event/compatibility/controller',
-            'controller/extension/shipping/*/before'  => 'event/compatibility/controller',
-            'controller/extension/theme/*/before'     => 'event/compatibility/controller',
-            'controller/extension/total/*/before'     => 'event/compatibility/controller',
-            
 	'view/*/before'                         => 'event/theme',
 	
 	'model/extension/analytics/*/before'    => 'event/compatibility/beforeModel',

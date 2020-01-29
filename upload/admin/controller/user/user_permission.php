@@ -381,10 +381,7 @@ class ControllerUserUserPermission extends Controller {
 
 
 
-			
-            //d_opencart_patch.xml 3
-            $permission = (strrpos($controller, '.') !== false) ? substr($controller, 0, strrpos($controller, '.')) : $controller;
-            
+			$permission = substr($controller, 0, strrpos($controller, '.'));
 
 			$hidefiles = explode("/", $permission);
             //var_dump($hidefiles);

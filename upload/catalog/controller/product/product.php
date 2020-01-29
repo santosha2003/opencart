@@ -3,7 +3,6 @@ class ControllerProductProduct extends Controller {
 	private $error = array();
 
 	public function index() {
-$this->load->model('catalog/custom_alttitle_img');
 		$this->load->language('product/product');
 
 		$data['breadcrumbs'] = array();
@@ -288,30 +287,6 @@ $this->load->model('catalog/custom_alttitle_img');
 			$data['points'] = $product_info['points'];
 			$data['description'] = html_entity_decode($product_info['description'], ENT_QUOTES, 'UTF-8');
 
-		 $data['ext_description'] = html_entity_decode($product_info['ext_description'], ENT_QUOTES, 'UTF-8');
-	  
-
-			$paterns = array(
-				'[name]',
-				'[category]',
-				'[manufacturer]',
-				'[store]',
-				'[N]'
-			);
-			$values = array(
-				$product_info['name'],
-				(isset($category_info['name'])?$category_info['name']:''),
-				$product_info['manufacturer'],
-				$this->config->get('config_name'),
-				''
-			);
-			$image_description = array(
-				'title' => $data['heading_title'],
-				'alt' => $data['heading_title'],
-			);
-			$data['image_description'] = $this->model_catalog_custom_alttitle_img->getImageDescriptionMain($paterns,$values, $product_info, $image_description);
-			
-
 			if ($product_info['quantity'] <= 0) {
 				$data['stock'] = $product_info['stock_status'];
 			} elseif ($this->config->get('config_stock_display')) {
@@ -366,21 +341,6 @@ $this->load->model('catalog/custom_alttitle_img');
 				$data['tax'] = false;
 			}
 
-
-			if ($data['images']) {
-				$i = 0;
-				foreach ($results as $key=>$result) {
-					$i++; $values[4] = $i;
-					$image_description = array(
-						'title' => $data['heading_title'],
-						'alt' => $data['heading_title'],
-					);
-					$image_description = $this->model_catalog_custom_alttitle_img->getImageDescriptionAdd($paterns,$values, $result, $image_description);
-				
-					$data['images'][$key]['image_description'] = $image_description;
-				}
-			}
-			
 			$discounts = $this->model_catalog_product->getProductDiscounts($this->request->get['product_id']);
 
 			$data['discounts'] = array();
@@ -534,81 +494,7 @@ $this->load->model('catalog/custom_alttitle_img');
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
 
-			
-            $template = 'product/product';
-
-            // Custom template module
-            $this->load->model('setting/setting');
-
-            $custom_template_module = $this->model_setting_setting->getSetting('custom_template_module');
-
-            $customer_group_id = $this->customer->getGroupId();
-
-            if ($this->config->get('config_theme') == 'theme_default') {
-                $directory = $this->config->get('theme_default_directory');
-            } else {
-                $directory = $this->config->get('config_theme');
-            }
-
-            if(!empty($custom_template_module['custom_template_module'])){
-                if(isset($this->request->get['path'])){
-                    foreach ($custom_template_module['custom_template_module'] as $key => $module) {
-                        if (($module['type'] == 4) && !empty($module['product_categories'])) {
-                            if ((isset($module['customer_groups']) && in_array($customer_group_id, $module['customer_groups'])) || !isset($module['customer_groups']) || empty($module['customer_groups'])){
-
-                                $category_id = explode('_', $this->request->get['path']);
-                                $category_id = (int)end($category_id);
-                                if (in_array($category_id, $module['product_categories'])) {
-                                    if (file_exists(DIR_TEMPLATE . $directory . DIRECTORY_SEPARATOR . 'template' . DIRECTORY_SEPARATOR . $module['template_name'] . '.tpl')) {
-                                        $template = $module['template_name'];
-                                    }
-                                }
-
-                            } // customer groups
-
-                        }
-                    }
-                }
-
-                foreach ($custom_template_module['custom_template_module'] as $key => $module) {
-                    if (($module['type'] == 5) && !empty($module['product_manufacturers'])) {
-
-                        if ((isset($module['customer_groups']) && in_array($customer_group_id, $module['customer_groups'])) || !isset($module['customer_groups']) || empty($module['customer_groups'])){
-
-                            $manufacturer_id = $product_info['manufacturer_id'];
-                            if (in_array($manufacturer_id, $module['product_manufacturers'])) {
-                                if (file_exists(DIR_TEMPLATE . $directory . DIRECTORY_SEPARATOR . 'template' . DIRECTORY_SEPARATOR . $module['template_name'] . '.tpl')) {
-                                    $template = $module['template_name'];
-                                }
-                            }
-
-                        } // customer groups
-
-                    }
-                }
-
-                foreach ($custom_template_module['custom_template_module'] as $key => $module) {
-                    if (($module['type'] == 1) && !empty($module['products'])) {
-                        if ((isset($module['customer_groups']) && in_array($customer_group_id, $module['customer_groups'])) || !isset($module['customer_groups']) || empty($module['customer_groups'])){
-
-                            $products = explode(',', $module['products']);
-                            if (in_array($product_id, $products)) {
-                                if (file_exists(DIR_TEMPLATE . $directory . DIRECTORY_SEPARATOR . 'template' . DIRECTORY_SEPARATOR . $module['template_name'] . '.tpl')) {
-                                    $template = $module['template_name'];
-                                }
-                            }
-
-                        } // customer groups
-
-                    }
-                }
-            }
-
-            $template = str_replace('\\', '/', $template);
-
-            $this->response->setOutput($this->load->view($template, $data));
-            // Custom template module
-            
+			$this->response->setOutput($this->load->view('product/product', $data));
 		} else {
 			$url = '';
 

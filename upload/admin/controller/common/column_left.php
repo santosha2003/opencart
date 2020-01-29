@@ -41,35 +41,6 @@ class ControllerCommonColumnLeft extends Controller {
 				'children' => array()
 			);
 			
-
-      		$newsblog = array();
-
-			if ($this->user->hasPermission('access', 'newsblog/category')) {
-				$newsblog[] = array(
-					'name'	   => $this->language->get('text_newsblog_category'),
-					'href'     => $this->url->link('newsblog/category', 'token=' . $this->session->data['token'], true),
-					'children' => array()
-				);
-			}
-
-			if ($this->user->hasPermission('access', 'newsblog/article')) {
-				$newsblog[] = array(
-					'name'	   => $this->language->get('text_newsblog_article'),
-					'href'     => $this->url->link('newsblog/article', 'token=' . $this->session->data['token'], true),
-					'children' => array()
-				);
-			}
-
-			if ($newsblog) {
-				$data['menus'][] = array(
-					'id'       => 'menu-newsblog',
-					'icon'	   => 'fa-newspaper-o',
-					'name'	   => $this->language->get('text_newsblog'),
-					'href'     => '',
-					'children' => $newsblog
-				);
-			}
-      
 			// Catalog
 			$catalog = array();
 			
@@ -164,15 +135,6 @@ class ControllerCommonColumnLeft extends Controller {
 				);		
 			}
 			
-
-			if ($this->user->hasPermission('access', 'catalog/news')) {		
-				$catalog[] = array(
-					'name'	   => $this->language->get('text_news'),
-					'href'     => $this->url->link('catalog/news', 'token=' . $this->session->data['token'], true),
-					'children' => array()		
-				);					
-			}
-      	
 			if ($this->user->hasPermission('access', 'catalog/information')) {		
 				$catalog[] = array(
 					'name'	   => $this->language->get('text_information'),
@@ -227,23 +189,6 @@ class ControllerCommonColumnLeft extends Controller {
 				);
 			}
 			
-
-      $this->load->model('extension/extension');
-      
-      if (!in_array('universal_import', $this->model_extension_extension->getInstalled('module'))) {
-        $extension[] = array(
-					'name'	   => '<img style="vertical-align:top" src="view/universal_import/img/icon.png"/> Install Universal Import Pro',
-					'href'     => $this->url->link('extension/extension/module/install', 'extension=universal_import&redir=1&token=' . $this->session->data['token'], true),
-					'children' => array()		
-				);
-      } else if ($this->user->hasPermission('access', 'module/universal_import')) {
-				$extension[] = array(
-					'name'	   => '<img style="vertical-align:top" src="view/universal_import/img/icon.png"/> Universal Import Pro',
-					'href'     => $this->url->link('module/universal_import', 'token=' . $this->session->data['token'], true),
-					'children' => array()		
-				);
-			}
-      
 			if ($this->user->hasPermission('access', 'extension/event')) {
 				$extension[] = array(
 					'name'	   => $this->language->get('text_event'),
@@ -452,22 +397,7 @@ class ControllerCommonColumnLeft extends Controller {
 				);
 			}
 			
-			
-
-            // inicio newsletter
-
-            if ($this->user->hasPermission('access', 'marketing/newsletter')) { 
-                $marketing[] = array(
-                    'name'     => $this->language->get('text_newsletter'),
-                    'href'     => $this->url->link('marketing/newsletter', 'token=' . $this->session->data['token'], true),
-                    'children' => array()       
-                );  
-            }
-
-            // fim newsletter
-
-            if ($marketing) {
-                
+			if ($marketing) {
 				$data['menus'][] = array(
 					'id'       => 'menu-marketing',
 					'icon'	   => 'fa-share-alt', 

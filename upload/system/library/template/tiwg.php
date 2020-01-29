@@ -21,7 +21,7 @@ final class PHP {
 
 			ob_start();
 
-			require(modification($file));
+			require($file);
 
 			return ob_get_clean();
 		}

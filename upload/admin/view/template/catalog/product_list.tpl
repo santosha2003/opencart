@@ -100,17 +100,6 @@
                   <?php } ?>
                 </select>
               </div>
-
-          <div class="form-group">
-            <label class="control-label" for="input-import-batch"><?php echo 'Import'; ?></label>
-            <select name="filter_import_batch" id="input-import-batch" class="form-control">
-              <option value="*"></option>
-              <?php foreach ($importLabels as $importLabel) { ?>
-              <option value="<?php echo $importLabel; ?>" <?php if ($filter_import_batch == $importLabel) echo 'selected="selected"'; ?>><?php echo $importLabel; ?></option>
-              <?php } ?>
-            </select>
-          </div>
-      
               <button type="button" id="button-filter" class="btn btn-primary pull-right"><i class="fa fa-filter"></i> <?php echo $button_filter; ?></button>
             </div>
           </div>
@@ -212,12 +201,6 @@
 $('#button-filter').on('click', function() {
 	var url = 'index.php?route=catalog/product&token=<?php echo $token; ?>';
 
- var filter_import_batch = $('select[name=\'filter_import_batch\']').val();
-
-  if (filter_import_batch != '*') {
-		url += '&filter_import_batch=' + encodeURIComponent(filter_import_batch);
-	}
-      
 	var filter_name = $('input[name=\'filter_name\']').val();
 
 	if (filter_name) {

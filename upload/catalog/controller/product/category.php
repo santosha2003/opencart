@@ -18,7 +18,7 @@ class ControllerProductCategory extends Controller {
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
-			$sort = 'p.date_added';
+			$sort = 'p.sort_order';
 		}
 
 		if (isset($this->request->get['order'])) {
@@ -424,44 +424,7 @@ class ControllerProductCategory extends Controller {
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
 
-			
-            $template = 'product/category';
-
-            // Custom template module
-            $this->load->model('setting/setting');
-
-            $custom_template_module = $this->model_setting_setting->getSetting('custom_template_module');
-
-            $customer_group_id = $this->customer->getGroupId();
-
-            if ($this->config->get('config_theme') == 'theme_default') {
-                $directory = $this->config->get('theme_default_directory');
-            } else {
-                $directory = $this->config->get('config_theme');
-            }
-
-            if(!empty($custom_template_module['custom_template_module'])){
-                foreach ($custom_template_module['custom_template_module'] as $key => $module) {
-                    if (($module['type'] == 0) && !empty($module['categories'])) {
-                        if ((isset($module['customer_groups']) && in_array($customer_group_id, $module['customer_groups'])) || !isset($module['customer_groups']) || empty($module['customer_groups'])){
-
-                            if (in_array($category_id, $module['categories'])) {
-                                if (file_exists(DIR_TEMPLATE . $directory . DIRECTORY_SEPARATOR . 'template' . DIRECTORY_SEPARATOR . $module['template_name'] . '.tpl')) {
-                                    $template = $module['template_name'];
-                                }
-                            }
-
-                        } // customer groups
-
-                    }
-                }
-            }
-
-            $template = str_replace('\\', '/', $template);
-
-            $this->response->setOutput($this->load->view($template, $data));
-            // Custom template module
-            
+			$this->response->setOutput($this->load->view('product/category', $data));
 		} else {
 			$url = '';
 

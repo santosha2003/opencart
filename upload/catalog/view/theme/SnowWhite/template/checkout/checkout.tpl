@@ -27,11 +27,6 @@
     <?php } ?>
     <div id="content" class="<?php echo $class; ?>"><?php echo $content_top; ?>
       <h1><?php echo $heading_title; ?></h1>
-
-            <?php if (isset($oplata_error)) { ?>
-        <div class="alert alert-warning"><?php echo $oplata_error; ?><button type="button" class="close" data-dismiss="alert">×</button></div>
-        <?php } ?>
-			
       <div class="panel-group" id="accordion">
         <div class="panel panel-default">
           <div class="panel-heading">
